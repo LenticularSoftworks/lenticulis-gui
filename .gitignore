@@ -1,0 +1,10 @@
+*Thumbs.db
+*.dll
+*.html
+*.ncb
+*.suo
+*.opensdf
+*.sdf
+*.vcxproj.*
+obj/
+bin/
