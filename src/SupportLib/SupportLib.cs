@@ -35,7 +35,7 @@ namespace lenticulis_gui.src.SupportLib
         /// <param name="mipmapData">Built mipmap, as array of integers; its size is determined using image dimensions and fixed mipmap dimension size</param>
         /// <returns>ID of loaded image</returns>
         [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int registerImageP(char[] filename, out char*[] format, out IntPtr colorSpace, out UIntPtr width, out UIntPtr height, out void* mipmapData);
+        public static extern int registerImageP(char[] filename, StringBuilder format, out IntPtr colorSpace, out UIntPtr width, out UIntPtr height, out void* mipmapData);
 
         /// <summary>
         /// Retrieves image ID using path

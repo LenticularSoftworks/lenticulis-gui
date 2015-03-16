@@ -28,21 +28,15 @@ namespace lenticulis_gui.src.SupportLib
         /// <returns>ID of loaded image</returns>
         public static unsafe int loadImage(String filename, out String format, out int colorSpace, out uint width, out uint height, out void* mipmapData)
         {
-            char[] formatTarget;
+            StringBuilder formatTarget = new StringBuilder(4092);
             IntPtr colorSpaceTarget;
             UIntPtr widthTarget, heightTarget;
-            //int id = SupportLib.registerImageP(Utils.getCString(filename), out formatTarget, out colorSpaceTarget, out widthTarget, out heightTarget, out mipmapData);
-            int id = SupportLib.registerImage(Utils.getCString(filename));
+            int id = SupportLib.registerImageP(Utils.getCString(filename), formatTarget, out colorSpaceTarget, out widthTarget, out heightTarget, out mipmapData);
 
-           /* format = new String(formatTarget);
+            format = formatTarget.ToString();
             colorSpace = colorSpaceTarget.ToInt32();
             width = widthTarget.ToUInt32();
-            height = heightTarget.ToUInt32();*/
-            format = "dummy";
-            colorSpace = 32;
-            width = 120;
-            height = 120;
-            mipmapData = null;
+            height = heightTarget.ToUInt32();
 
             return id;
         }

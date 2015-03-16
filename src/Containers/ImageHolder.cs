@@ -59,11 +59,11 @@ namespace lenticulis_gui.src.Containers
             // at first, load image (using librarian call)
             void* mipMapTarget;
 
-            //try
+            try
             {
                 h.id = ImageLoader.loadImage(path, out h.format, out h.colorSpace, out h.width, out h.height, out mipMapTarget);
             }
-            //catch (BadImageFormatException ex)
+            catch (BadImageFormatException ex)
             {
                 // TODO: better exception handling, let user know about what's exactly wrong
                 return null;
