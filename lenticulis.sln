@@ -21,10 +21,12 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Win32.ActiveCfg = Debug|x86
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|Win32.Build.0 = Debug|x86
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|x64.ActiveCfg = Debug|x64
+		{492BB61B-43B4-442F-8040-3085CF47516C}.Debug|x64.Build.0 = Debug|x64
 		{492BB61B-43B4-442F-8040-3085CF47516C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{492BB61B-43B4-442F-8040-3085CF47516C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{492BB61B-43B4-442F-8040-3085CF47516C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU

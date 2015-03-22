@@ -23,7 +23,6 @@ namespace lenticulis_gui
         public MainWindow()
         {
             InitializeComponent();
-            lenticulis_gui.src.Containers.ImageHolder.loadImage("listen.png");
         }
     }
 }
