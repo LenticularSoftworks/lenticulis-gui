@@ -62,5 +62,20 @@ namespace lenticulis_gui.src.App
 
             return null;
         }
+
+        /// <summary>
+        /// Stores loaded image holder
+        /// </summary>
+        /// <param name="id">Image ID</param>
+        /// <param name="image">Container instance</param>
+        /// <returns></returns>
+        public bool storeImageHolder(int id, ImageHolder image)
+        {
+            if (loadedImages.ContainsKey(id))
+                return false;
+
+            loadedImages.Add(id, image);
+            return true;
+        }
     }
 }
