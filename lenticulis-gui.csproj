@@ -87,6 +87,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -107,6 +108,7 @@
     <Compile Include="src\App\Storage.cs" />
     <Compile Include="src\App\Utils.cs" />
     <Compile Include="src\Containers\ImageHolder.cs" />
+    <Compile Include="src\MainWindow\BrowserItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
     <Page Include="src\MainWindow\MainWindow.xaml">
@@ -152,7 +154,57 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="res\icon\Add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Config.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Disc.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Image.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Minus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Move.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\New.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Plus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Redo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Refresh.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Remove.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Resize.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Save.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Trackback.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Undo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Unknown.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
