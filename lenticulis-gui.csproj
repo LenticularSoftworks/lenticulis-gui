@@ -109,6 +109,7 @@
     <Compile Include="src\App\Utils.cs" />
     <Compile Include="src\Containers\ImageHolder.cs" />
     <Compile Include="src\MainWindow\BrowserItem.cs" />
+    <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
     <Page Include="src\MainWindow\MainWindow.xaml">
@@ -204,6 +205,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\icon\Unknown.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Eye.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
