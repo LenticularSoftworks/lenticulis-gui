@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using lenticulis_gui.src.Containers;
 
 namespace lenticulis_gui
 {
@@ -15,11 +16,7 @@ namespace lenticulis_gui
     /// </summary>
     public class TimelineItem : Grid
     {
-        public int Layer { get; set; }
-        public int Column { get; set; }
-        public int Length { get; set; }
         public string Text { get; set; }
-        public bool Visible { get; set; }
 
         //resize panels
         public WrapPanel rightResizePanel;
@@ -28,12 +25,17 @@ namespace lenticulis_gui
         //size of resize panel
         private const int sizeChangePanelWidth = 5;
 
+        // data storage class
+        private LayerObject dataObject;
+
         public TimelineItem(int layer, int column, int length, string text)
             : base()
         {
+            dataObject = new LayerObject();
+
             SetPosition(layer, column, length);
             this.Text = text;
-            this.Visible = true;
+            this.dataObject.Visible = true;
 
             //Color
             this.Background = Brushes.MediumTurquoise;
@@ -55,9 +57,9 @@ namespace lenticulis_gui
         /// </summary>
         private void SetGridSettings()
         {
-            Grid.SetColumn(this, this.Column);
-            Grid.SetRow(this, this.Layer);
-            Grid.SetColumnSpan(this, this.Length);
+            Grid.SetColumn(this, this.dataObject.Column);
+            Grid.SetRow(this, this.dataObject.Layer);
+            Grid.SetColumnSpan(this, this.dataObject.Length);
         }
 
         /// <summary>
@@ -114,9 +116,9 @@ namespace lenticulis_gui
         {
             if (column >= 0 && layer >= 0 && length > 0)
             {
-                this.Layer = layer;
-                this.Column = column;
-                this.Length = length;
+                this.dataObject.Layer = layer;
+                this.dataObject.Column = column;
+                this.dataObject.Length = length;
             }
 
             SetGridSettings();
@@ -130,11 +132,20 @@ namespace lenticulis_gui
         /// <returns></returns>
         public bool IsInPosition(int row, int column)
         {
-            if (this.Layer == row && column >= this.Column && column < (this.Column + this.Length))
+            if (this.dataObject.Layer == row && column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length))
             {
                 return true;
             }
             else return false;
+        }
+
+        /// <summary>
+        /// Retrieves data holder object
+        /// </summary>
+        /// <returns>data holder object</returns>
+        public LayerObject getLayerObject()
+        {
+            return dataObject;
         }
 
         public override string ToString()

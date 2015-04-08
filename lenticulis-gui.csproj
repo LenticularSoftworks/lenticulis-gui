@@ -105,9 +105,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\App\ProjectHolder.cs" />
+    <Compile Include="src\App\ProjectSaver.cs" />
     <Compile Include="src\App\Storage.cs" />
     <Compile Include="src\App\Utils.cs" />
     <Compile Include="src\Containers\ImageHolder.cs" />
+    <Compile Include="src\Containers\Layer.cs" />
+    <Compile Include="src\Containers\LayerObject.cs" />
     <Compile Include="src\MainWindow\BrowserItem.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />

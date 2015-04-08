@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Forms;
+using lenticulis_gui.src.App;
+using lenticulis_gui.src.Containers;
 
 namespace lenticulis_gui
 {
@@ -28,9 +30,6 @@ namespace lenticulis_gui
         //timeline column dimensions
         private const int rowHeight = 30;
         private const int columnMinWidth = 150;
-
-        private int ImageCount;
-        private int LayerCount;
 
         //timeline item list
         public List<TimelineItem> timelineList;
@@ -51,19 +50,19 @@ namespace lenticulis_gui
 
             GetDrives();
 
+            //test image and layer count
+            int imageCount = 15;
+            int layerCount = 5;
+
+            SetImageCount(imageCount);
+            AddTimelineHeader();
+            AddTimelineLayer(layerCount);
+
             //test items
             timelineList = new List<TimelineItem>();
             timelineList.Add(new TimelineItem(0, 0, 1, "Obr1.jpg"));
             timelineList.Add(new TimelineItem(1, 1, 3, "Obr2.png"));
             timelineList.Add(new TimelineItem(2, 5, 1, "Obr3.gif"));
-
-            //test image and layer count
-            ImageCount = 15;
-            LayerCount = 5;
-
-            SetImageCount(ImageCount);
-            AddTimelineHeader();
-            AddTimelineLayer(LayerCount);
             SetPanels();
         }
 
@@ -154,7 +153,7 @@ namespace lenticulis_gui
         /// </summary>
         private void AddTimelineHeader()
         {
-            for (int i = 0; i < ImageCount; i++)
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
             {
                 System.Windows.Controls.Label label = new System.Windows.Controls.Label()
                 {
@@ -189,7 +188,7 @@ namespace lenticulis_gui
                 TimelineHeader.ColumnDefinitions.Add(colDef);
             }
 
-            ImageCount = count;
+            ProjectHolder.ImageCount = count;
         }
 
         /// <summary>
@@ -205,16 +204,20 @@ namespace lenticulis_gui
 
                 //Add row definition
                 Timeline.RowDefinitions.Add(rowDef);
-                LayerCount++;
+                ProjectHolder.LayerCount++;
 
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Black };
                 horizontalBorder.BorderThickness = new Thickness() { Bottom = 0.5 };
 
                 Grid.SetRow(horizontalBorder, Timeline.RowDefinitions.Count - 1);
-                Grid.SetColumnSpan(horizontalBorder, ImageCount);
+                Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
 
                 Timeline.Children.Add(horizontalBorder);
+
+                // create layer object and put it into layer list in project holder class
+                Layer layer = new Layer(ProjectHolder.LayerCount - 1);
+                ProjectHolder.layers.Add(layer);
             }
 
             SetTimelineVerticalLines();
@@ -226,13 +229,13 @@ namespace lenticulis_gui
         private void SetTimelineVerticalLines()
         {
             //Create and add vertical border
-            for (int i = 0; i < ImageCount; i++)
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
             {
                 Border verticalBorder = new Border() { BorderBrush = Brushes.Gray };
                 verticalBorder.BorderThickness = new Thickness() { Right = 0.5 };
 
                 Grid.SetColumn(verticalBorder, i);
-                Grid.SetRowSpan(verticalBorder, LayerCount);
+                Grid.SetRowSpan(verticalBorder, ProjectHolder.LayerCount);
 
                 Timeline.Children.Add(verticalBorder);
             }
@@ -289,8 +292,8 @@ namespace lenticulis_gui
             capturedTimelineItem = (TimelineItem)((WrapPanel)sender).Parent;
             capturedResizePanel = (WrapPanel)sender;
 
-            capturedTimelineItemColumn = capturedTimelineItem.Column;
-            capturedTimelineItemLength = capturedTimelineItem.Length;
+            capturedTimelineItemColumn = capturedTimelineItem.getLayerObject().Column;
+            capturedTimelineItemLength = capturedTimelineItem.getLayerObject().Length;
         }
 
         /// <summary>
@@ -329,7 +332,7 @@ namespace lenticulis_gui
             int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
             int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
 
-            setTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.Length);
+            setTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
         }
 
         /// <summary>
@@ -355,7 +358,7 @@ namespace lenticulis_gui
                 length = currentColumn - column + 1; //index start at 0 - length + 1
             }
 
-            setTimelineItemPosition(capturedTimelineItem.Layer, column, length);
+            setTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
         }
 
         /// <summary>
@@ -367,10 +370,10 @@ namespace lenticulis_gui
         private void setTimelineItemPosition(int row, int column, int length)
         {
             bool overlap = TimelineItemOverlap(column, row, length);
-            int endColumn = column + capturedTimelineItem.Length - 1;
+            int endColumn = column + capturedTimelineItem.getLayerObject().Length - 1;
 
             //if the whole element is in grid and doesn't overlaps another item
-            if (column >= 0 && endColumn < ImageCount && capturedTimelineItem.Layer >= 0 && capturedTimelineItem.Layer < LayerCount && !overlap)
+            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.getLayerObject().Layer >= 0 && capturedTimelineItem.getLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
             {
                 capturedTimelineItem.SetPosition(row, column, length);
             }
@@ -419,6 +422,34 @@ namespace lenticulis_gui
             if (capturedResizePanel != null)
             {
                 capturedResizePanel = null;
+            }
+        }
+
+        /// <summary>
+        /// Saving button click event hook - invoke save dialog and proceed saving if confirmed and filled correctly
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectHolder.ProjectFileName == null || ProjectHolder.ProjectFileName == "")
+            {
+                Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+                dialog.FileName = "projekt";
+                dialog.DefaultExt = ".lcp";
+                dialog.Filter = "Lenticulis projekt (.lcp)|*.lcp";
+
+                Nullable<bool> res = dialog.ShowDialog();
+                if (res == true)
+                {
+                    // save project to newly selected file target
+                    ProjectSaver.saveProject(dialog.FileName);
+                }
+            }
+            else
+            {
+                // use previously stored filename
+                ProjectSaver.saveProject();
             }
         }
     }

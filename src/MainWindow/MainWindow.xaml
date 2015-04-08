@@ -55,7 +55,7 @@
                     <Button ToolTip="Nový">
                         <Image Source="/lenticulis-gui;component/res/icon/New.ico" />
                     </Button>
-                    <Button ToolTip="Uložit">
+                    <Button ToolTip="Uložit" Click="ButtonSave_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Save.ico" />
                     </Button>
                     <Button ToolTip="Otevřít">
