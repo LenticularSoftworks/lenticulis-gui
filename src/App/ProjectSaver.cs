@@ -34,7 +34,7 @@ namespace lenticulis_gui.src.App
             {
                 xw.WriteAttributeString("name", ProjectHolder.ProjectName);
                 // TODO: move version somewhere globally
-                xw.WriteAttributeString("lenticulis-version", "1.0");
+                xw.WriteAttributeString("lenticulis-version", lenticulis_gui.Properties.Resources.LENTICULIS_VERSION);
 
                 // write out project properties
                 writeProperties(xw);
