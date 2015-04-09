@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
 
 namespace lenticulis_gui
@@ -67,7 +69,7 @@ namespace lenticulis_gui
         /// </summary>
         private void AddVisibilityButton()
         {
-            Button btn = new Button()
+            ToggleButton btn = new ToggleButton()
             {
                 Width = 20,
                 Height = 20,
@@ -75,9 +77,27 @@ namespace lenticulis_gui
                 Margin = new Thickness(0, 0, 2 * sizeChangePanelWidth, 0),
                 Content = new Image()
                 {
-                    //Source = new BitmapImage(new Uri("pack://application:,,,/lenticulis-gui;component/res/icon/Eye.ico"))
+                    Source = Utils.iconResourceToImageSource("Eye")
                 }
             };
+
+            // hook click event - toggle visibility state
+            btn.Click += new RoutedEventHandler(delegate(object o, RoutedEventArgs args) {
+                ToggleButton source = (ToggleButton)o;
+                Image content = (Image)source.Content;
+                LayerObject lobj = ((TimelineItem)source.Parent).getLayerObject();
+
+                if (lobj.Visible)
+                {
+                    lobj.Visible = false;
+                    content.Source = Utils.iconResourceToImageSource("EyeStrikeOut");
+                }
+                else
+                {
+                    lobj.Visible = true;
+                    content.Source = Utils.iconResourceToImageSource("Eye");
+                }
+            });
 
             this.Children.Add(btn);
         }

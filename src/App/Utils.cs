@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace lenticulis_gui.src.App
 {
@@ -31,6 +32,17 @@ namespace lenticulis_gui.src.App
             // remove old alpha and subtitute it with inverted one
             int c = (int)((number & 0x00FFFFFF) | (alpha << 24));
             return c;
+        }
+
+        /// <summary>
+        /// Converts icon resource to imagesource usable in code for WPF components
+        /// </summary>
+        /// <param name="resourceName">name of icon resource</param>
+        /// <returns>imagesource object from that icon</returns>
+        public static ImageSource iconResourceToImageSource(String resourceName)
+        {
+            System.Drawing.Icon ico = ((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(resourceName));
+            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         /// <summary>
