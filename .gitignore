@@ -6,5 +6,6 @@
 *.opensdf
 *.sdf
 *.vcxproj.*
+*.csproj.user
 obj/
 bin/
