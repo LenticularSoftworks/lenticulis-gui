@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
 using System.Windows;
+using lenticulis_gui.src.App;
 
 namespace lenticulis_gui
 {
@@ -30,7 +30,7 @@ namespace lenticulis_gui
             this.Extension = extension.ToLower();
             this.Dir = dir;
 
-            IsImage();
+            Image = Utils.IsAcceptedImageExtension(Extension);
             FindIcon();
         }
 
@@ -43,7 +43,6 @@ namespace lenticulis_gui
             if (Image)
             {
                 Ico = PATH + "Image.ico";
-
                 return;
             }
 
@@ -54,22 +53,6 @@ namespace lenticulis_gui
                 case "dir": Ico = PATH + "Folder.ico"; break;
                 case "parent": Ico = PATH + "Trackback.ico"; break;
                 default: Ico = PATH + "Unknown.ico"; break;
-            }
-        }
-
-        /// <summary>
-        /// Set Image variable true if item is in acceptable image format
-        /// </summary>
-        private void IsImage()
-        {
-            Image = false;
-
-            for (int i = 0; i < MainWindow.Extensions.Length; i++)
-            {
-                if (Extension.Equals(MainWindow.Extensions[i]))
-                {
-                    Image = true;
-                }
             }
         }
 

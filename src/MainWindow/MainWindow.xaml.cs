@@ -23,9 +23,6 @@ namespace lenticulis_gui
     /// </summary>
     public partial class MainWindow : Window
     {
-        //List of acceptable file extensions
-        public static string[] Extensions = { ".jpg", ".png", ".gif" };
-
         //timeline column dimensions
         private const int rowHeight = 30;
         private const int columnMinWidth = 150;
@@ -136,6 +133,52 @@ namespace lenticulis_gui
             {
                 GetDrives();
             }
+            else if (!BItem.Dir)
+            {
+                bool result = LoadAndPutResource(BItem.Path, BItem.Extension);
+
+                // positive result means the image was successfully loaded and put into canvas + timeline
+                if (result)
+                {
+                    // check for presence in last used list
+                    bool found = false;
+                    foreach (BrowserItem bi in LastUsedList.Items)
+                    {
+                        if (bi.Path.Equals(BItem.Path))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    // if not yet there, add it
+                    if (!found)
+                        LastUsedList.Items.Add(new BrowserItem(BItem.Name, BItem.Path, BItem.Extension, false));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Select item from last used tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LastUsed_DoubleClick(object sender, EventArgs e)
+        {
+            BrowserItem BItem = (BrowserItem)(BrowserList.SelectedItem);
+
+            LoadAndPutResource(BItem.Path, BItem.Extension);
+        }
+
+        private bool LoadAndPutResource(String path, String extension)
+        {
+            if (!Utils.IsAcceptedImageExtension(extension))
+                return false;
+
+            // TODO: main loading routine
+
+            // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
+            return true;
         }
 
         /// <summary>

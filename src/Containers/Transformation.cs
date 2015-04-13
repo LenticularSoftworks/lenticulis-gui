@@ -29,6 +29,12 @@ namespace lenticulis_gui.src.Containers
         public float TransformAngle { get; private set; }
 
         /// <summary>
+        /// Type of interpolation used in this transformation
+        /// </summary>
+        [System.ComponentModel.DefaultValue(InterpolationType.Linear)]
+        public InterpolationType Interpolation { get; set; }
+
+        /// <summary>
         /// Full constructor, there's no use for it yet
         /// </summary>
         /// <param name="type">Transformation type</param>

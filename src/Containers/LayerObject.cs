@@ -16,6 +16,8 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         private static int lobj_guid_high = 1;
 
+        // Section for layer object properties
+
         /// <summary>
         /// Parent layer of this object
         /// </summary>
@@ -71,12 +73,103 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public bool Visible { get; set; }
 
+        // Section for canvas object properties
+
         /// <summary>
-        /// Constructor - only sets ID of this object by generating a new 
+        /// Initial X position of element on canvas
+        /// </summary>
+        public float InitialX { get; set; }
+        /// <summary>
+        /// Initial Y position of element on canvas
+        /// </summary>
+        public float InitialY { get; set; }
+        /// <summary>
+        /// Initial angle of element on canvas
+        /// </summary>
+        public float InitialAngle { get; set; }
+        /// <summary>
+        /// Initial X scale of element on canvas
+        /// </summary>
+        public float InitialScaleX { get; set; }
+        /// <summary>
+        /// Initial Y scale of element on canvas
+        /// </summary>
+        public float InitialScaleY { get; set; }
+
+        /// <summary>
+        /// Dictionary of transformations done on this object during its lifetime
+        /// </summary>
+        private Dictionary<TransformType, Transformation> Transformations;
+
+        /// <summary>
+        /// Constructor - only sets ID of this object by generating a new one from static member,
+        /// inits initial state of position, rotation and scale, and creates transformation dictionary
         /// </summary>
         public LayerObject()
         {
             Id = lobj_guid_high++;
+
+            resetInitialState();
+
+            initTransformationDict();
+        }
+
+        /// <summary>
+        /// Init transformation dictionary; prefill with nulls
+        /// </summary>
+        private void initTransformationDict()
+        {
+            Transformations = new Dictionary<TransformType, Transformation>();
+
+            var values = Enum.GetValues(typeof(TransformType));
+            foreach (TransformType tr in values)
+                Transformations.Add(tr, null);
+        }
+
+        /// <summary>
+        /// Resets object to initial state (position, rotation and scale)
+        /// </summary>
+        private void resetInitialState()
+        {
+            InitialX = 0;
+            InitialY = 0;
+            InitialAngle = 0;
+            InitialScaleX = 1.0f;
+            InitialScaleY = 1.0f;
+        }
+
+        /// <summary>
+        /// Returns true, if there is any transformation present
+        /// </summary>
+        /// <returns>Is there any transformation?</returns>
+        public bool hasTransformations()
+        {
+            foreach (KeyValuePair<TransformType, Transformation> kvp in Transformations)
+            {
+                if (kvp.Value != null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves transformation using its type
+        /// </summary>
+        /// <param name="type">Type of transformation</param>
+        /// <returns>Transformation instance or null</returns>
+        public Transformation getTransformation(TransformType type)
+        {
+            return Transformations[type];
+        }
+
+        /// <summary>
+        /// Sets transformation to its slot
+        /// </summary>
+        /// <param name="transformation">Transformation to be applied</param>
+        public void setTransformation(Transformation transformation)
+        {
+            Transformations[transformation.Type] = transformation;
         }
     }
 }

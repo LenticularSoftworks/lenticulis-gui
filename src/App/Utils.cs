@@ -10,6 +10,9 @@ namespace lenticulis_gui.src.App
 {
     static class Utils
     {
+        // List of accepted image file extensions (lower case without preceding dot)
+        public static string[] Extensions = { "jpg", "png", "gif" };
+
         /// <summary>
         /// Builds C-compliant string (zero terminated)
         /// </summary>
@@ -97,6 +100,26 @@ namespace lenticulis_gui.src.App
             }
 
             return foundChild;
+        }
+
+        /// <summary>
+        /// Verifies, whether the supplied extension is accepted by us as valid image extension
+        /// </summary>
+        /// <param name="extension">string representation of extension</param>
+        /// <returns>is valid image extension?</returns>
+        public static bool IsAcceptedImageExtension(String extension)
+        {
+            // prepare string to have no dot at the start, and be lower case
+            if (extension[0] == '.')
+                extension = extension.Substring(1);
+            extension = extension.ToLower();
+
+            for (int i = 0; i < Extensions.Length; i++)
+            {
+                if (extension.Equals(Extensions[i]))
+                    return true;
+            }
+            return false;
         }
     }
 }
