@@ -9,6 +9,8 @@ namespace lenticulis_gui.src.App
 {
     public static class ProjectSaver
     {
+        private const float FLOAT_DELTA = 0.00001f;
+
         /// <summary>
         /// Save project using previously stored project file name (the project was saved in the past)
         /// </summary>
@@ -33,7 +35,6 @@ namespace lenticulis_gui.src.App
             xw.WriteStartElement("project");
             {
                 xw.WriteAttributeString("name", ProjectHolder.ProjectName);
-                // TODO: move version somewhere globally
                 xw.WriteAttributeString("lenticulis-version", lenticulis_gui.Properties.Resources.LENTICULIS_VERSION);
 
                 // write out project properties
@@ -197,8 +198,65 @@ namespace lenticulis_gui.src.App
             xw.WriteAttributeString("frame-start", obj.Column.ToString());
             xw.WriteAttributeString("frame-end", (obj.Column + obj.Length).ToString());
             xw.WriteAttributeString("visible", obj.Visible ? "1" : "0");
-            // TODO: initial x, y, angle, scale-x,-y
-            // TODO: transform elements inside this element
+
+            // write optional fields
+
+            // X and Y position, if not zero
+            if (obj.InitialX != 0.0)
+                xw.WriteAttributeString("x", obj.InitialX.ToString());
+            if (obj.InitialY != 0.0)
+                xw.WriteAttributeString("y", obj.InitialY.ToString());
+
+            // initial angle, if not zero
+            if (obj.InitialAngle != 0.0)
+                xw.WriteAttributeString("angle", obj.InitialAngle.ToString());
+
+            // initial scale if not 1.0 (close to one)
+            if (Math.Abs(obj.InitialScaleX - 1.0) > FLOAT_DELTA)
+                xw.WriteAttributeString("scale-x", obj.InitialScaleX.ToString());
+            if (Math.Abs(obj.InitialScaleY - 1.0) > FLOAT_DELTA)
+                xw.WriteAttributeString("scale-y", obj.InitialScaleY.ToString());
+
+            // if the object has some transformation, write it
+            if (obj.hasTransformations())
+            {
+                // go through all possible types
+                var values = Enum.GetValues(typeof(TransformType));
+                foreach (TransformType tr in values)
+                {
+                    // and if present
+                    Transformation trans = obj.getTransformation(tr);
+                    if (trans != null)
+                    {
+                        // write its element
+                        xw.WriteStartElement("transform");
+                        {
+                            // type is mandatory
+                            xw.WriteAttributeString("type", tr.ToString().ToLower());
+
+                            // other fields are mandatory depending on type
+                            switch (tr)
+                            {
+                                // mandatory transform vector
+                                case TransformType.Translation:
+                                case TransformType.Scale:
+                                    xw.WriteAttributeString("vector-x", trans.TransformX.ToString());
+                                    xw.WriteAttributeString("vector-y", trans.TransformY.ToString());
+                                    break;
+                                // mandatory rotation angle
+                                case TransformType.Rotate:
+                                    xw.WriteAttributeString("angle", trans.TransformAngle.ToString());
+                                    break;
+                            }
+
+                            // interpolation field is not mandatory, but we will include it anyways
+                            xw.WriteAttributeString("interpolation", trans.Interpolation.ToString().ToLower());
+                        }
+                        xw.WriteEndElement();
+                    }
+                }
+            }
+
             xw.WriteEndElement();
         }
     }
