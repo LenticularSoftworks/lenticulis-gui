@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
 using System.Windows;
+using lenticulis_gui.src.App;
 
 namespace lenticulis_gui
 {
@@ -36,15 +36,11 @@ namespace lenticulis_gui
         /// </summary>
         private void FindIcon()
         {
-            // If file is acceptable format
-            for (int i = 0; i < MainWindow.Extensions.Length; i++)
+            // If the extension is valid image extension
+            if (Utils.IsAcceptedImageExtension(Extension))
             {
-                if (Extension.Equals(MainWindow.Extensions[i]))
-                {
-                    Ico = PATH + "Image.ico";
-
-                    return;
-                }
+                Ico = PATH + "Image.ico";
+                return;
             }
 
             // Other extensions
