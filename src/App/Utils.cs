@@ -109,6 +109,10 @@ namespace lenticulis_gui.src.App
         /// <returns>is valid image extension?</returns>
         public static bool IsAcceptedImageExtension(String extension)
         {
+            // no extension is not valid
+            if (extension == null || extension.Length == 0)
+                return false;
+
             // prepare string to have no dot at the start, and be lower case
             if (extension[0] == '.')
                 extension = extension.Substring(1);

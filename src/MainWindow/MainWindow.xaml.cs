@@ -465,6 +465,10 @@ namespace lenticulis_gui
             //dragged data as browser item
             BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
 
+            // dragged item has to be instance of browserItem
+            if (browserItem == null)
+                return;
+
             //drag drop event
             DragDrop.DoDragDrop(parent, browserItem, System.Windows.DragDropEffects.Move);
         }
