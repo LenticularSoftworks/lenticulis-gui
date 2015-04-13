@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.IO;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
+using lenticulis_gui.src.SupportLib;
 
 namespace lenticulis_gui
 {
@@ -135,7 +136,7 @@ namespace lenticulis_gui
             }
             else if (!BItem.Dir)
             {
-                bool result = LoadAndPutResource(BItem.Path, BItem.Extension);
+                bool result = LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
 
                 // positive result means the image was successfully loaded and put into canvas + timeline
                 if (result)
@@ -167,9 +168,15 @@ namespace lenticulis_gui
         {
             BrowserItem BItem = (BrowserItem)(BrowserList.SelectedItem);
 
-            LoadAndPutResource(BItem.Path, BItem.Extension);
+            LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
         }
 
+        /// <summary>
+        /// Method for loading and putting element on canvas / to timeline to implicit position
+        /// </summary>
+        /// <param name="path">Path to image file</param>
+        /// <param name="extension">Extension (often obtained via file browser)</param>
+        /// <returns>True if everything succeeded</returns>
         private bool LoadAndPutResource(String path, String extension)
         {
             if (!Utils.IsAcceptedImageExtension(extension))
