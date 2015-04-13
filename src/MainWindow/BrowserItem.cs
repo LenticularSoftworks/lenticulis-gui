@@ -19,6 +19,7 @@ namespace lenticulis_gui
         public string Extension { get; set; }
         public bool Dir { get; set; }
         public string Ico { get; set; }
+        public bool Image { get; set; }
 
         private const string PATH = "/lenticulis-gui;component/res/icon/";
 
@@ -28,6 +29,8 @@ namespace lenticulis_gui
             this.Path = path;
             this.Extension = extension.ToLower();
             this.Dir = dir;
+
+            IsImage();
             FindIcon();
         }
 
@@ -37,14 +40,11 @@ namespace lenticulis_gui
         private void FindIcon()
         {
             // If file is acceptable format
-            for (int i = 0; i < MainWindow.Extensions.Length; i++)
+            if (Image)
             {
-                if (Extension.Equals(MainWindow.Extensions[i]))
-                {
-                    Ico = PATH + "Image.ico";
+                Ico = PATH + "Image.ico";
 
-                    return;
-                }
+                return;
             }
 
             // Other extensions
@@ -54,6 +54,22 @@ namespace lenticulis_gui
                 case "dir": Ico = PATH + "Folder.ico"; break;
                 case "parent": Ico = PATH + "Trackback.ico"; break;
                 default: Ico = PATH + "Unknown.ico"; break;
+            }
+        }
+
+        /// <summary>
+        /// Set Image variable true if item is in acceptable image format
+        /// </summary>
+        private void IsImage()
+        {
+            Image = false;
+
+            for (int i = 0; i < MainWindow.Extensions.Length; i++)
+            {
+                if (Extension.Equals(MainWindow.Extensions[i]))
+                {
+                    Image = true;
+                }
             }
         }
 

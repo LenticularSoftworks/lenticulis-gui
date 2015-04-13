@@ -42,7 +42,7 @@
                             </Grid.RowDefinitions>
                         </Grid>
                         <Grid Name="Timeline" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          MouseLeftButtonUp="Timeline_MouseLeftButtonUp" MouseMove="Timeline_MouseMove">
+                          MouseLeftButtonUp="Timeline_MouseLeftButtonUp" MouseMove="Timeline_MouseMove" AllowDrop="True" Drop="Timeline_DropHandler">
                         </Grid>
                     </DockPanel>
                 </ScrollViewer>
@@ -89,7 +89,7 @@
                 <Grid Width="250">
                     <TextBox Name="AddressBlock" Height="45" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True"/>
 
-                    <ListBox IsSynchronizedWithCurrentItem="true" Margin="0,45,0,0" Name="BrowserList">
+                    <ListBox IsSynchronizedWithCurrentItem="true" Margin="0,45,0,0" Name="BrowserList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="BrowserItem">
                                 <StackPanel Orientation="Horizontal">
@@ -98,11 +98,6 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <EventSetter Event="MouseDoubleClick" Handler="Browser_DoubleClick"/>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
                     </ListBox>
                 </Grid>
             </Border>

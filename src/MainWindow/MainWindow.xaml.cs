@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
-using System.Windows.Forms;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
 
@@ -50,20 +49,11 @@ namespace lenticulis_gui
 
             GetDrives();
 
-            //test image and layer count
-            int imageCount = 15;
-            int layerCount = 5;
-
-            SetImageCount(imageCount);
+            SetImageCount(5); //start image count for testing
             AddTimelineHeader();
-            AddTimelineLayer(layerCount);
+            AddTimelineLayer(1); //start layer count 1
 
-            //test items
             timelineList = new List<TimelineItem>();
-            timelineList.Add(new TimelineItem(0, 0, 1, "Obr1.jpg"));
-            timelineList.Add(new TimelineItem(1, 1, 3, "Obr2.png"));
-            timelineList.Add(new TimelineItem(2, 5, 1, "Obr3.gif"));
-            SetPanels();
         }
 
         /// <summary>
@@ -139,7 +129,7 @@ namespace lenticulis_gui
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Nelze otevřít", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, "Nelze otevřít", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             else if (BItem.Dir && BItem.Path == "root")
@@ -158,7 +148,7 @@ namespace lenticulis_gui
                 System.Windows.Controls.Label label = new System.Windows.Controls.Label()
                 {
                     Content = "#" + (i + 1),
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center
                 };
 
                 Grid.SetColumn(label, i);
@@ -252,27 +242,11 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Add resize panels to timeline item
-        /// </summary>
-        private void SetPanels()
-        {
-            foreach (TimelineItem item in timelineList)
-            {
-                item.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
-
-                item.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                item.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-
-                Timeline.Children.Add(item);
-            }
-        }
-
-        /// <summary>
         /// Mouse drag n drop action listener
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimelineItem_MouseLeftButtonDown(object sender, System.Windows.Input.MouseEventArgs e)
+        private void TimelineItem_MouseDown(object sender, MouseEventArgs e)
         {
             capturedTimelineItem = (TimelineItem)sender;
 
@@ -287,7 +261,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimelineResize_MouseLeftButtonDown(object sender, System.Windows.Input.MouseEventArgs e)
+        private void TimelineResize_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             capturedTimelineItem = (TimelineItem)((WrapPanel)sender).Parent;
             capturedResizePanel = (WrapPanel)sender;
@@ -301,23 +275,21 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Timeline_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Timeline_MouseMove(object sender, MouseEventArgs e)
         {
+            double columnWidth = Timeline.ColumnDefinitions[0].ActualWidth; //get actual column width
+
             if (capturedTimelineItem != null)
             {
-                Point mouse = Mouse.GetPosition(Timeline);
-
-                double columnWidth = Timeline.ColumnDefinitions[0].ActualWidth; //get actual column width
-
                 if (capturedResizePanel == null)
                 {
                     //Timeline item shift
-                    TimelineItemShift(mouse, columnWidth);
+                    TimelineItemShift(columnWidth);
                 }
                 else
                 {
                     //Timeline item resize
-                    TimelineItemResize(sender, mouse, columnWidth);
+                    TimelineItemResize(sender, columnWidth);
                 }
             }
         }
@@ -325,28 +297,32 @@ namespace lenticulis_gui
         /// <summary>
         /// Time line item shift
         /// </summary>
-        /// <param name="mouse"></param>
         /// <param name="columnWidth"></param>
-        private void TimelineItemShift(Point mouse, double columnWidth)
+        private void TimelineItemShift(double columnWidth)
         {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            //Position in grid calculated from mouse position and grid dimensions
             int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
             int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
 
-            setTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
+            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
         }
 
         /// <summary>
         /// Timeline item resize
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="mouse"></param>
         /// <param name="columnWidth"></param>
-        private void TimelineItemResize(object sender, Point mouse, double columnWidth)
+        private void TimelineItemResize(object sender, double columnWidth)
         {
+            Point mouse = Mouse.GetPosition(Timeline);
+
             int length;
             int column;
             int currentColumn = (int)(mouse.X / columnWidth);
 
+            //if left panel is dragged else right panel is dragged
             if (capturedResizePanel.HorizontalAlignment.ToString() == "Left")
             {
                 column = currentColumn;
@@ -358,7 +334,7 @@ namespace lenticulis_gui
                 length = currentColumn - column + 1; //index start at 0 - length + 1
             }
 
-            setTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
+            SetTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
         }
 
         /// <summary>
@@ -367,10 +343,10 @@ namespace lenticulis_gui
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <param name="length"></param>
-        private void setTimelineItemPosition(int row, int column, int length)
+        private void SetTimelineItemPosition(int row, int column, int length)
         {
             bool overlap = TimelineItemOverlap(column, row, length);
-            int endColumn = column + capturedTimelineItem.getLayerObject().Length - 1;
+            int endColumn = column + length - 1;
 
             //if the whole element is in grid and doesn't overlaps another item
             if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.getLayerObject().Layer >= 0 && capturedTimelineItem.getLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
@@ -380,7 +356,7 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// True if timeline overlaps another
+        /// Returns true if timeline item overlaps another
         /// </summary>
         /// <param name="timelineColumn"></param>
         /// <param name="timelineRow"></param>
@@ -390,6 +366,7 @@ namespace lenticulis_gui
         {
             foreach (TimelineItem item in timelineList)
             {
+                //if its the same item
                 if (item == capturedTimelineItem)
                 {
                     continue;
@@ -397,6 +374,7 @@ namespace lenticulis_gui
 
                 for (int i = 0; i < timelineLength; i++)
                 {
+                    //overlaps antoher item
                     if (item.IsInPosition(timelineRow, timelineColumn + i))
                     {
                         return true;
@@ -408,21 +386,105 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Timeline mouse button up listener. 
+        /// Browser listener - Double click opens folder, click starts drag n drop action
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Timeline_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Browser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (capturedTimelineItem != null)
+            if (e.ClickCount == 2)
             {
-                capturedTimelineItem = null;
+                //Open folder
+                Browser_DoubleClick(sender, e);
+            }
+            else
+            {
+                //drag browser item
+                Browser_Click(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Browser drag handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Browser_Click(object sender, MouseButtonEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            //dragged data as browser item
+            BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
+
+            //drag drop event
+            DragDrop.DoDragDrop(parent, browserItem, System.Windows.DragDropEffects.Move);
+        }
+
+        /// <summary>
+        /// Browser drop handler - Creates new timeline item and adds to timeline
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timeline_DropHandler(object sender, DragEventArgs e)
+        {
+            //dropped data as browser item
+            BrowserItem browserItem = (BrowserItem)e.Data.GetData(typeof(BrowserItem));
+
+            //if is not image in acceptable format
+            if (!browserItem.Image)
+            {
+                MessageBox.Show("Tento formát nelze načíst do projektu", "Nepodporovaný formát", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                return;
             }
 
-            if (capturedResizePanel != null)
+            Point mouse = e.GetPosition(Timeline);
+
+            //actual column width
+            double columnWidth = Timeline.ColumnDefinitions[0].ActualWidth;
+
+            int column = (int)(mouse.X / columnWidth);
+            int row = (int)(mouse.Y / rowHeight);
+
+            if (!TimelineItemOverlap(column, row, 1))
             {
-                capturedResizePanel = null;
+                //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
+                TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
+
+                //add into list of items and set mouse listeners
+                timelineList.Add(newItem);
+                newItem.MouseDown += TimelineItem_MouseDown;
+                newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.delete.Click += TimelineDelete_Click;
+
+                //add into timeline
+                Timeline.Children.Add(newItem);
             }
+        }
+
+        /// <summary>
+        /// Remove timeline item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimelineDelete_Click(object sender, RoutedEventArgs e)
+        {
+            //remove from list and from timeline
+            timelineList.Remove(capturedTimelineItem);
+            Timeline.Children.Remove(capturedTimelineItem);
+
+            capturedTimelineItem = null;
+        }
+
+        /// <summary>
+        /// Timeline mouse button up listener
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timeline_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            capturedTimelineItem = null;
+            capturedResizePanel = null;
         }
 
         /// <summary>
@@ -451,6 +513,47 @@ namespace lenticulis_gui
                 // use previously stored filename
                 ProjectSaver.saveProject();
             }
+        }
+
+        /// <summary>
+        /// Gets the object for the element selected in the listbox
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private static object GetObjectDataFromPoint(ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                //get the object from the element
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    // try to get the object value for the corresponding element
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+
+                    //get the parent and we will iterate again
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+
+                    //if we reach the actual listbox then we must break to avoid an infinite loop
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+
+                //return the data that we fetched only if it is not Unset value
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+
+            return null;
         }
     }
 }

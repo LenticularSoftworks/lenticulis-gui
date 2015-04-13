@@ -24,6 +24,9 @@ namespace lenticulis_gui
         public WrapPanel rightResizePanel;
         public WrapPanel leftResizePanel;
 
+        //context menu items
+        public MenuItem delete;
+
         //size of resize panel
         private const int sizeChangePanelWidth = 5;
 
@@ -52,6 +55,7 @@ namespace lenticulis_gui
 
             AddResizePanel();
             AddVisibilityButton();
+            AddContextMenu();
         }
 
         /// <summary>
@@ -82,7 +86,8 @@ namespace lenticulis_gui
             };
 
             // hook click event - toggle visibility state
-            btn.Click += new RoutedEventHandler(delegate(object o, RoutedEventArgs args) {
+            btn.Click += new RoutedEventHandler(delegate(object o, RoutedEventArgs args)
+            {
                 ToggleButton source = (ToggleButton)o;
                 Image content = (Image)source.Content;
                 LayerObject lobj = ((TimelineItem)source.Parent).getLayerObject();
@@ -124,6 +129,28 @@ namespace lenticulis_gui
 
             this.Children.Add(rightResizePanel);
             this.Children.Add(leftResizePanel);
+        }
+
+        /// <summary>
+        /// Add context menu to item
+        /// </summary>
+        private void AddContextMenu()
+        {
+            ContextMenu cMenu = new ContextMenu();
+
+            //set public menu item
+            delete = new MenuItem()
+            {
+                Header = "Odtranit",
+                Icon = new Image()
+                {
+                    Source = Utils.iconResourceToImageSource("Erase")
+                }
+            };
+
+            cMenu.Items.Add(delete);
+
+            this.ContextMenu = cMenu;
         }
 
         /// <summary>
