@@ -141,7 +141,7 @@ namespace lenticulis_gui
             //set public menu item
             delete = new MenuItem()
             {
-                Header = "Odtranit",
+                Header = "Odstranit",
                 Icon = new Image()
                 {
                     Source = Utils.iconResourceToImageSource("Erase")
