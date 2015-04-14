@@ -292,6 +292,73 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Remove last layer action listener - if there's images shows yes/no dialog first
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemoveLayer_Click(object sender, RoutedEventArgs e)
+        {
+            //it has to be at least one layer
+            if (ProjectHolder.LayerCount == 1)
+            {
+                return;
+            }
+
+            int lastLayer = ProjectHolder.LayerCount - 1;
+            MessageBoxResult messageBoxResult = MessageBoxResult.Yes;
+
+            foreach (TimelineItem item in timelineList)
+            {
+                //if some item is in last layer
+                if (item.getLayerObject().Layer == lastLayer)
+                {
+                    messageBoxResult = MessageBox.Show("Ve vrstvě se nachází obrázky. Opravdu chcete vrstvu smazat?", "Smazat vrstvu", MessageBoxButton.YesNo);
+
+                    break;
+                }
+            }
+
+            //remove last layer
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                RemoveLastLayer();
+            }
+        }
+
+        /// <summary>
+        /// Remove last layer in timeline and project holder and its images
+        /// </summary>
+        private void RemoveLastLayer() 
+        {
+            int lastLayer = ProjectHolder.LayerCount - 1;
+            //list of deleting items
+            List<TimelineItem> deleteItems = new List<TimelineItem>();
+
+            //fill deleteItems list
+            foreach (TimelineItem item in timelineList)
+            {
+                if (item.getLayerObject().Layer == lastLayer)
+                {
+                    deleteItems.Add(item);
+                }
+            }
+
+            //remove items in timelineList
+            foreach (TimelineItem item in deleteItems)
+            {
+                timelineList.Remove(item);
+                Timeline.Children.Remove(item);
+            }
+
+            //remove from Timeline
+            Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
+            
+            //set ProjectHolder
+            ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
+            ProjectHolder.LayerCount--;
+        }
+
+        /// <summary>
         /// Mouse drag n drop action listener
         /// </summary>
         /// <param name="sender"></param>

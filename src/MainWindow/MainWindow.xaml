@@ -28,7 +28,7 @@
                         <Button Name="AddLayer" ToolTip="Přidat vrstvu" Click="AddLayer_Click">
                             <Image Source="/lenticulis-gui;component/res/icon/Add.ico" Margin="0,0,0,10"/>
                         </Button>
-                        <Button ToolTip="Odstranit vrstvu">
+                        <Button Name="RemoveLayer" ToolTip="Odstranit vrstvu" Click="RemoveLayer_Click">
                             <Image Source="/lenticulis-gui;component/res/icon/Remove.ico" Margin="0,0,0,10"/>
                         </Button>
                     </ToolBar>
