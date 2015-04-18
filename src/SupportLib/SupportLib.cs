@@ -17,6 +17,12 @@ namespace lenticulis_gui.src.SupportLib
         const String LENT_SUPPORT_DLL_NAME = "lenticulis-support.dll";
 
         /// <summary>
+        /// Initializes the backend library
+        /// </summary>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void initializeMagick();
+
+        /// <summary>
         /// Registers image in memory, and returns ID
         /// </summary>
         /// <param name="filename">Path to image to be loaded</param>

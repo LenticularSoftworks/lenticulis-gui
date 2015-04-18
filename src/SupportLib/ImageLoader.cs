@@ -31,12 +31,15 @@ namespace lenticulis_gui.src.SupportLib
             StringBuilder formatTarget = new StringBuilder(4092);
             IntPtr colorSpaceTarget;
             UIntPtr widthTarget, heightTarget;
-            int id = SupportLib.registerImageP(Utils.getCString(filename), formatTarget, out colorSpaceTarget, out widthTarget, out heightTarget, out mipmapData);
+            void* mmdata;
+            int id = SupportLib.registerImageP(Utils.getCString(filename), formatTarget, out colorSpaceTarget, out widthTarget, out heightTarget, out mmdata);
 
             format = formatTarget.ToString();
             colorSpace = colorSpaceTarget.ToInt32();
             width = widthTarget.ToUInt32();
             height = heightTarget.ToUInt32();
+
+            mipmapData = mmdata;
 
             return id;
         }

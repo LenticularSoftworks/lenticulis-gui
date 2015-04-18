@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using lenticulis_gui.src.SupportLib;
 
 namespace lenticulis_gui
 {
@@ -13,5 +14,11 @@ namespace lenticulis_gui
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            SupportLib.initializeMagick();
+        }
     }
 }
