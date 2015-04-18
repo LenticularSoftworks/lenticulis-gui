@@ -115,6 +115,18 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
+        /// Destroys any references to this object in layer, etc.
+        /// </summary>
+        public void dispose()
+        {
+            if (parentLayer != null)
+            {
+                parentLayer.removeLayerObject(this);
+                parentLayer = null;
+            }
+        }
+
+        /// <summary>
         /// Init transformation dictionary; prefill with nulls
         /// </summary>
         private void initTransformationDict()

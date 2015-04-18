@@ -103,7 +103,7 @@
                             </ListBox>
                         </TabItem>
                         <TabItem Header="Nedávno použité">
-                            <ListBox IsSynchronizedWithCurrentItem="true" Name="LastUsedList">
+                            <ListBox IsSynchronizedWithCurrentItem="true" Name="LastUsedList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate DataType="BrowserItem">
                                         <StackPanel Orientation="Horizontal">

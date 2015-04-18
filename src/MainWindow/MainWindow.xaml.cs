@@ -134,7 +134,8 @@ namespace lenticulis_gui
             {
                 GetDrives();
             }
-            else if (!BItem.Dir)
+            // disable this action for now - we will allow putting things to project only by dragging them onto timeline
+            /*else if (!BItem.Dir)
             {
                 bool result = LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
 
@@ -156,7 +157,7 @@ namespace lenticulis_gui
                     if (!found)
                         LastUsedList.Items.Add(new BrowserItem(BItem.Name, BItem.Path, BItem.Extension, false));
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -166,9 +167,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void LastUsed_DoubleClick(object sender, EventArgs e)
         {
-            BrowserItem BItem = (BrowserItem)(BrowserList.SelectedItem);
-
-            LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
+            // no action for now?
         }
 
         /// <summary>
@@ -177,12 +176,14 @@ namespace lenticulis_gui
         /// <param name="path">Path to image file</param>
         /// <param name="extension">Extension (often obtained via file browser)</param>
         /// <returns>True if everything succeeded</returns>
-        private bool LoadAndPutResource(String path, String extension)
+        private bool LoadAndPutResource(String path, String extension, int layer, int frame)
         {
             if (!Utils.IsAcceptedImageExtension(extension))
                 return false;
 
             // TODO: main loading routine
+
+            ImageHolder ih = ImageHolder.loadImage(path);
 
             // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
             return true;
@@ -568,18 +569,39 @@ namespace lenticulis_gui
 
             if (!TimelineItemOverlap(column, row, 1))
             {
-                //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
-                TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
+                // load resource and put it into internal structures
+                bool result = LoadAndPutResource(browserItem.Path + "\\" + browserItem.Name, browserItem.Extension, row, column);
 
-                //add into list of items and set mouse listeners
-                timelineList.Add(newItem);
-                newItem.MouseDown += TimelineItem_MouseDown;
-                newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                newItem.delete.Click += TimelineDelete_Click;
+                if (result)
+                {
+                    // check for presence in last used list
+                    bool found = false;
+                    foreach (BrowserItem bi in LastUsedList.Items)
+                    {
+                        if (bi.Path.Equals(browserItem.Path))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
 
-                //add into timeline
-                Timeline.Children.Add(newItem);
+                    // if not yet there, add it
+                    if (!found)
+                        LastUsedList.Items.Add(new BrowserItem(browserItem.Name, browserItem.Path, browserItem.Extension, false));
+
+                    //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
+                    TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
+
+                    //add into list of items and set mouse listeners
+                    timelineList.Add(newItem);
+                    newItem.MouseDown += TimelineItem_MouseDown;
+                    newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                    newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                    newItem.delete.Click += TimelineDelete_Click;
+
+                    //add into timeline
+                    Timeline.Children.Add(newItem);
+                }
             }
         }
 
@@ -593,6 +615,8 @@ namespace lenticulis_gui
             //remove from list and from timeline
             timelineList.Remove(capturedTimelineItem);
             Timeline.Children.Remove(capturedTimelineItem);
+
+            capturedTimelineItem.getLayerObject().dispose();
 
             capturedTimelineItem = null;
         }
