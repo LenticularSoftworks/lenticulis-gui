@@ -181,7 +181,22 @@ namespace lenticulis_gui
             if (!Utils.IsAcceptedImageExtension(extension))
                 return false;
 
+            // Create new loading window
+            LoadingWindow lw = new LoadingWindow();
+            // show it
+            lw.Show();
+            // and disable this window to disallow all operations
+            this.IsEnabled = false;
+            // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
+
+            // load image...
             ImageHolder ih = ImageHolder.loadImage(path);
+
+            // after image was loaded, enable main window
+            this.IsEnabled = true;
+            // and close loading window
+            lw.Close();
+
             if (ih == null)
                 return false;
 
