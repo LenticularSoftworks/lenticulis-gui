@@ -181,9 +181,27 @@ namespace lenticulis_gui
             if (!Utils.IsAcceptedImageExtension(extension))
                 return false;
 
-            // TODO: main loading routine
-
             ImageHolder ih = ImageHolder.loadImage(path);
+            if (ih == null)
+                return false;
+
+            // TODO: main canvas logic - put item onto canvas here
+
+            // The following lines of code are only to show, how to manage image displaying on WPF canvas
+
+            // now the image is ready for putting onto canvas
+            // retrieve desired image as ImageSource, using dimensions we want to use (initially it would be just
+            // image original dimensions, i think, so use ih.width and ih.height)
+
+            //ImageSource isrc = ih.getImageForSize(100, 80);
+
+            // Assign ImageSource as source of Image control on canvas
+            // These are only important attributes needed to be set - source, width and height, and stretch set to fill
+
+            //MyCanvasImage.Source = isrc;
+            //MyCanvasImage.Width = 100;
+            //MyCanvasImage.Height = 80;
+            //MyCanvasImage.Stretch = System.Windows.Media.Stretch.Fill;
 
             // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
             return true;

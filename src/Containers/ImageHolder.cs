@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Windows.Media;
 using lenticulis_gui.src.SupportLib;
 
 namespace lenticulis_gui.src.Containers
@@ -48,6 +49,11 @@ namespace lenticulis_gui.src.Containers
         public Image mipMapData;
 
         /// <summary>
+        /// Parsed mipmap into array of ImageSource instances to be used in frontend (on canvas)
+        /// </summary>
+        private ImageSource[] imageThumbnails;
+
+        /// <summary>
         /// Static factory method for building ImageHolder class
         /// </summary>
         /// <param name="path">Path of image to be loaded</param>
@@ -77,8 +83,40 @@ namespace lenticulis_gui.src.Containers
 
             h.fileName = path;
             h.mipMapData = ImageLoader.resolveMipmap((uint*)mipMapTarget, mmWidth, mmHeight);
+            h.imageThumbnails = ImageLoader.parseMipmap(h);
 
             return h;
+        }
+
+        /// <summary>
+        /// Retrieves image thumbnail for desired dimensions
+        /// </summary>
+        /// <param name="width">width of visible image</param>
+        /// <param name="height">height of visible image</param>
+        /// <returns>the nearest larger image thumbnail available</returns>
+        public ImageSource getImageForSize(int width, int height)
+        {
+            // not yet loaded, or invalid image
+            if (imageThumbnails == null || imageThumbnails.Length == 0)
+                return null;
+
+            // iterate from second element, and store first as "last visited" element
+            ImageSource last = imageThumbnails[0];
+            ImageSource current;
+            for (int i = 1; i < imageThumbnails.Length; i++)
+            {
+                // just save current
+                current = imageThumbnails[i];
+
+                // if the current is smaller than needed image, return the last visited
+                if (current.Width < width && current.Height < height)
+                    break;
+
+                // otherwise set current as last visited and iterate again
+                last = current;
+            }
+
+            return last;
         }
     }
 }
