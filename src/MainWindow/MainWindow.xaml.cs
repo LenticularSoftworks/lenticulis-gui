@@ -347,8 +347,7 @@ namespace lenticulis_gui
             //remove items in timelineList
             foreach (TimelineItem item in deleteItems)
             {
-                timelineList.Remove(item);
-                Timeline.Children.Remove(item);
+                RemoveTimelineItem(item);
             }
 
             //remove from Timeline
@@ -613,12 +612,21 @@ namespace lenticulis_gui
         private void TimelineDelete_Click(object sender, RoutedEventArgs e)
         {
             //remove from list and from timeline
-            timelineList.Remove(capturedTimelineItem);
-            Timeline.Children.Remove(capturedTimelineItem);
-
-            capturedTimelineItem.getLayerObject().dispose();
+            RemoveTimelineItem(capturedTimelineItem);
 
             capturedTimelineItem = null;
+        }
+
+        /// <summary>
+        /// Removes item from timeline, and properly disposes its references
+        /// </summary>
+        /// <param name="item"></param>
+        private void RemoveTimelineItem(TimelineItem item)
+        {
+            timelineList.Remove(item);
+            Timeline.Children.Remove(item);
+
+            item.getLayerObject().dispose();
         }
 
         /// <summary>
