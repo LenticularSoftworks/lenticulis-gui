@@ -139,6 +139,7 @@
       <DependentUpon>ProjectPropertiesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\MainWindow\BrowserItem.cs" />
+    <Compile Include="src\MainWindow\WorkCanvas.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />

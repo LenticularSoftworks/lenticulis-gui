@@ -32,6 +32,9 @@ namespace lenticulis_gui
         //timeline item list
         public List<TimelineItem> timelineList;
 
+        //canvas list
+        private List<WorkCanvas> canvasList;
+
         //drag n drop captured items
         private TimelineItem capturedTimelineItem = null;
         private WrapPanel capturedResizePanel = null;
@@ -51,11 +54,101 @@ namespace lenticulis_gui
             timelineList = new List<TimelineItem>();
         }
 
+        /// <summary>
+        /// Set image and layer count
+        /// </summary>
+        /// <param name="imageCount"></param>
+        /// <param name="layerCount"></param>
         public void SetProjectProperties(int imageCount, int layerCount)
         {
             SetImageCount(imageCount);
             AddTimelineHeader();
             AddTimelineLayer(layerCount);
+
+            canvasList = new List<WorkCanvas>();
+            SetWorkCanvasList();
+            ShowSingleCanvas(0);
+        }
+
+        /// <summary>
+        /// Create Canvas for each image
+        /// </summary>
+        private void SetWorkCanvasList()
+        {
+            canvasList.Clear();
+
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
+            {
+                canvasList.Add(new WorkCanvas(i));
+            }
+        }
+
+        /// <summary>
+        /// Show single canvas
+        /// </summary>
+        /// <param name="imageID"></param>
+        private void ShowSingleCanvas(int imageID)
+        {
+            ScrollViewer canvas = GetCanvas(imageID);
+
+            if (canvas != null)
+            {
+                CanvasPanel.ColumnDefinitions.Clear();
+                CanvasPanel.Children.Clear();
+
+                CanvasPanel.Children.Add(canvas);
+            }
+        }
+
+        /// <summary>
+        /// Splits canvas in two 
+        /// </summary>
+        /// <param name="firstImageID"></param>
+        /// <param name="secondImageID"></param>
+        private void ShowDoubleCanvas(int firstImageID, int secondImageID)
+        {
+            ScrollViewer leftCanvas = GetCanvas(firstImageID);
+            ScrollViewer rightCanvas = GetCanvas(secondImageID);
+
+            if (leftCanvas != null && rightCanvas != null)
+            {
+                CanvasPanel.ColumnDefinitions.Clear();
+                CanvasPanel.Children.Clear();
+
+                CanvasPanel.ColumnDefinitions.Add(new ColumnDefinition());
+                CanvasPanel.ColumnDefinitions.Add(new ColumnDefinition());
+
+                Grid.SetColumn(leftCanvas, 0);
+                Grid.SetColumn(rightCanvas, 1);
+
+                CanvasPanel.Children.Add(leftCanvas);
+                CanvasPanel.Children.Add(rightCanvas);
+            }
+        }
+
+        /// <summary>
+        /// Get cavnas by image ID and return with scrollbar
+        /// </summary>
+        /// <param name="imageID"></param>
+        /// <returns></returns>
+        private ScrollViewer GetCanvas(int imageID)
+        {
+            if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
+            {
+                return null;
+            }
+
+            ScrollViewer scViewer = new ScrollViewer();
+            scViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+            WorkCanvas canvas = canvasList[imageID];
+
+            //TODO: redraw canvas canvas.Draw();
+
+            scViewer.Content = canvas;
+
+            return scViewer;
         }
 
         /// <summary>
@@ -805,10 +898,37 @@ namespace lenticulis_gui
             return null;
         }
 
+        /// <summary>
+        /// Creates new project
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NewProjectButton_Click(object sender, RoutedEventArgs e)
         {
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();
         }
+
+        /// <summary>
+        /// Change canvas view event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DoubleCanvas_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowDoubleCanvas(0, ProjectHolder.ImageCount - 1);
+        }
+
+        /// <summary>
+        /// Change canvas view event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SingleCanvas_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowSingleCanvas(0);
+        }
+
+        
     }
 }
