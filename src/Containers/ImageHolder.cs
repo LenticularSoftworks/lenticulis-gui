@@ -65,15 +65,40 @@ namespace lenticulis_gui.src.Containers
             // at first, load image (using librarian call)
             void* mipMapTarget;
 
+            int tmpId = -1;
+
             try
             {
-                h.id = ImageLoader.loadImage(path, out h.format, out h.colorSpace, out h.width, out h.height, out mipMapTarget);
+                tmpId = ImageLoader.loadImage(path, out h.format, out h.colorSpace, out h.width, out h.height, out mipMapTarget);
             }
-            catch (BadImageFormatException ex)
+            catch (Exception ex)
             {
-                // TODO: better exception handling, let user know about what's exactly wrong
+                // This should never happen - we don't throw exceptions there
+                System.Windows.MessageBox.Show("Byla vyvolána neočekávaná výjimka: "+ex.Message, "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 return null;
             }
+
+            if (tmpId < 0)
+            {
+                switch (tmpId)
+                {
+                    case ImageLoader.LOADER_ERROR_IMAGE_NOT_FOUND:
+                        System.Windows.MessageBox.Show("Obrázek nebyl nalezen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        break;
+                    case ImageLoader.LOADER_ERROR_IMAGE_CORRUPTED:
+                        System.Windows.MessageBox.Show("Soubor obrázku je pravděpodobně poškozen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        break;
+                    case ImageLoader.LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED:
+                        System.Windows.MessageBox.Show("Nepodporovaná barevná hloubka obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        break;
+                    case ImageLoader.LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED:
+                        System.Windows.MessageBox.Show("Nepodporovaný formát obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        break;
+                }
+                return null;
+            }
+
+            h.id = tmpId;
 
             // then process mipmap into internal class
             int mmSize = SupportLib.SupportLib.getMipmapSize();

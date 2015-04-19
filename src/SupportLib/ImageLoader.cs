@@ -18,6 +18,11 @@ namespace lenticulis_gui.src.SupportLib
 {
     static class ImageLoader
     {
+        public const int LOADER_ERROR_IMAGE_NOT_FOUND = -1;
+        public const int LOADER_ERROR_IMAGE_CORRUPTED = -2;
+        public const int LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED = -3;
+        public const int LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED = -4;
+
         /// <summary>
         /// Encapsulates librarian call for loading image
         /// </summary>
