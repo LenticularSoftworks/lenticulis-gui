@@ -13,6 +13,7 @@
                     <MenuItem Header="_Uložit"/>
                     <Separator/>
                     <MenuItem Header="_Zavřít"/>
+                    <Slider Height="100" Width="100"/>
                 </MenuItem>
                 <MenuItem Header="_Úpravy">
                 </MenuItem>
@@ -52,7 +53,7 @@
         <DockPanel LastChildFill="True">
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <Button ToolTip="Nový">
+                    <Button ToolTip="Nový" Click="NewProjectButton_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/New.ico" />
                     </Button>
                     <Button ToolTip="Uložit" Click="ButtonSave_Click">

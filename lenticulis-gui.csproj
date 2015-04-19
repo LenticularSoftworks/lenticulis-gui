@@ -135,11 +135,18 @@
     <Compile Include="src\Containers\Layer.cs" />
     <Compile Include="src\Containers\LayerObject.cs" />
     <Compile Include="src\Containers\Transformation.cs" />
+    <Compile Include="src\Dialogs\ProjectPropertiesWindow.xaml.cs">
+      <DependentUpon>ProjectPropertiesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\MainWindow\BrowserItem.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
     <Page Include="src\Dialogs\LoadingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Dialogs\ProjectPropertiesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

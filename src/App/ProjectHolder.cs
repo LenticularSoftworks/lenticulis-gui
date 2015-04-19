@@ -33,5 +33,18 @@ namespace lenticulis_gui.src.App
         /// All layers within this project
         /// </summary>
         public static List<Layer> layers = new List<Layer>();
+
+        /// <summary>
+        /// Force cleanup of whole project - clears all layers, its objects, and restores default settings
+        /// This should be done after program startup, and before loading project, or creating new project
+        /// </summary>
+        public static void cleanUp()
+        {
+            MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            if (mw == null)
+                return;
+
+            mw.ClearTimeline();
+        }
     }
 }

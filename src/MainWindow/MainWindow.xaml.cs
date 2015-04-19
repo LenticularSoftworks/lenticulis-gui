@@ -16,6 +16,7 @@ using System.IO;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.SupportLib;
+using lenticulis_gui.src.Dialogs;
 
 namespace lenticulis_gui
 {
@@ -262,6 +263,40 @@ namespace lenticulis_gui
             ProjectHolder.ImageCount = count;
         }
 
+        public void UpdateImageCount(int newcount)
+        {
+            int current = ProjectHolder.ImageCount;
+
+            // adding specific count of frames
+            if (newcount > current)
+            {
+                for (int i = 0; i < newcount-current; i++)
+                {
+                    ColumnDefinition colDef = new ColumnDefinition();
+                    colDef.MinWidth = columnMinWidth;
+                    Timeline.ColumnDefinitions.Add(colDef);
+
+                    colDef = new ColumnDefinition();
+                    colDef.MinWidth = columnMinWidth;
+                    TimelineHeader.ColumnDefinitions.Add(colDef);
+                }
+            }
+            // removing some frames
+            else if (newcount < current)
+            {
+                // delete N last elements
+                for (int i = current - 1; i > newcount - 1; i++)
+                {
+                    Timeline.ColumnDefinitions.Remove(Timeline.ColumnDefinitions[i]);
+                    TimelineHeader.ColumnDefinitions.Remove(TimelineHeader.ColumnDefinitions[i]);
+                }
+
+                // TODO: check for existing layer objects in there columns !
+            }
+
+            ProjectHolder.ImageCount = newcount;
+        }
+
         /// <summary>
         /// Add timeline layer
         /// </summary>
@@ -386,6 +421,24 @@ namespace lenticulis_gui
             //set ProjectHolder
             ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
             ProjectHolder.LayerCount--;
+        }
+
+        /// <summary>
+        /// Clears timeline
+        /// </summary>
+        public void ClearTimeline()
+        {
+            TimelineItem[] toDelete = timelineList.ToArray();
+
+            // Remove each timeline item
+            for (int i = 0; i < toDelete.Length; i++)
+                RemoveTimelineItem(toDelete[i]);
+
+            // Remove all rows except the first one
+            for (int i = Timeline.RowDefinitions.Count - 1; i > 0; i--)
+                Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[i]);
+
+            ProjectHolder.layers.Clear();
         }
 
         /// <summary>
@@ -737,6 +790,12 @@ namespace lenticulis_gui
             }
 
             return null;
+        }
+
+        private void NewProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
+            ppw.ShowDialog();
         }
     }
 }
