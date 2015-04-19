@@ -113,24 +113,21 @@ namespace lenticulis_gui
         /// <summary>
         /// Open folder by selected item in browser
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Browser_DoubleClick(object sender, EventArgs e)
+        /// <param name="browserItem"></param>
+        private void Browser_DoubleClick(BrowserItem browserItem)
         {
-            BrowserItem BItem = (BrowserItem)(BrowserList.SelectedItem);
-
-            if (BItem.Dir && BItem.Path != "root")
+            if (browserItem.Dir && browserItem.Path != "root")
             {
                 try
                 {
-                    ActualFolder(BItem.Path);
+                    ActualFolder(browserItem.Path);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Nelze otevřít", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            else if (BItem.Dir && BItem.Path == "root")
+            else if (browserItem.Dir && browserItem.Path == "root")
             {
                 GetDrives();
             }
@@ -542,29 +539,29 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Browser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            ListBox parent = (ListBox)sender;
+            //dragged data as browser item
+            BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
+
             if (e.ClickCount == 2)
             {
                 //Open folder
-                Browser_DoubleClick(sender, e);
+                Browser_DoubleClick(browserItem);
             }
             else
             {
                 //drag browser item
-                Browser_Click(sender, e);
+                Browser_Click(browserItem, parent);
             }
         }
 
         /// <summary>
         /// Browser drag handler
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Browser_Click(object sender, MouseButtonEventArgs e)
+        /// <param name="browserItem"></param>
+        /// <param name="parent"></param>
+        private void Browser_Click(BrowserItem browserItem, ListBox parent)
         {
-            ListBox parent = (ListBox)sender;
-            //dragged data as browser item
-            BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
-
             // dragged item has to be instance of browserItem
             if (browserItem == null)
                 return;
