@@ -30,6 +30,16 @@ namespace lenticulis_gui.src.App
         public static int LayerCount { get; set; }
 
         /// <summary>
+        /// Canvas width
+        /// </summary>
+        public static int Width { get; set; }
+
+        /// <summary>
+        /// Canvas height
+        /// </summary>
+        public static int Height { get; set; }
+
+        /// <summary>
         /// All layers within this project
         /// </summary>
         public static List<Layer> layers = new List<Layer>();

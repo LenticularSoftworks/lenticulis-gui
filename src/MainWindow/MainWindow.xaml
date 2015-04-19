@@ -9,11 +9,11 @@
         <DockPanel DockPanel.Dock="Top">
             <Menu>
                 <MenuItem Header="_Soubor">
+                    <MenuItem Header="_Nový" Click="NewProjectButton_Click"/>
                     <MenuItem Header="_Otevřít"/>
                     <MenuItem Header="_Uložit"/>
                     <Separator/>
                     <MenuItem Header="_Zavřít"/>
-                    <Slider Height="100" Width="100"/>
                 </MenuItem>
                 <MenuItem Header="_Úpravy">
                 </MenuItem>

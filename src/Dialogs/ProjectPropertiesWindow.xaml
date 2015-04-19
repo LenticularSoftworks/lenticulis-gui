@@ -3,10 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Vlastnosti projektu" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
-        <Label Content="Název projektu" HorizontalAlignment="Left" Margin="7,3,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" Text="Můj projekt" VerticalAlignment="Top" Width="274"/>
-        <Button Name="CancelButton" Content="Zrušit" HorizontalAlignment="Left" Margin="209,240,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
-        <Button Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="129,240,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
+        <Label Content="Název projektu" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBox Name="PropertiesProjectName" HorizontalAlignment="Left" Height="23" Margin="15,36,0,0" TextWrapping="Wrap" Text="Můj projekt" VerticalAlignment="Top" Width="258" />
+
+        <Label Content="Velikost obrázku" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+        <Label Content="Šířka:" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>
+        <Label Content="Výška:" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="PropertiesWidth" HorizontalAlignment="Left" Height="23" Margin="53,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33"/>
+        <TextBox Name="PropertiesHeight" HorizontalAlignment="Left" Height="22" Margin="53,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33"/>
+        <ComboBox HorizontalAlignment="Left" Margin="100,120,0,0" VerticalAlignment="Top" Width="61">
+            <ComboBoxItem IsSelected="True">px</ComboBoxItem>
+        </ComboBox>
+
+        <Label Content="Další" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+        <Label Content="Počet snímků:" HorizontalAlignment="Left" Margin="11,173,0,0" VerticalAlignment="Top"/>
+        <Label Content="Počet vrstev:" HorizontalAlignment="Left" Margin="11,197,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="PropertiesImages" Text="1" HorizontalAlignment="Left" Height="22" Margin="93,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="34"/>
+        <TextBox Name="PropertiesLayers" Text="1" HorizontalAlignment="Left" Height="22" Margin="93,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="34"/>
+
+        <Button Name="CancelButton" Content="Zrušit" HorizontalAlignment="Left" Margin="198,235,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click" RenderTransformOrigin="0.433,0.525"/>
+        <Button Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="118,235,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
 
     </Grid>
 </Window>

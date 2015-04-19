@@ -48,11 +48,14 @@ namespace lenticulis_gui
 
             GetDrives();
 
-            SetImageCount(5); //start image count for testing
-            AddTimelineHeader();
-            AddTimelineLayer(1); //start layer count 1
-
             timelineList = new List<TimelineItem>();
+        }
+
+        public void SetProjectProperties(int imageCount, int layerCount)
+        {
+            SetImageCount(imageCount);
+            AddTimelineHeader();
+            AddTimelineLayer(layerCount);
         }
 
         /// <summary>
@@ -303,6 +306,11 @@ namespace lenticulis_gui
         /// <param name="count">layer count</param>
         private void AddTimelineLayer(int count)
         {
+            if (ProjectHolder.ImageCount == 0)
+            {
+                return;
+            }
+
             for (int i = 0; i < count; i++)
             {
                 RowDefinition rowDef = new RowDefinition();
@@ -365,7 +373,7 @@ namespace lenticulis_gui
         private void RemoveLayer_Click(object sender, RoutedEventArgs e)
         {
             //it has to be at least one layer
-            if (ProjectHolder.LayerCount == 1)
+            if (ProjectHolder.LayerCount == 1 || ProjectHolder.ImageCount == 0)
             {
                 return;
             }
@@ -477,6 +485,11 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Timeline_MouseMove(object sender, MouseEventArgs e)
         {
+            if (Timeline.ColumnDefinitions.Count == 0)
+            {
+                return;
+            }
+
             double columnWidth = Timeline.ColumnDefinitions[0].ActualWidth; //get actual column width
 
             if (capturedTimelineItem != null)
