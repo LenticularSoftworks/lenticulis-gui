@@ -639,9 +639,18 @@ namespace lenticulis_gui
             int lower = item.getLayerObject().Column;
             int upper = lower + item.getLayerObject().Length - 1;
 
-            DoubleCanvas.IsChecked = true;
-            SetRangeSlider(lower, upper);
-            ShowDoubleCanvas(lower, upper);
+            if (lower != upper)
+            {
+                DoubleCanvas.IsChecked = true;
+                SetRangeSlider(lower, upper);
+                ShowDoubleCanvas(lower, upper);
+            }
+            else
+            {
+                SingleCanvas.IsChecked = true;
+                SetSingleSlider(lower);
+                ShowSingleCanvas(lower);
+            }
         }
 
         /// <summary>
