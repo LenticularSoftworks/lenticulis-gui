@@ -13,13 +13,14 @@ using System.Windows.Shapes;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using lenticulis_gui.src.App;
+using MahApps.Metro.Controls;
 
 namespace lenticulis_gui
 {
     /// <summary>
     /// Interaction logic for LoadingWindow.xaml
     /// </summary>
-    public partial class LoadingWindow : Window
+    public partial class LoadingWindow : MetroWindow
     {
         /// <summary>
         /// Following stuff is there only to disable cross in window handle

@@ -12,13 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
+using MahApps.Metro.Controls;
 
 namespace lenticulis_gui.src.Dialogs
 {
     /// <summary>
     /// Interaction logic for ProjectPropertiesWindow.xaml
     /// </summary>
-    public partial class ProjectPropertiesWindow : Window
+    public partial class ProjectPropertiesWindow : MetroWindow
     {
         public ProjectPropertiesWindow()
         {
@@ -50,28 +51,28 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
-            int height = parseInputInt(PropertiesHeight.Text);
+            int height = (int)(PropertiesHeight.Value);
             if (height <= 0)
             {
                 MessageBox.Show("Výška musí být kladné číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            int width = parseInputInt(PropertiesWidth.Text);
+            int width = (int)(PropertiesWidth.Value);
             if (width <= 0)
             {
                 MessageBox.Show("Šířka musí být kladné číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            int images = parseInputInt(PropertiesImages.Text);
+            int images = (int)(PropertiesImages.Value);
             if (images <= 0)
             {
                 MessageBox.Show("Počet snímků musí být přirozené číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            int layers = parseInputInt(PropertiesLayers.Text);
+            int layers = (int)(PropertiesLayers.Value);
             if (layers <= 0)
             {
                 MessageBox.Show("Počet vrstev musí být přirozené číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -86,27 +87,6 @@ namespace lenticulis_gui.src.Dialogs
             mw.SetProjectProperties(images, layers);
 
             this.Close();
-        }
-
-        /// <summary>
-        /// Try parse integer - Return -1 if failed
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        private int parseInputInt(string number)
-        {
-            int result;
-
-            try
-            {
-                result = int.Parse(number);
-            }
-            catch
-            {
-                result = -1;
-            }
-
-            return result;
         }
     }
 }

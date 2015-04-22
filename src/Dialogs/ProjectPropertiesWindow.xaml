@@ -1,7 +1,23 @@
-﻿<Window x:Class="lenticulis_gui.src.Dialogs.ProjectPropertiesWindow"
+﻿<Controls:MetroWindow x:Class="lenticulis_gui.src.Dialogs.ProjectPropertiesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="Vlastnosti projektu" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+
+    <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+    
     <Grid>
         <Label Content="Název projektu" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <TextBox Name="PropertiesProjectName" HorizontalAlignment="Left" Height="23" Margin="15,36,0,0" TextWrapping="Wrap" Text="Můj projekt" VerticalAlignment="Top" Width="258" />
@@ -9,20 +25,20 @@
         <Label Content="Velikost obrázku" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="Šířka:" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>
         <Label Content="Výška:" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="PropertiesWidth" HorizontalAlignment="Left" Height="23" Margin="53,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33"/>
-        <TextBox Name="PropertiesHeight" HorizontalAlignment="Left" Height="22" Margin="53,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33"/>
-        <ComboBox HorizontalAlignment="Left" Margin="100,120,0,0" VerticalAlignment="Top" Width="61">
+        <Controls:NumericUpDown Name="PropertiesWidth" HorizontalAlignment="Left" Minimum="1" Height="23" Margin="53,93,0,0" VerticalAlignment="Top" Width="102"/>
+        <Controls:NumericUpDown Name="PropertiesHeight" HorizontalAlignment="Left" Minimum="1" Height="22" Margin="53,120,0,0" VerticalAlignment="Top" Width="102"/>
+        <ComboBox HorizontalAlignment="Left" Margin="166,120,0,0" VerticalAlignment="Top" Width="61">
             <ComboBoxItem IsSelected="True">px</ComboBoxItem>
         </ComboBox>
 
         <Label Content="Další" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="Počet snímků:" HorizontalAlignment="Left" Margin="11,173,0,0" VerticalAlignment="Top"/>
         <Label Content="Počet vrstev:" HorizontalAlignment="Left" Margin="11,197,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="PropertiesImages" Text="1" HorizontalAlignment="Left" Height="22" Margin="93,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="34"/>
-        <TextBox Name="PropertiesLayers" Text="1" HorizontalAlignment="Left" Height="22" Margin="93,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="34"/>
+        <Controls:NumericUpDown Name="PropertiesImages" Value="1" Minimum="1" HorizontalAlignment="Left" Height="22" Margin="93,174,0,0" VerticalAlignment="Top" Width="34"/>
+        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" HorizontalAlignment="Left" Height="22" Margin="93,201,0,0" VerticalAlignment="Top" Width="34"/>
 
         <Button Name="CancelButton" Content="Zrušit" HorizontalAlignment="Left" Margin="198,235,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click" RenderTransformOrigin="0.433,0.525"/>
         <Button Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="118,235,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
 
     </Grid>
-</Window>
+</Controls:MetroWindow>

@@ -14,7 +14,8 @@ namespace lenticulis_gui
     {
         public int imageID { get; set; }
 
-        public WorkCanvas(int imageID) : base()
+        public WorkCanvas(int imageID)
+            : base()
         {
             this.imageID = imageID;
 
@@ -22,6 +23,13 @@ namespace lenticulis_gui
             this.Height = ProjectHolder.Height;
             this.Margin = new Thickness(10, 10, 10, 10);
             this.Background = new SolidColorBrush(Colors.White);
+
+            //for testing purposes only
+            this.Children.Add(new Label()
+            {
+                Content = imageID + "( + 1)",
+                FontSize = 25
+            });
         }
     }
 }

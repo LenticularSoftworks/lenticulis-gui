@@ -13,17 +13,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using MahApps.Metro.Controls;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.SupportLib;
 using lenticulis_gui.src.Dialogs;
+using System.Windows.Controls.Primitives;
 
 namespace lenticulis_gui
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         //timeline column dimensions
         private const int rowHeight = 30;
@@ -68,6 +70,7 @@ namespace lenticulis_gui
             canvasList = new List<WorkCanvas>();
             SetWorkCanvasList();
             ShowSingleCanvas(0);
+            SetSingleSlider(0);
         }
 
         /// <summary>
@@ -124,6 +127,73 @@ namespace lenticulis_gui
                 CanvasPanel.Children.Add(leftCanvas);
                 CanvasPanel.Children.Add(rightCanvas);
             }
+        }
+
+        /// <summary>
+        /// Adds range slider under the canvas
+        /// </summary>
+        /// <param name="firstImageID"></param>
+        /// <param name="secondImageID"></param>
+        private void SetRangeSlider(int firstImageID, int secondImageID)
+        {
+            RangeSlider slider = new RangeSlider();
+
+            slider.Margin = new Thickness() { Top = 5, Left = 5 };
+            slider.TickFrequency = 1;
+            slider.TickPlacement = TickPlacement.Both;
+            slider.IsSnapToTickEnabled = true;
+            slider.Minimum = 0;
+            slider.Maximum = ProjectHolder.ImageCount - 1;
+            slider.MinRangeWidth = 0;
+            slider.LowerValue = firstImageID;
+            slider.UpperValue = secondImageID;
+            slider.RangeSelectionChanged += DoubleSlider_ValueChanged;
+
+            SliderPanel.Children.Clear();
+            SliderPanel.Children.Add(slider);
+        }
+
+        /// <summary>
+        /// Adds slider under the canvas
+        /// </summary>
+        /// <param name="imageID"></param>
+        private void SetSingleSlider(int imageID)
+        {
+            Slider slider = new Slider();
+
+            slider.Margin = new Thickness() { Top = 5, Left = 5 };
+            slider.TickFrequency = 1;
+            slider.TickPlacement = TickPlacement.Both;
+            slider.IsSnapToTickEnabled = true;
+            slider.Minimum = 0;
+            slider.Maximum = ProjectHolder.ImageCount - 1;
+            slider.Value = imageID;
+            slider.ValueChanged += SingleSlider_ValueChanged;
+
+            SliderPanel.Children.Clear();
+            SliderPanel.Children.Add(slider);
+        }
+
+        /// <summary>
+        /// Slider value change event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SingleSlider_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            ShowSingleCanvas((int)((Slider)sender).Value);
+        }
+
+        /// <summary>
+        /// Range slider value change event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DoubleSlider_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            RangeSlider slider = sender as RangeSlider;
+
+            ShowDoubleCanvas((int)slider.LowerValue, (int)slider.UpperValue);
         }
 
         /// <summary>
@@ -366,7 +436,7 @@ namespace lenticulis_gui
             // adding specific count of frames
             if (newcount > current)
             {
-                for (int i = 0; i < newcount-current; i++)
+                for (int i = 0; i < newcount - current; i++)
                 {
                     ColumnDefinition colDef = new ColumnDefinition();
                     colDef.MinWidth = columnMinWidth;
@@ -414,8 +484,8 @@ namespace lenticulis_gui
                 ProjectHolder.LayerCount++;
 
                 //Create and add horizontal border
-                Border horizontalBorder = new Border() { BorderBrush = Brushes.Black };
-                horizontalBorder.BorderThickness = new Thickness() { Bottom = 0.5 };
+                Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
+                horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
 
                 Grid.SetRow(horizontalBorder, Timeline.RowDefinitions.Count - 1);
                 Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
@@ -439,7 +509,7 @@ namespace lenticulis_gui
             for (int i = 0; i < ProjectHolder.ImageCount; i++)
             {
                 Border verticalBorder = new Border() { BorderBrush = Brushes.Gray };
-                verticalBorder.BorderThickness = new Thickness() { Right = 0.5 };
+                verticalBorder.BorderThickness = new Thickness() { Right = 1 };
 
                 Grid.SetColumn(verticalBorder, i);
                 Grid.SetRowSpan(verticalBorder, ProjectHolder.LayerCount);
@@ -495,7 +565,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Remove last layer in timeline and project holder and its images
         /// </summary>
-        private void RemoveLastLayer() 
+        private void RemoveLastLayer()
         {
             int lastLayer = ProjectHolder.LayerCount - 1;
             //list of deleting items
@@ -518,7 +588,7 @@ namespace lenticulis_gui
 
             //remove from Timeline
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
-            
+
             //set ProjectHolder
             ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
             ProjectHolder.LayerCount--;
@@ -555,6 +625,23 @@ namespace lenticulis_gui
 
             capturedX = mouse.X;
             capturedY = mouse.Y;
+        }
+
+        /// <summary>
+        /// Shows current layer object on canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimelineItem_MouseUp(object sender, MouseEventArgs e)
+        {
+            TimelineItem item = (TimelineItem)sender;
+
+            int lower = item.getLayerObject().Column;
+            int upper = lower + item.getLayerObject().Length - 1;
+
+            DoubleCanvas.IsChecked = true;
+            SetRangeSlider(lower, upper);
+            ShowDoubleCanvas(lower, upper);
         }
 
         /// <summary>
@@ -785,6 +872,7 @@ namespace lenticulis_gui
                     newItem.MouseDown += TimelineItem_MouseDown;
                     newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
                     newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                    newItem.MouseUp += TimelineItem_MouseUp;
                     newItem.delete.Click += TimelineDelete_Click;
 
                     //add into timeline
@@ -916,6 +1004,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void DoubleCanvas_Checked(object sender, RoutedEventArgs e)
         {
+            SetRangeSlider(0, ProjectHolder.ImageCount - 1);
             ShowDoubleCanvas(0, ProjectHolder.ImageCount - 1);
         }
 
@@ -926,9 +1015,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void SingleCanvas_Checked(object sender, RoutedEventArgs e)
         {
+            SetSingleSlider(0);
             ShowSingleCanvas(0);
         }
 
-        
+
     }
 }
