@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Media;
+using lenticulis_gui.src.App;
 using lenticulis_gui.src.SupportLib;
 
 namespace lenticulis_gui.src.Containers
@@ -60,6 +61,11 @@ namespace lenticulis_gui.src.Containers
         /// <returns>build ImageHolder instance based on input path</returns>
         public static unsafe ImageHolder loadImage(String path)
         {
+            // image already loaded, return the loaded one
+            ImageHolder tmp = Storage.Instance.getImageHolder(path);
+            if (tmp != null)
+                return tmp;
+
             ImageHolder h = new ImageHolder();
 
             // at first, load image (using librarian call)
@@ -109,6 +115,9 @@ namespace lenticulis_gui.src.Containers
             h.fileName = path;
             h.mipMapData = ImageLoader.resolveMipmap((uint*)mipMapTarget, mmWidth, mmHeight);
             h.imageThumbnails = ImageLoader.parseMipmap(h);
+
+            // store image for possible later reuse
+            Storage.Instance.storeImageHolder(h.id, h);
 
             return h;
         }
