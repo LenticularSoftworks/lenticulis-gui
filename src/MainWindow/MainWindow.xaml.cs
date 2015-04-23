@@ -151,6 +151,7 @@ namespace lenticulis_gui
 
             SliderPanel.Children.Clear();
             SliderPanel.Children.Add(slider);
+            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
         /// <summary>
@@ -172,6 +173,7 @@ namespace lenticulis_gui
 
             SliderPanel.Children.Clear();
             SliderPanel.Children.Add(slider);
+            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
         /// <summary>
@@ -431,6 +433,8 @@ namespace lenticulis_gui
             }
 
             ProjectHolder.ImageCount = count;
+
+            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
         public void UpdateImageCount(int newcount)
@@ -1048,6 +1052,11 @@ namespace lenticulis_gui
             ShowSingleCanvas(0);
         }
 
+        /// <summary>
+        /// Clicked on zoom in button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
         {
             foreach (WorkCanvas wc in canvasList)
@@ -1057,6 +1066,11 @@ namespace lenticulis_gui
             }
         }
 
+        /// <summary>
+        /// Clicked on zoom out button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
         {
             foreach (WorkCanvas wc in canvasList)
@@ -1064,6 +1078,17 @@ namespace lenticulis_gui
                 if (wc.CanvasScale > 0.1)
                     wc.CanvasScale /= 1.2;
             }
+        }
+
+        /// <summary>
+        /// On resize event - window itself
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // adjust slider size to match the timeline
+            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
     }
