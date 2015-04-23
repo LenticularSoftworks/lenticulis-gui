@@ -95,7 +95,19 @@ namespace lenticulis_gui.src.App
         {
             xw.WriteStartElement("resources");
             {
-                // TODO
+                for (int i = 0; i < ProjectHolder.layers.Count; i++)
+                {
+                    List<LayerObject> objects = ProjectHolder.layers[i].getLayerObjects();
+                    for (int j = 0; j < objects.Count; j++)
+                    {
+                        LayerObject obj = objects[j];
+                        ImageHolder ih = Storage.Instance.getImageHolder(obj.ResourceId);
+                        if (ih == null)
+                            continue;
+                        // TODO: loading PSD
+                        writeResource(xw, ih.id.ToString(), "image", ih.fileName, null);
+                    }
+                }
             }
             xw.WriteEndElement();
         }

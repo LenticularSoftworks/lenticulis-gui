@@ -340,8 +340,10 @@ namespace lenticulis_gui
         /// <param name="path">Path to image file</param>
         /// <param name="extension">Extension (often obtained via file browser)</param>
         /// <returns>True if everything succeeded</returns>
-        private bool LoadAndPutResource(String path, String extension, int layer, int frame)
+        private bool LoadAndPutResource(String path, String extension, int layer, int frame, out int resourceId)
         {
+            resourceId = 0;
+
             if (!Utils.IsAcceptedImageExtension(extension))
                 return false;
 
@@ -363,6 +365,8 @@ namespace lenticulis_gui
 
             if (ih == null)
                 return false;
+
+            resourceId = ih.id;
 
             // TODO: main canvas logic - put item onto canvas here
 
@@ -859,8 +863,9 @@ namespace lenticulis_gui
 
             if (!TimelineItemOverlap(column, row, 1))
             {
+                int resourceId = 0;
                 // load resource and put it into internal structures
-                bool result = LoadAndPutResource(browserItem.Path + "\\" + browserItem.Name, browserItem.Extension, row, column);
+                bool result = LoadAndPutResource(browserItem.Path + "\\" + browserItem.Name, browserItem.Extension, row, column, out resourceId);
 
                 if (result)
                 {
@@ -881,6 +886,7 @@ namespace lenticulis_gui
 
                     //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
+                    newItem.getLayerObject().ResourceId = resourceId;
 
                     //add into list of items and set mouse listeners
                     timelineList.Add(newItem);
