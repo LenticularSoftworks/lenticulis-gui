@@ -262,6 +262,12 @@
     <Resource Include="res\icon\Erase.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="res\icon\ZoomIn.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\ZoomOut.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="lenticulis.ico" />
   </ItemGroup>
   <ItemGroup>

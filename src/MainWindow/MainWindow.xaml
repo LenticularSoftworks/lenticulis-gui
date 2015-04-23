@@ -83,6 +83,13 @@
                     <Button ToolTip="Vpřed">
                         <Image Source="/lenticulis-gui;component/res/icon/Redo.ico" />
                     </Button>
+                    <Separator />
+                    <Button ToolTip="Přiblížit" Click="ZoomInButton_Clicked">
+                        <Image Source="/lenticulis-gui;component/res/icon/ZoomIn.ico" />
+                    </Button>
+                    <Button ToolTip="Oddálit" Click="ZoomOutButton_Clicked">
+                        <Image Source="/lenticulis-gui;component/res/icon/ZoomOut.ico" />
+                    </Button>
 
                 </ToolBar>
                 <ToolBar>

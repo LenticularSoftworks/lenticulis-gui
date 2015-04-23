@@ -1042,6 +1042,23 @@ namespace lenticulis_gui
             ShowSingleCanvas(0);
         }
 
+        private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            foreach (WorkCanvas wc in canvasList)
+            {
+                if (wc.CanvasScale < 50.0)
+                    wc.CanvasScale *= 1.2;
+            }
+        }
+
+        private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            foreach (WorkCanvas wc in canvasList)
+            {
+                if (wc.CanvasScale > 0.1)
+                    wc.CanvasScale /= 1.2;
+            }
+        }
 
     }
 }
