@@ -845,6 +845,12 @@ namespace lenticulis_gui
 
             Point mouse = e.GetPosition(Timeline);
 
+            if (Timeline.ColumnDefinitions.Count == 0)
+            {
+                MessageBox.Show("Nebyl načten ani vytvořen žádný projekt. Založte nebo načtěte nový projekt před přetahováním obrázků.", "Není projekt", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             //actual column width
             double columnWidth = Timeline.ColumnDefinitions[0].ActualWidth;
 
@@ -1013,6 +1019,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void DoubleCanvas_Checked(object sender, RoutedEventArgs e)
         {
+            // no project loaded / created
+            if (Timeline.ColumnDefinitions.Count == 0)
+                return;
+
             SetRangeSlider(0, ProjectHolder.ImageCount - 1);
             ShowDoubleCanvas(0, ProjectHolder.ImageCount - 1);
         }
@@ -1024,6 +1034,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void SingleCanvas_Checked(object sender, RoutedEventArgs e)
         {
+            // no project loaded / created
+            if (Timeline.ColumnDefinitions.Count == 0)
+                return;
+
             SetSingleSlider(0);
             ShowSingleCanvas(0);
         }

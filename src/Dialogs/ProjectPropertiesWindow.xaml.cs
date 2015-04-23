@@ -51,6 +51,24 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
+            if (PropertiesHeight.Value == null || PropertiesWidth.Value == null)
+            {
+                MessageBox.Show("Zadejte oba rozměry plátna", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (PropertiesImages.Value == null)
+            {
+                MessageBox.Show("Zadejte počet snímků", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (PropertiesLayers.Value == null)
+            {
+                MessageBox.Show("Zadejte počet vrstev", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             int height = (int)(PropertiesHeight.Value);
             if (height <= 0)
             {
