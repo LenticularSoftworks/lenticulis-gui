@@ -127,6 +127,9 @@
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" />
+                                </ListBox.ItemContainerStyle>
                             </ListBox>
                         </TabItem>
                         <TabItem Style="{x:Null}" Header="Nedávno použité">
