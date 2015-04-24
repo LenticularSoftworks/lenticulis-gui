@@ -140,5 +140,13 @@ namespace lenticulis_gui.src.SupportLib
 
             return retList.ToArray();
         }
+
+        /// <summary>
+        /// Clears all registered images
+        /// </summary>
+        public static void unloadAllImages()
+        {
+            SupportLib.clearRegisteredImages();
+        }
     }
 }

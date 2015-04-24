@@ -105,5 +105,12 @@ namespace lenticulis_gui.src.SupportLib
         /// <returns>Length of longer image side</returns>
         [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern int getMipmapSize();
+
+        /// <summary>
+        /// Destroys all images stored in memory
+        /// </summary>
+        /// <returns>Length of longer image side</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void clearRegisteredImages();
     }
 }

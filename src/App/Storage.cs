@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using lenticulis_gui.src.SupportLib;
 using lenticulis_gui.src.Containers;
 
 namespace lenticulis_gui.src.App
@@ -76,6 +77,15 @@ namespace lenticulis_gui.src.App
 
             loadedImages.Add(id, image);
             return true;
+        }
+
+        /// <summary>
+        /// Cleans up internal storages
+        /// </summary>
+        public void cleanUp()
+        {
+            ImageLoader.unloadAllImages();
+            loadedImages.Clear();
         }
     }
 }

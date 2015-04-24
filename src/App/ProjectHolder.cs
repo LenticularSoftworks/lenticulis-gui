@@ -12,6 +12,11 @@ namespace lenticulis_gui.src.App
     public static class ProjectHolder
     {
         /// <summary>
+        /// Flag for "there is some project present in program!"
+        /// </summary>
+        public static bool ValidProject = false;
+
+        /// <summary>
         /// Name of project - can be set in properties
         /// </summary>
         public static String ProjectName { get; set; }

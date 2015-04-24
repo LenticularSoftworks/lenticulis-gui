@@ -342,7 +342,7 @@ namespace lenticulis_gui
         /// <param name="path">Path to image file</param>
         /// <param name="extension">Extension (often obtained via file browser)</param>
         /// <returns>True if everything succeeded</returns>
-        private bool LoadAndPutResource(String path, String extension, int layer, int frame, out int resourceId)
+        public bool LoadAndPutResource(String path, String extension, int layer, int frame, out int resourceId)
         {
             resourceId = 0;
 
@@ -869,41 +869,63 @@ namespace lenticulis_gui
             {
                 int resourceId = 0;
                 // load resource and put it into internal structures
-                bool result = LoadAndPutResource(browserItem.Path + "\\" + browserItem.Name, browserItem.Extension, row, column, out resourceId);
+                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length-1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, row, column, out resourceId);
 
                 if (result)
                 {
-                    // check for presence in last used list
-                    bool found = false;
-                    foreach (BrowserItem bi in LastUsedList.Items)
-                    {
-                        if (bi.Path.Equals(browserItem.Path))
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    // if not yet there, add it
-                    if (!found)
-                        LastUsedList.Items.Add(new BrowserItem(browserItem.Name, browserItem.Path, browserItem.Extension, false));
+                    AddLastUsedItem(browserItem.Path, browserItem.Name, browserItem.Extension);
 
                     //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
                     newItem.getLayerObject().ResourceId = resourceId;
 
                     //add into list of items and set mouse listeners
-                    timelineList.Add(newItem);
-                    newItem.MouseDown += TimelineItem_MouseDown;
-                    newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                    newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                    newItem.MouseUp += TimelineItem_MouseUp;
-                    newItem.delete.Click += TimelineDelete_Click;
-
-                    //add into timeline
-                    Timeline.Children.Add(newItem);
+                    AddTimelineItem(newItem);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds new item to timeline
+        /// </summary>
+        /// <param name="newItem">item to be added</param>
+        public void AddTimelineItem(TimelineItem newItem)
+        {
+            timelineList.Add(newItem);
+            newItem.MouseDown += TimelineItem_MouseDown;
+            newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+            newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+            newItem.MouseUp += TimelineItem_MouseUp;
+            newItem.delete.Click += TimelineDelete_Click;
+
+            // add into timeline
+            Timeline.Children.Add(newItem);
+        }
+
+        /// <summary>
+        /// Adds specified resource to last used items list, if it's not already there
+        /// </summary>
+        /// <param name="path">path to file</param>
+        /// <param name="name">filename</param>
+        /// <param name="extension">file extension</param>
+        public void AddLastUsedItem(String path, String name, String extension)
+        {
+            String fullpath = path + ((path[path.Length-1] == '\\') ? "" : "\\") + name;
+
+            // check for presence in last used list
+            bool found = false;
+            foreach (BrowserItem bi in LastUsedList.Items)
+            {
+                if (fullpath.Equals(bi.Path + ((bi.Path[bi.Path.Length - 1] == '\\') ? "" : "\\") + bi.Name))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            // if not yet there, add it
+            if (!found)
+                LastUsedList.Items.Add(new BrowserItem(name, path, extension, false));
         }
 
         /// <summary>
@@ -949,7 +971,19 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            if (ProjectHolder.ProjectFileName == null || ProjectHolder.ProjectFileName == "")
+            SaveRoutine();
+        }
+
+        /// <summary>
+        /// Save routine - asks for file, if needed
+        /// </summary>
+        /// <returns></returns>
+        private bool SaveRoutine(bool saveAs = false)
+        {
+            if (!ProjectHolder.ValidProject)
+                return false;
+
+            if (saveAs || ProjectHolder.ProjectFileName == null || ProjectHolder.ProjectFileName == "")
             {
                 Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
                 dialog.FileName = "projekt";
@@ -961,12 +995,52 @@ namespace lenticulis_gui
                 {
                     // save project to newly selected file target
                     ProjectSaver.saveProject(dialog.FileName);
+                    return true;
                 }
+                return false;
             }
             else
             {
                 // use previously stored filename
                 ProjectSaver.saveProject();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Clicked on project loading
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonLoad_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectHolder.ValidProject)
+            {
+                MessageBoxResult res = MessageBox.Show("Nyní je otevřený jiný projekt. Chcete změny v něm uložit?", "Neuložená práce", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (res)
+                {
+                    // When clicked "Yes", offer saving, and if saving succeeds, proceed to load; otherwise do nothing
+                    case MessageBoxResult.Yes:
+                        if (!SaveRoutine())
+                            return;
+                        break;
+                    // When clicked "No", discard any changes
+                    case MessageBoxResult.No:
+                        break;
+                    // When clicked "Cancel", just do nothing
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+            }
+
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "Lenticulis projekt (.lcp)|*.lcp";
+
+            Nullable<bool> dres = dialog.ShowDialog();
+            if (dres == true)
+            {
+                // load project from selected file
+                ProjectLoader.loadProject(dialog.FileName);
             }
         }
 
@@ -1030,7 +1104,7 @@ namespace lenticulis_gui
         private void DoubleCanvas_Checked(object sender, RoutedEventArgs e)
         {
             // no project loaded / created
-            if (Timeline.ColumnDefinitions.Count == 0)
+            if (!ProjectHolder.ValidProject)
                 return;
 
             SetRangeSlider(0, ProjectHolder.ImageCount - 1);
@@ -1045,7 +1119,7 @@ namespace lenticulis_gui
         private void SingleCanvas_Checked(object sender, RoutedEventArgs e)
         {
             // no project loaded / created
-            if (Timeline.ColumnDefinitions.Count == 0)
+            if (!ProjectHolder.ValidProject)
                 return;
 
             SetSingleSlider(0);
@@ -1059,6 +1133,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
         {
+            // no project loaded / created
+            if (!ProjectHolder.ValidProject)
+                return;
+
             foreach (WorkCanvas wc in canvasList)
             {
                 if (wc.CanvasScale < 50.0)
@@ -1073,6 +1151,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
         {
+            // no project loaded / created
+            if (!ProjectHolder.ValidProject)
+                return;
+
             foreach (WorkCanvas wc in canvasList)
             {
                 if (wc.CanvasScale > 0.1)
