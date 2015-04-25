@@ -894,19 +894,6 @@ namespace lenticulis_gui
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
                     newItem.getLayerObject().ResourceId = resourceId;
 
-                    //add into list of items and set mouse listeners
-                    timelineList.Add(newItem);
-                    newItem.MouseDown += TimelineItem_MouseDown;
-                    newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                    newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                    newItem.delete.Click += TimelineDelete_Click;
-
-                    //add into timeline
-                    Timeline.Children.Add(newItem);
-
-                    //repaint canvas
-                    canvasList[column].Paint();
-
                     AddTimelineItem(newItem);
                 }
             }
@@ -926,6 +913,9 @@ namespace lenticulis_gui
 
             // add into timeline
             Timeline.Children.Add(newItem);
+
+            //repaint canvas
+            canvasList[newItem.getLayerObject().Column].Paint();
         }
 
         /// <summary>
