@@ -1208,7 +1208,7 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Clicked on zoom out button
+        /// Clicked on export button
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1220,6 +1220,37 @@ namespace lenticulis_gui
 
             ExportWindow ew = new ExportWindow();
             ew.ShowDialog();
+        }
+
+        /// <summary>
+        /// Clicked on "About" menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShowAboutWindow_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow aw = new AboutWindow();
+            aw.ShowDialog();
+        }
+
+        /// <summary>
+        /// Clicked on GitHub menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenGithub_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/LenticularSoftworks");
+        }
+
+        /// <summary>
+        /// Clicked on licencing menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenLicence_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.gnu.org/copyleft/gpl.html");
         }
 
     }

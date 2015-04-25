@@ -40,6 +40,14 @@
                     <MenuItem Header="_Úpravy">
                     </MenuItem>
                     <MenuItem Header="_O projektu">
+    					<MenuItem Header="_GitHub.com" Click="OpenGithub_Click" />
+                        <MenuItem Header="_Tutoriály">
+                            <MenuItem Header="_Videonávody" />
+                            <MenuItem Header="Už_ivatelská příručka" />
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="_Licence (GPLv3)" Click="OpenLicence_Click" />
+                        <MenuItem Header="O _projektu" Click="ShowAboutWindow_Click" />
                     </MenuItem>
                 </Menu>
             </DockPanel>

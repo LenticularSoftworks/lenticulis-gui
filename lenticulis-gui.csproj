@@ -131,6 +131,9 @@
     </ApplicationDefinition>
     <Compile Include="src\App\Interpolator.cs" />
     <Compile Include="src\App\ProjectLoader.cs" />
+    <Compile Include="src\Dialogs\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Dialogs\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
     </Compile>
@@ -155,6 +158,10 @@
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\ImageProcessor.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
+    <Page Include="src\Dialogs\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\Dialogs\ExportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -304,6 +311,10 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\image\fav.png" />
+    <Resource Include="res\image\logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

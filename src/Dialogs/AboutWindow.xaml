@@ -1,0 +1,66 @@
+﻿<Controls:MetroWindow x:Class="lenticulis_gui.src.Dialogs.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:lenticulis_gui.Properties"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        Title="O projektu" Height="341" Width="540">
+
+    <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+
+    <Grid>
+        <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Height="127" Margin="382,21,0,0" VerticalAlignment="Top" Width="127" Source="/lenticulis-gui;component/res/image/logo.png" Stretch="Fill" Focusable="True"/>
+        <Label Content="Lenticulis" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <Label Name="VersionLabel" Content="Verze 0" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
+        <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Height="70" Margin="382,177,0,0" VerticalAlignment="Top" Width="127" Source="/lenticulis-gui;component/res/image/fav.png" RenderTransformOrigin="0.487,0.512"/>
+        <TextBlock HorizontalAlignment="Left" Margin="14,61,0,0" TextWrapping="WrapWithOverflow" Text="Projekt Lenticulus vznikal v rámci předmětu KIV/ZSWI, a to
+ jako semestrální práce třech studentů informatiky a dvou studentů informačních systémů." VerticalAlignment="Top" Height="53" Width="319"/>
+        <TextBlock HorizontalAlignment="Left" Margin="14,135,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Height="65" Width="319">
+            Program a jeho podpůrná knihovna jsou distribuovány pod licencí
+            GNU GPLv3. Zdrojové kódy jsou k dispozici na: <Hyperlink NavigateUri="https://github.com/LenticularSoftworks" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/LenticularSoftworks</Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="14,200,0,-14" TextWrapping="Wrap" VerticalAlignment="Top" Height="119" Width="319">
+            Členové týmu:<LineBreak/>
+            <BulletDecorator>
+              <BulletDecorator.Bullet>
+                <Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+              </BulletDecorator.Bullet>
+            </BulletDecorator>
+            Martin Úbl (vedoucí týmu, vývoj)<LineBreak/>
+
+            <BulletDecorator>
+              <BulletDecorator.Bullet>
+                <Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+              </BulletDecorator.Bullet>
+            </BulletDecorator>
+            Tomáš Kleisner (vývoj)<LineBreak/>
+            <BulletDecorator>
+              <BulletDecorator.Bullet>
+                <Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+              </BulletDecorator.Bullet>
+            </BulletDecorator>
+            David Herman (vývoj)<LineBreak/>
+            <BulletDecorator>
+              <BulletDecorator.Bullet>
+                <Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+              </BulletDecorator.Bullet>
+            </BulletDecorator>
+            Ondřej Pova (dokumentace, testování)<LineBreak/>
+            <BulletDecorator>
+              <BulletDecorator.Bullet>
+                <Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+              </BulletDecorator.Bullet>
+            </BulletDecorator>
+            Václav Pelc (dokumentace, testování)<LineBreak/>
+        </TextBlock>
+    </Grid>
+</Controls:MetroWindow>
