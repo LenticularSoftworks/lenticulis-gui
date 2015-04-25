@@ -131,7 +131,8 @@ namespace lenticulis_gui
             }
             else
             {
-                float progress = (float)(imageID - lo.Column) / (float)(lo.Length - 1);
+                // use reciproc value to be able to eighter interpolate and extrapolate
+                float progress = 1.0f / ((float)(imageID - lo.Column) / (float)(lo.Length - 1));
 
                 float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, x_image) - lo.InitialX;
                 float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, y_image) - lo.InitialY;
