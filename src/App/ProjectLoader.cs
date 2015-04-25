@@ -176,6 +176,7 @@ namespace lenticulis_gui.src.App
             int id;
             ImageHolder ih;
             String path, type;
+            int psdlayer;
 
             try
             {
@@ -183,10 +184,21 @@ namespace lenticulis_gui.src.App
                 {
                     id = int.Parse(el.GetAttribute("id"));
 
-                    // TODO: PSD stuff?
-
                     path = el.GetAttribute("path");
                     type = el.GetAttribute("type");
+
+                    psdlayer = -1;
+                    if (el.HasAttribute("psd-layer"))
+                    {
+                        try
+                        {
+                            psdlayer = int.Parse(el.GetAttribute("psd-layer"));
+                        }
+                        catch (Exception)
+                        {
+                            //
+                        }
+                    }
 
                     // verify, if it's supported format
                     if (!type.Equals("image"))
@@ -196,7 +208,7 @@ namespace lenticulis_gui.src.App
                     }
 
                     // load image
-                    ih = ImageHolder.loadImage(path, false);
+                    ih = ImageHolder.loadImage(path, false, psdlayer);
                     // if anything fails, show message about it
                     if (ih == null)
                     {
@@ -339,8 +351,12 @@ namespace lenticulis_gui.src.App
                 expl = hldr.fileName.Split('\\');
                 String fileBareName = expl[expl.Length-1];
                 String fileBarePath = hldr.fileName.Substring(0, hldr.fileName.Length - fileBareName.Length);
+
                 // load resource and put it into internal structures
-                bool result = mw.LoadAndPutResource(hldr.fileName, extension, layerId, frameStart, out resourceId);
+                String loadFileName = hldr.fileName;
+                if (hldr.psdLayerIndex > -1)
+                    loadFileName = loadFileName + "["+hldr.psdLayerIndex+"]";
+                bool result = mw.LoadAndPutResource(loadFileName, extension, true, out resourceId);
 
                 if (!result)
                 {
@@ -416,8 +432,6 @@ namespace lenticulis_gui.src.App
                     trans.Interpolation = itype;
                     lobj.setTransformation(trans);
                 }
-
-                // TODO: put it on canvas, when it's ready
             }
 
             return true;

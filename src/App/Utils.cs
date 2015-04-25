@@ -11,7 +11,7 @@ namespace lenticulis_gui.src.App
     static class Utils
     {
         // List of accepted image file extensions (lower case without preceding dot)
-        public static string[] Extensions = { "jpg", "png", "gif" };
+        public static string[] Extensions = { "jpg", "jpeg", "png", "gif", "tif", "tiff", "psd", "bmp" };
 
         /// <summary>
         /// Builds C-compliant string (zero terminated)

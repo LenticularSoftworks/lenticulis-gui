@@ -118,8 +118,7 @@ namespace lenticulis_gui.src.App
                         ImageHolder ih = Storage.Instance.getImageHolder(obj.ResourceId);
                         if (ih == null)
                             continue;
-                        // TODO: loading PSD
-                        writeResource(xw, ih.id.ToString(), "image", ih.fileName, null);
+                        writeResource(xw, ih.id.ToString(), "image", ih.fileName, ih.psdLayerIndex);
                     }
                 }
             }
@@ -134,15 +133,15 @@ namespace lenticulis_gui.src.App
         /// <param name="type">type of resource</param>
         /// <param name="path">path to resource (relative or absolute)</param>
         /// <param name="psdlayer">PSD layer identifier, or null for other formats</param>
-        private static void writeResource(XmlWriter xw, String id, String type, String path, String psdlayer = null)
+        private static void writeResource(XmlWriter xw, String id, String type, String path, int psdlayer = -1)
         {
             xw.WriteStartElement("resource");
             {
                 xw.WriteAttributeString("id", id);
                 xw.WriteAttributeString("type", type);
                 xw.WriteAttributeString("path", path);
-                if (psdlayer != null)
-                    xw.WriteAttributeString("psd-layer", psdlayer);
+                if (psdlayer > -1)
+                    xw.WriteAttributeString("psd-layer", psdlayer.ToString());
             }
             xw.WriteEndElement();
         }

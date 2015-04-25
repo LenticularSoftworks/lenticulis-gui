@@ -364,7 +364,7 @@ namespace lenticulis_gui
         /// <param name="path">Path to image file</param>
         /// <param name="extension">Extension (often obtained via file browser)</param>
         /// <returns>True if everything succeeded</returns>
-        public bool LoadAndPutResource(String path, String extension, int layer, int frame, out int resourceId)
+        public bool LoadAndPutResource(String path, String extension, bool callback, out int resourceId)
         {
             resourceId = 0;
 
@@ -380,7 +380,19 @@ namespace lenticulis_gui
             // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
 
             // load image...
-            ImageHolder ih = ImageHolder.loadImage(path);
+
+            int psdLayerIndex = -1;
+            if (!callback && extension.ToLower().Equals(".psd"))
+            {
+                List<String> layers = ImageLoader.getLayerInfo(path);
+
+                LayerSelectWindow lsw = new LayerSelectWindow(layers);
+                lsw.ShowDialog();
+
+                psdLayerIndex = lsw.selectedLayer;
+            }
+
+            ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);
 
             // after image was loaded, enable main window
             this.IsEnabled = true;
@@ -391,24 +403,6 @@ namespace lenticulis_gui
                 return false;
 
             resourceId = ih.id;
-
-            // TODO: main canvas logic - put item onto canvas here
-
-            // The following lines of code are only to show, how to manage image displaying on WPF canvas
-
-            // now the image is ready for putting onto canvas
-            // retrieve desired image as ImageSource, using dimensions we want to use (initially it would be just
-            // image original dimensions, i think, so use ih.width and ih.height)
-
-            //ImageSource isrc = ih.getImageForSize(100, 80);
-
-            // Assign ImageSource as source of Image control on canvas
-            // These are only important attributes needed to be set - source, width and height, and stretch set to fill
-
-            //MyCanvasImage.Source = isrc;
-            //MyCanvasImage.Width = 100;
-            //MyCanvasImage.Height = 80;
-            //MyCanvasImage.Stretch = System.Windows.Media.Stretch.Fill;
 
             // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
             return true;
@@ -898,7 +892,7 @@ namespace lenticulis_gui
             {
                 int resourceId = 0;
                 // load resource and put it into internal structures
-                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length-1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, row, column, out resourceId);
+                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length-1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, false, out resourceId);
 
                 if (result)
                 {

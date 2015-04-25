@@ -142,6 +142,25 @@ namespace lenticulis_gui.src.SupportLib
         }
 
         /// <summary>
+        /// Retrieves layer labels and count from file on specified path
+        /// </summary>
+        /// <param name="path">path to file</param>
+        /// <returns>list of layers</returns>
+        public static List<String> getLayerInfo(String path)
+        {
+            StringBuilder layerTarget = new StringBuilder(4092);
+
+            int lcount = SupportLib.getLayerInfo(Utils.getCString(path), layerTarget);
+
+            if (layerTarget.ToString().Length == 0)
+                return null;
+
+            String[] linfo = layerTarget.ToString().Split(';');
+
+            return new List<String>(linfo);
+        }
+
+        /// <summary>
         /// Clears all registered images
         /// </summary>
         public static void unloadAllImages()

@@ -45,6 +45,11 @@ namespace lenticulis_gui.src.Containers
         public int colorSpace;
 
         /// <summary>
+        /// Index of PSD layer
+        /// </summary>
+        public int psdLayerIndex;
+
+        /// <summary>
         /// Formatted mipmap in Image class instance
         /// </summary>
         public Image mipMapData;
@@ -59,8 +64,12 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         /// <param name="path">Path of image to be loaded</param>
         /// <returns>build ImageHolder instance based on input path</returns>
-        public static unsafe ImageHolder loadImage(String path, bool reportError = true)
+        public static unsafe ImageHolder loadImage(String path, bool reportError = true, int psdLayerIdentifier = -1)
         {
+            String origPath = path;
+            if (psdLayerIdentifier > -1)
+                path = path + "["+psdLayerIdentifier+"]";
+
             // image already loaded, return the loaded one
             ImageHolder tmp = Storage.Instance.getImageHolder(path);
             if (tmp != null)
@@ -115,7 +124,8 @@ namespace lenticulis_gui.src.Containers
             int mmWidth = mmSize * 3/2;
             int mmHeight = mmSize;
 
-            h.fileName = path;
+            h.psdLayerIndex = psdLayerIdentifier;
+            h.fileName = origPath;
             h.mipMapData = ImageLoader.resolveMipmap((uint*)mipMapTarget, mmWidth, mmHeight);
             h.imageThumbnails = ImageLoader.parseMipmap(h);
 

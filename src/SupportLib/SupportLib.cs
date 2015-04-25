@@ -168,5 +168,14 @@ namespace lenticulis_gui.src.SupportLib
         /// <returns>error code</returns>
         [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern int exportCanvas(char[] filename, byte quality);
+
+        /// <summary>
+        /// Retrieves layer info from PSD format 
+        /// </summary>
+        /// <param name="filename">filename of PSD file</param>
+        /// <param name="result">out parameter filled by support lib with layer info</param>
+        /// <returns>count of layers</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int getLayerInfo(char[] filename, StringBuilder result);
     }
 }
