@@ -102,6 +102,8 @@ namespace lenticulis_gui
                     lobj.Visible = true;
                     content.Source = Utils.iconResourceToImageSource("Eye");
                 }
+
+                RepaintChange();
             });
 
             this.Children.Add(btn);
@@ -166,9 +168,25 @@ namespace lenticulis_gui
                 this.dataObject.Layer = layer;
                 this.dataObject.Column = column;
                 this.dataObject.Length = length;
-            }
 
-            SetGridSettings();
+                SetGridSettings();
+
+                RepaintChange();
+            }
+        }
+
+        /// <summary>
+        /// Repaint canvases after change
+        /// </summary>
+        private void RepaintChange()
+        {
+            //main window object
+            MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            if (mw == null)
+                return;
+
+            //repaint canvas
+            mw.RepaintCanvas();
         }
 
         /// <summary>
@@ -180,6 +198,20 @@ namespace lenticulis_gui
         public bool IsInPosition(int row, int column)
         {
             if (this.dataObject.Layer == row && column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        /// <summary>
+        /// True if timelien item is in column
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public bool IsInColumn(int column)
+        {
+            if (column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length))
             {
                 return true;
             }

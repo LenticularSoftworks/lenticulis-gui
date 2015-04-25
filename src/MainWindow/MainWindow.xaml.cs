@@ -213,12 +213,20 @@ namespace lenticulis_gui
             scViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 
             WorkCanvas canvas = canvasList[imageID];
-
-            //TODO: redraw canvas canvas.Draw();
-
             scViewer.Content = canvas;
 
             return scViewer;
+        }
+
+        /// <summary>
+        /// Repaint canvas when changed
+        /// </summary>
+        public void RepaintCanvas()
+        {
+            for (int i = 0; i < canvasList.Count; i++)
+            {
+                canvasList[i].Paint();
+            }
         }
 
         /// <summary>
@@ -621,14 +629,21 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimelineItem_MouseDown(object sender, MouseEventArgs e)
+        private void TimelineItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            capturedTimelineItem = (TimelineItem)sender;
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                TimelineItem_DoubleClick(sender, e);
+            }
+            else
+            {
+                capturedTimelineItem = (TimelineItem)sender;
 
-            Point mouse = Mouse.GetPosition((UIElement)sender);
+                Point mouse = Mouse.GetPosition((UIElement)sender);
 
-            capturedX = mouse.X;
-            capturedY = mouse.Y;
+                capturedX = mouse.X;
+                capturedY = mouse.Y;
+            }
         }
 
         /// <summary>
@@ -636,7 +651,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimelineItem_MouseUp(object sender, MouseEventArgs e)
+        private void TimelineItem_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             TimelineItem item = (TimelineItem)sender;
 
@@ -893,11 +908,13 @@ namespace lenticulis_gui
                     newItem.MouseDown += TimelineItem_MouseDown;
                     newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
                     newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                    newItem.MouseUp += TimelineItem_MouseUp;
                     newItem.delete.Click += TimelineDelete_Click;
 
                     //add into timeline
                     Timeline.Children.Add(newItem);
+
+                    //repaint canvas
+                    canvasList[column].Paint();
                 }
             }
         }
