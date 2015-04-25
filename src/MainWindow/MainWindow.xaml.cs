@@ -986,6 +986,12 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Timeline_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            if (capturedTimelineItem != null && capturedResizePanel != null)
+            {
+                if (capturedTimelineItem.getLayerObject().Length == 1)
+                    capturedTimelineItem.getLayerObject().resetTransformations();
+            }
+
             capturedTimelineItem = null;
             capturedResizePanel = null;
         }

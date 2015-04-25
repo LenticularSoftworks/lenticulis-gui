@@ -102,6 +102,11 @@ namespace lenticulis_gui.src.Containers
         private Dictionary<TransformType, Transformation> Transformations;
 
         /// <summary>
+        /// Transformation changed flag
+        /// </summary>
+        private bool transformationChanged = false;
+
+        /// <summary>
         /// Constructor - only sets ID of this object by generating a new one from static member,
         /// inits initial state of position, rotation and scale, and creates transformation dictionary
         /// </summary>
@@ -133,14 +138,7 @@ namespace lenticulis_gui.src.Containers
         {
             Transformations = new Dictionary<TransformType, Transformation>();
 
-            var values = Enum.GetValues(typeof(TransformType));
-            foreach (TransformType tr in values)
-            {
-                if (tr == TransformType.Scale)
-                    Transformations.Add(tr, new Transformation(tr, 1.0f, 1.0f, 0));
-                else
-                    Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
-            }
+            resetTransformations();
         }
 
         /// <summary>
@@ -156,18 +154,29 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
+        /// Resets transformation dictionary to original state - put identic transformations (0;0 translation, 0 rotation and 1;1 scale)
+        /// </summary>
+        public void resetTransformations()
+        {
+            transformationChanged = false;
+            Transformations.Clear();
+            var values = Enum.GetValues(typeof(TransformType));
+            foreach (TransformType tr in values)
+            {
+                if (tr == TransformType.Scale)
+                    Transformations.Add(tr, new Transformation(tr, 1.0f, 1.0f, 0));
+                else
+                    Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
+            }
+        }
+
+        /// <summary>
         /// Returns true, if there is any transformation present
         /// </summary>
         /// <returns>Is there any transformation?</returns>
         public bool hasTransformations()
         {
-            foreach (KeyValuePair<TransformType, Transformation> kvp in Transformations)
-            {
-                if (kvp.Value != null)
-                    return true;
-            }
-
-            return false;
+            return transformationChanged;
         }
 
         /// <summary>
@@ -187,6 +196,7 @@ namespace lenticulis_gui.src.Containers
         public void setTransformation(Transformation transformation)
         {
             Transformations[transformation.Type] = transformation;
+            transformationChanged = true;
         }
     }
 }

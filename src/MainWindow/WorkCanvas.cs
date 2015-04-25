@@ -113,14 +113,14 @@ namespace lenticulis_gui
         private void SetLayerObjectProperties(UIElement source)
         {
             System.Windows.Controls.Image droppedImage = source as System.Windows.Controls.Image;
-            
+
             LayerObject lo = GetLayerObjectByImage(droppedImage);
 
             if (imageID == lo.Column)
             {
                 // if there's some transformation present, preserve destination location by moving its vector
                 Transformation tr = lo.getTransformation(TransformType.Translation);
-                if (tr != null)
+                if (tr != null && lo.Length > 1)
                 {
                     tr.setVector(tr.TransformX - (x_image - lo.InitialX),
                                  tr.TransformY - (y_image - lo.InitialY));
@@ -133,8 +133,8 @@ namespace lenticulis_gui
             {
                 float progress = (float)(imageID - lo.Column) / (float)(lo.Length - 1);
 
-                float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, x_image);
-                float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, y_image);
+                float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, x_image) - lo.InitialX;
+                float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, y_image) - lo.InitialY;
                 lo.setTransformation(new Transformation(TransformType.Translation, transX, transY, 0));
             }
         }
