@@ -59,7 +59,7 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         /// <param name="path">Path of image to be loaded</param>
         /// <returns>build ImageHolder instance based on input path</returns>
-        public static unsafe ImageHolder loadImage(String path)
+        public static unsafe ImageHolder loadImage(String path, bool reportError = true)
         {
             // image already loaded, return the loaded one
             ImageHolder tmp = Storage.Instance.getImageHolder(path);
@@ -86,20 +86,23 @@ namespace lenticulis_gui.src.Containers
 
             if (tmpId < 0)
             {
-                switch (tmpId)
+                if (reportError)
                 {
-                    case ImageLoader.LOADER_ERROR_IMAGE_NOT_FOUND:
-                        System.Windows.MessageBox.Show("Obrázek nebyl nalezen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                        break;
-                    case ImageLoader.LOADER_ERROR_IMAGE_CORRUPTED:
-                        System.Windows.MessageBox.Show("Soubor obrázku je pravděpodobně poškozen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                        break;
-                    case ImageLoader.LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED:
-                        System.Windows.MessageBox.Show("Nepodporovaná barevná hloubka obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                        break;
-                    case ImageLoader.LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED:
-                        System.Windows.MessageBox.Show("Nepodporovaný formát obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                        break;
+                    switch (tmpId)
+                    {
+                        case ImageLoader.LOADER_ERROR_IMAGE_NOT_FOUND:
+                            System.Windows.MessageBox.Show("Obrázek nebyl nalezen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            break;
+                        case ImageLoader.LOADER_ERROR_IMAGE_CORRUPTED:
+                            System.Windows.MessageBox.Show("Soubor obrázku je pravděpodobně poškozen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            break;
+                        case ImageLoader.LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED:
+                            System.Windows.MessageBox.Show("Nepodporovaná barevná hloubka obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            break;
+                        case ImageLoader.LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED:
+                            System.Windows.MessageBox.Show("Nepodporovaný formát obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            break;
+                    }
                 }
                 return null;
             }

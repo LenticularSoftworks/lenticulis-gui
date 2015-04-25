@@ -105,5 +105,68 @@ namespace lenticulis_gui.src.SupportLib
         /// <returns>Length of longer image side</returns>
         [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern int getMipmapSize();
+
+        /// <summary>
+        /// Destroys all images stored in memory
+        /// </summary>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void clearRegisteredImages();
+
+        /// <summary>
+        /// Initializes new canvas for future image composition
+        /// </summary>
+        /// <param name="width">width of canvas</param>
+        /// <param name="height">height of canvas</param>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void initializeCanvas(uint width, uint height);
+
+        /// <summary>
+        /// Loads image to be processed within currently initialized canvas
+        /// </summary>
+        /// <param name="id">id of previously loaded resource</param>
+        /// <returns>error code</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int loadImage(int id);
+
+        /// <summary>
+        /// Resizes currently loaded image to specified dimensions
+        /// </summary>
+        /// <param name="width">new width of image</param>
+        /// <param name="height">new height of image</param>
+        /// <returns>error code</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int resizeImage(uint width, uint height);
+
+        /// <summary>
+        /// Rotates currently loaded image by specified angle
+        /// </summary>
+        /// <param name="angle">angle in degrees</param>
+        /// <returns>error code</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int rotateImage(double angle);
+
+        /// <summary>
+        /// Places currently loaded (and transformed) image to canvas onto specified coordinates
+        /// </summary>
+        /// <param name="x_pos">x position of composite</param>
+        /// <param name="y_pos">y position of composite</param>
+        /// <returns>error code</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int compositeImage(uint x_pos, uint y_pos);
+
+        /// <summary>
+        /// Closes currently loaded image
+        /// </summary>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void finalizeImage();
+
+        /// <summary>
+        /// Exports built canvas to file with specified quality
+        /// </summary>
+        /// <param name="filename">Filename to export to</param>
+        /// <param name="quality">output quality (1-100)</param>
+        /// <returns>error code</returns>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int exportCanvas(char[] filename, byte quality);
     }
 }

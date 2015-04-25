@@ -100,6 +100,7 @@ namespace lenticulis_gui.src.Dialogs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = height;
             ProjectHolder.Width = width;
+            ProjectHolder.ValidProject = true;
 
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
             mw.SetProjectProperties(images, layers);

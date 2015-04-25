@@ -10,6 +10,7 @@ namespace lenticulis_gui.src.App
     public static class ProjectSaver
     {
         private const float FLOAT_DELTA = 0.00001f;
+        private static bool SavingInProgress = false;
 
         /// <summary>
         /// Save project using previously stored project file name (the project was saved in the past)
@@ -26,6 +27,11 @@ namespace lenticulis_gui.src.App
         /// <param name="filename">Path to file (absolute or relative) to serve as project save file</param>
         public static void saveProject(String filename)
         {
+            if (SavingInProgress)
+                return;
+
+            SavingInProgress = true;
+
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
 
@@ -53,6 +59,10 @@ namespace lenticulis_gui.src.App
 
             xw.WriteEndDocument();
             xw.Flush();
+
+            xw.Close();
+
+            SavingInProgress = false;
         }
 
         /// <summary>
@@ -67,6 +77,10 @@ namespace lenticulis_gui.src.App
                 writeProperty(xw, "frame-count", ProjectHolder.ImageCount.ToString());
                 // count of layers
                 writeProperty(xw, "layer-count", ProjectHolder.LayerCount.ToString());
+                // width of canvas
+                writeProperty(xw, "canvas-width", ProjectHolder.Width.ToString());
+                // height of canvas
+                writeProperty(xw, "canvas-height", ProjectHolder.Height.ToString());
             }
             xw.WriteEndElement();
         }

@@ -129,6 +129,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\App\Interpolator.cs" />
+    <Compile Include="src\App\ProjectLoader.cs" />
+    <Compile Include="src\Dialogs\ExportWindow.xaml.cs">
+      <DependentUpon>ExportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Dialogs\LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>
@@ -148,7 +153,12 @@
     <Compile Include="src\MainWindow\WorkCanvas.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
+    <Compile Include="src\SupportLib\ImageProcessor.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
+    <Page Include="src\Dialogs\ExportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\Dialogs\LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -266,6 +276,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\icon\ZoomOut.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Export.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="lenticulis.ico" />

@@ -4,7 +4,8 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="Lenticulis" Height="600" Width="800"
         WindowStyle="SingleBorderWindow"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        SizeChanged="MetroWindow_SizeChanged">
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -38,7 +39,10 @@
 
         <Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Gray">
             <DockPanel LastChildFill="True" Height="180">
-                <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical">
+                <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="Gray">
+                    <StackPanel Name="SliderPanel" Height="40" Margin="45,0,0,0" />
+                </Border>
+                <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical" Margin="0,1,0,-1">
                     <ToolBar>
                         <Button Name="AddLayer" ToolTip="Přidat vrstvu" Click="AddLayer_Click">
                             <Image Source="/lenticulis-gui;component/res/icon/Add.ico" Margin="0,0,0,10"/>
@@ -73,7 +77,7 @@
                     <Button ToolTip="Uložit" Click="ButtonSave_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Save.ico" />
                     </Button>
-                    <Button ToolTip="Otevřít">
+                    <Button ToolTip="Otevřít" Click="ButtonLoad_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Folder.ico" />
                     </Button>
                     <Separator />
@@ -90,7 +94,10 @@
                     <Button ToolTip="Oddálit" Click="ZoomOutButton_Clicked">
                         <Image Source="/lenticulis-gui;component/res/icon/ZoomOut.ico" />
                     </Button>
-
+                    <Separator />
+                    <Button ToolTip="Exportovat" Click="ExportButton_Clicked">
+                        <Image Source="/lenticulis-gui;component/res/icon/Export.ico" />
+                    </Button>
                 </ToolBar>
                 <ToolBar>
                     <RadioButton Style="{x:Null}" GroupName="CanvasSelect" Name="SingleCanvas" Content="Jeden snímek" IsChecked="True" Click="SingleCanvas_Checked" />
@@ -154,9 +161,6 @@
             </Border>
 
             <DockPanel LastChildFill="True">
-                <Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Gray">
-                    <StackPanel Name="SliderPanel" Height="40" />
-                </Border>
                 <Border BorderThickness="1" BorderBrush="Gray">
                     <Grid Name="CanvasPanel" Background="#FFECECEC" />
                 </Border>
