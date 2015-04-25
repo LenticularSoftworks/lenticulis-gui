@@ -362,7 +362,7 @@ namespace lenticulis_gui
                 return false;
 
             // Create new loading window
-            LoadingWindow lw = new LoadingWindow();
+            LoadingWindow lw = new LoadingWindow("image");
             // show it
             lw.Show();
             // and disable this window to disallow all operations
@@ -1062,7 +1062,19 @@ namespace lenticulis_gui
             if (dres == true)
             {
                 // load project from selected file
+                // Create new loading window
+                LoadingWindow lw = new LoadingWindow("project");
+                // show it
+                lw.Show();
+                // and disable this window to disallow all operations
+                this.IsEnabled = false;
+
                 ProjectLoader.loadProject(dialog.FileName);
+
+                // after image was loaded, enable main window
+                this.IsEnabled = true;
+                // and close loading window
+                lw.Close();
             }
         }
 

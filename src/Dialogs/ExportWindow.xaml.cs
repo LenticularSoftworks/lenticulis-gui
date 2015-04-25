@@ -132,11 +132,24 @@ namespace lenticulis_gui.src.Dialogs
             if (!Directory.Exists(@ExportPathEdit.Text))
                 Directory.CreateDirectory(@ExportPathEdit.Text);
 
+            // load project from selected file
+            // Create new loading window
+            LoadingWindow lw = new LoadingWindow("export");
+            // show it
+            lw.Show();
+            // and disable this window to disallow all operations
+            this.IsEnabled = false;
+
             // prepare layer object matrix
             LayerObject[][] objMatrix = ImageProcessor.prepareObjectMatrix(ProjectHolder.layers.ToArray());
 
             // and export it to file sequence
             ImageProcessor.exportObjectMatrix(objMatrix, ExportPathEdit.Text, ExportPatternEdit.Text, quality);
+
+            // after image was loaded, enable main window
+            this.IsEnabled = true;
+            // and close loading window
+            lw.Close();
 
             this.Close();
         }
