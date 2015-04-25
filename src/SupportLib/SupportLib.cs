@@ -152,7 +152,7 @@ namespace lenticulis_gui.src.SupportLib
         /// <param name="y_pos">y position of composite</param>
         /// <returns>error code</returns>
         [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int compositeImage(uint x_pos, uint y_pos);
+        public static extern int compositeImage(int x_pos, int y_pos);
 
         /// <summary>
         /// Closes currently loaded image

@@ -24,10 +24,12 @@ namespace lenticulis_gui.src.SupportLib
         {
             // working variables
             float tmp_angle;
-            uint tmp_x, tmp_y, final_x, final_y;
+            uint tmp_x, tmp_y;
+            int final_x, final_y;
             float progress;
             LayerObject current;
             Transformation trans;
+            ImageHolder resource;
 
             String builtPathPattern = path + (path[path.Length - 1] == '\\' ? "" : "\\") + filenamePattern;
 
@@ -35,7 +37,7 @@ namespace lenticulis_gui.src.SupportLib
             {
                 SupportLib.initializeCanvas((uint)ProjectHolder.Width, (uint)ProjectHolder.Height);
 
-                for (int layer = 0; layer < objects[keyframe].Length; layer++)
+                for (int layer = objects[keyframe].Length - 1; layer >= 0; layer--)
                 {
                     current = objects[keyframe][layer];
                     if (current == null)
@@ -43,19 +45,24 @@ namespace lenticulis_gui.src.SupportLib
 
                     SupportLib.loadImage(current.ResourceId);
 
-                    final_x = (uint)current.InitialX;
-                    final_y = (uint)current.InitialY;
+                    resource = Storage.Instance.getImageHolder(current.ResourceId);
+
+                    final_x = (int)current.InitialX;
+                    final_y = (int)current.InitialY;
 
                     if (current.hasTransformations())
                     {
-                        progress = (float)(current.Column - keyframe) / (float)current.Length;
+                        if (current.Length > 1)
+                            progress = (float)(keyframe - current.Column) / (float)(current.Length - 1);
+                        else
+                            progress = 0.0f;
 
                         // at first, look for scaling transformation
                         trans = current.getTransformation(TransformType.Scale);
                         if (trans != null)
                         {
-                            tmp_x = (uint)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX);
-                            tmp_y = (uint)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY);
+                            tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, trans.TransformX));
+                            tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, trans.TransformY));
                             SupportLib.resizeImage(tmp_x, tmp_y);
                         }
 
@@ -72,13 +79,13 @@ namespace lenticulis_gui.src.SupportLib
                         trans = current.getTransformation(TransformType.Translation);
                         if (trans != null)
                         {
-                            final_x = (uint)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
-                            final_y = (uint)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
+                            final_x = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
+                            final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
                         }
                     }
 
                     // place image onto canvas
-                    SupportLib.compositeImage(final_x, final_y);
+                    SupportLib.compositeImage(final_y, final_x);
 
                     SupportLib.finalizeImage();
                 }

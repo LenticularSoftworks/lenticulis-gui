@@ -118,16 +118,24 @@ namespace lenticulis_gui
 
             if (imageID == lo.Column)
             {
+                // if there's some transformation present, preserve destination location by moving its vector
+                Transformation tr = lo.getTransformation(TransformType.Translation);
+                if (tr != null)
+                {
+                    tr.setVector(tr.TransformX - (x_image - lo.InitialX),
+                                 tr.TransformY - (y_image - lo.InitialY));
+                }
+
                 lo.InitialX = x_image;
-                lo.InitialY = y_image; 
+                lo.InitialY = y_image;
             }
             else
             {
-                float progress = (this.imageID - lo.Column + 1);
+                float progress = (float)(imageID - lo.Column) / (float)(lo.Length - 1);
 
-                //float transX = Interpolator.interpolateLinearValue(TransformType.Translation, progress, lo.InitialX, 0);
-                //float transY = Interpolator.interpolateLinearValue(TransformType.Translation, progress, lo.InitialX, 0);
-                //lo.setTransformation(new Transformation(TransformType.Translation, transX, transY, 0));
+                float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, x_image);
+                float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, y_image);
+                lo.setTransformation(new Transformation(TransformType.Translation, transX, transY, 0));
             }
         }
 
@@ -171,10 +179,14 @@ namespace lenticulis_gui
 
             foreach (LayerObject lo in images)
             {
-                ImageHolder imageHolder = Storage.Instance.getImageHolder(lo.Id);
+                ImageHolder imageHolder = Storage.Instance.getImageHolder(lo.ResourceId);
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
 
                 System.Windows.Controls.Image image = SetImage(source, lo);
+
+                image.Width = imageHolder.width;
+                image.Height = imageHolder.height;
+                image.Stretch = Stretch.Fill;
 
                 this.Children.Add(image);
             }
@@ -192,6 +204,7 @@ namespace lenticulis_gui
         private System.Windows.Controls.Image SetImage(ImageSource source, LayerObject lo)
         {
             System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+
             //source 
             image.Source = source;
 
@@ -202,14 +215,19 @@ namespace lenticulis_gui
 
             //transform
             InterpolationType interType = InterpolationType.Linear;
-            float progress = (this.imageID - lo.Column + 1) / (float)lo.Length;
+            float progress = 0.0f;
+
+            if (lo.Length > 1)
+                progress = (imageID - lo.Column) / (float)(lo.Length - 1);
 
             float angle = Interpolator.interpolateLinearValue(interType, progress, lo.InitialAngle, lo.InitialAngle + lo.getTransformation(TransformType.Rotate).TransformAngle);
             float positionX = Interpolator.interpolateLinearValue(interType, progress, lo.InitialX, lo.InitialX + lo.getTransformation(TransformType.Translation).TransformX);
             float positionY = Interpolator.interpolateLinearValue(interType, progress, lo.InitialY, lo.InitialY + lo.getTransformation(TransformType.Translation).TransformY);
+            float scaleX = Interpolator.interpolateLinearValue(interType, progress, lo.InitialScaleX, lo.getTransformation(TransformType.Scale).TransformX);
+            float scaleY = Interpolator.interpolateLinearValue(interType, progress, lo.InitialScaleY, lo.getTransformation(TransformType.Scale).TransformY);
 
             image.LayoutTransform = new RotateTransform(angle);
-            image.LayoutTransform = new ScaleTransform(lo.InitialScaleX, lo.InitialScaleY);
+            image.LayoutTransform = new ScaleTransform(scaleX, scaleY);
             Canvas.SetTop(image, positionX);
             Canvas.SetLeft(image, positionY);
 

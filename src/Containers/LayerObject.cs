@@ -135,7 +135,12 @@ namespace lenticulis_gui.src.Containers
 
             var values = Enum.GetValues(typeof(TransformType));
             foreach (TransformType tr in values)
-                Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
+            {
+                if (tr == TransformType.Scale)
+                    Transformations.Add(tr, new Transformation(tr, 1.0f, 1.0f, 0));
+                else
+                    Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
+            }
         }
 
         /// <summary>
