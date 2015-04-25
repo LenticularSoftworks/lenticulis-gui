@@ -46,7 +46,13 @@ namespace lenticulis_gui
             this.Background = Brushes.MediumTurquoise;
 
             //Add label
-            System.Windows.Controls.Label label = new System.Windows.Controls.Label() { Content = this.Text };
+            string labelContent = this.Text;
+            if (this.Text.Length > 15)
+            {
+                labelContent = this.Text.Substring(0, 14) + "...";
+            }
+
+            System.Windows.Controls.Label label = new System.Windows.Controls.Label() { Content = labelContent };
             this.Children.Add(label);
 
             //Alignment

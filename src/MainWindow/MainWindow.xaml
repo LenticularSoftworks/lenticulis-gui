@@ -82,7 +82,7 @@
 
             <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical">
                 <ToolBar>
-                    <Button ToolTip="Přesunout vrstvu" >
+                    <Button ToolTip="Přesunout vrstvu">
                         <Image Source="/lenticulis-gui;component/res/icon/Move.ico" Margin="0,0,0,10"/>
                     </Button>
                     <Button ToolTip="Změnit velikost vrstvy">
@@ -157,34 +157,32 @@
         <GridSplitter Grid.Row="1" Height="3" ShowsPreview="True" HorizontalAlignment="Stretch" Background="DodgerBlue" />
 
         <!-- Timeline begin -->
-        <Border Grid.Row="2" BorderThickness="1,0,1,1" BorderBrush="DodgerBlue">
-            <DockPanel LastChildFill="True" Height="Auto">
-                <StackPanel DockPanel.Dock="Top" Name="SliderPanel" Height="40" Margin="45,0,0,0" />
-                <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical" Margin="0,1,0,0">
-                    <ToolBar>
-                        <Button Name="AddLayer" ToolTip="Přidat vrstvu" Click="AddLayer_Click">
-                            <Image Source="/lenticulis-gui;component/res/icon/Add.ico" Margin="0,0,0,10"/>
-                        </Button>
-                        <Button Name="RemoveLayer" ToolTip="Odstranit vrstvu" Click="RemoveLayer_Click">
-                            <Image Source="/lenticulis-gui;component/res/icon/Remove.ico" Margin="0,0,0,10"/>
-                        </Button>
-                    </ToolBar>
-                </ToolBarTray>
+        <DockPanel LastChildFill="True" Grid.Row="2" Height="Auto">
+            <StackPanel DockPanel.Dock="Top" Name="SliderPanel" Height="40" Margin="45,0,0,0" />
+            <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical" Margin="0,1,0,0">
+                <ToolBar>
+                    <Button Name="AddLayer" ToolTip="Přidat vrstvu" Click="AddLayer_Click">
+                        <Image Source="/lenticulis-gui;component/res/icon/Add.ico" Margin="0,0,0,10"/>
+                    </Button>
+                    <Button Name="RemoveLayer" ToolTip="Odstranit vrstvu" Click="RemoveLayer_Click">
+                        <Image Source="/lenticulis-gui;component/res/icon/Remove.ico" Margin="0,0,0,10"/>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
 
-                <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <DockPanel LastChildFill="True">
-                        <Grid DockPanel.Dock="Top" Name="TimelineHeader" Background="LightGray" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25" />
-                            </Grid.RowDefinitions>
-                        </Grid>
-                        <Grid Name="Timeline" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <DockPanel LastChildFill="True">
+                    <Grid DockPanel.Dock="Top" Name="TimelineHeader" Background="LightGray" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                        </Grid.RowDefinitions>
+                    </Grid>
+                    <Grid Name="Timeline" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           MouseLeftButtonUp="Timeline_MouseLeftButtonUp" MouseMove="Timeline_MouseMove" AllowDrop="True" Drop="Timeline_DropHandler">
-                        </Grid>
-                    </DockPanel>
-                </ScrollViewer>
-            </DockPanel>
-        </Border>
+                    </Grid>
+                </DockPanel>
+            </ScrollViewer>
+        </DockPanel>
         <!-- Timeline end-->
 
 

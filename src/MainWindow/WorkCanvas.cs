@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Media;
 using lenticulis_gui.src.Containers;
 using System.Windows.Shapes;
+using System.Windows.Input;
 
 namespace lenticulis_gui
 {
@@ -22,7 +23,23 @@ namespace lenticulis_gui
         /// </summary>
         public int imageID { get; set; }
 
+        //drag n drop values
+        bool captured = false;
+        float y_image, x_canvas, x_image, y_canvas;
+
         private double canvasScaleCached = 1.0;
+        public double CanvasScale
+        {
+            get
+            {
+                return canvasScaleCached;
+            }
+            set
+            {
+                canvasScaleCached = value;
+                this.LayoutTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
+            }
+        }
 
         public WorkCanvas(int imageID)
             : base()
@@ -34,22 +51,112 @@ namespace lenticulis_gui
             this.Margin = new Thickness(10, 10, 10, 10);
             this.Background = new SolidColorBrush(Colors.White);
 
-            this.RenderTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
+            this.LayoutTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
 
             Paint();
         }
 
-        public double CanvasScale
+        /// <summary>
+        /// Drag image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            get
+            UIElement source = sender as UIElement;
+            Mouse.Capture(source);
+            captured = true;
+            y_image = (float)Canvas.GetLeft(source);
+            x_canvas = (float)e.GetPosition(this).X;
+            x_image = (float)Canvas.GetTop(source);
+            y_canvas = (float)e.GetPosition(this).Y;
+        }
+
+        /// <summary>
+        /// Move image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (captured)
             {
-                return canvasScaleCached;
+                UIElement source = sender as UIElement;
+
+                double x = e.GetPosition(this).X;
+                double y = e.GetPosition(this).Y;
+                y_image += (float)(x - x_canvas);
+                Canvas.SetLeft(source, y_image);
+                x_canvas = (float)x;
+                x_image += (float)(y - y_canvas);
+                Canvas.SetTop(source, x_image);
+                y_canvas = (float)y;
             }
-            set
+        }
+
+        /// <summary>
+        /// Drop image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            SetLayerObjectProperties((UIElement) sender);
+            captured = false;
+        }
+
+        /// <summary>
+        /// Set layer object properties after drop
+        /// </summary>
+        /// <param name="source"></param>
+        private void SetLayerObjectProperties(UIElement source)
+        {
+            System.Windows.Controls.Image droppedImage = source as System.Windows.Controls.Image;
+            
+            LayerObject lo = GetLayerObjectByImage(droppedImage);
+
+            if (imageID == lo.Column)
             {
-                canvasScaleCached = value;
-                this.RenderTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
+                lo.InitialX = x_image;
+                lo.InitialY = y_image; 
             }
+            else
+            {
+                float progress = (this.imageID - lo.Column + 1);
+
+                //float transX = Interpolator.interpolateLinearValue(TransformType.Translation, progress, lo.InitialX, 0);
+                //float transY = Interpolator.interpolateLinearValue(TransformType.Translation, progress, lo.InitialX, 0);
+                //lo.setTransformation(new Transformation(TransformType.Translation, transX, transY, 0));
+            }
+        }
+
+        /// <summary>
+        /// Return layer object by Image
+        /// </summary>
+        /// <param name="droppedImage"></param>
+        /// <returns></returns>
+        private LayerObject GetLayerObjectByImage(System.Windows.Controls.Image droppedImage)
+        {
+            List<LayerObject> layerObjects = GetImages();
+            int index = 0;
+
+            for (int i = 0; i < this.Children.Count; i++)
+            {
+                if (this.Children[i].GetType() == typeof(System.Windows.Controls.Image))
+                {
+                    if (this.Children[i] == droppedImage)
+                    {
+                        return layerObjects[index];
+                    }
+
+                    else
+                    {
+                        index++;
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -67,19 +174,47 @@ namespace lenticulis_gui
                 ImageHolder imageHolder = Storage.Instance.getImageHolder(lo.Id);
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
 
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = source;
-
-                Canvas.SetTop(image, lo.InitialX);
-                Canvas.SetLeft(image, lo.InitialY);
+                System.Windows.Controls.Image image = SetImage(source, lo);
 
                 this.Children.Add(image);
             }
 
             //add border of canvas
-            createBorder();
+            CreateBorder();
         }
 
+        /// <summary>
+        /// Set image properties
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="lo"></param>
+        /// <returns></returns>
+        private System.Windows.Controls.Image SetImage(ImageSource source, LayerObject lo)
+        {
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //source 
+            image.Source = source;
+
+            //listeners
+            image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
+            image.MouseMove += Image_MouseMove;
+            image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
+
+            //transform
+            InterpolationType interType = InterpolationType.Linear;
+            float progress = (this.imageID - lo.Column + 1) / (float)lo.Length;
+
+            float angle = Interpolator.interpolateLinearValue(interType, progress, lo.InitialAngle, lo.InitialAngle + lo.getTransformation(TransformType.Rotate).TransformAngle);
+            float positionX = Interpolator.interpolateLinearValue(interType, progress, lo.InitialX, lo.InitialX + lo.getTransformation(TransformType.Translation).TransformX);
+            float positionY = Interpolator.interpolateLinearValue(interType, progress, lo.InitialY, lo.InitialY + lo.getTransformation(TransformType.Translation).TransformY);
+
+            image.LayoutTransform = new RotateTransform(angle);
+            image.LayoutTransform = new ScaleTransform(lo.InitialScaleX, lo.InitialScaleY);
+            Canvas.SetTop(image, positionX);
+            Canvas.SetLeft(image, positionY);
+
+            return image;
+        }
 
         /// <summary>
         /// Returns visible images on canvas
@@ -114,18 +249,56 @@ namespace lenticulis_gui
         /// <summary>
         /// Add border on canvas
         /// </summary>
-        private void createBorder()
+        private void CreateBorder()
         {
-            System.Windows.Shapes.Rectangle border = new System.Windows.Shapes.Rectangle()
+            Line top = new Line()
             {
-                Fill = System.Windows.Media.Brushes.Transparent,
-                Stroke = System.Windows.Media.Brushes.DarkOrange,
+                X1 = 0,
+                X2 = this.Width,
+                Y1 = 0,
+                Y2 = 0,
                 StrokeDashArray = new DoubleCollection() { 2 },
-                Width = this.Width,
-                Height = this.Height,
+                StrokeThickness = 1,
+                Stroke = System.Windows.Media.Brushes.DarkOrange,
             };
 
-            this.Children.Add(border);
+            Line bottom = new Line()
+            {
+                X1 = 0,
+                X2 = this.Width,
+                Y1 = this.Height,
+                Y2 = this.Height,
+                StrokeDashArray = new DoubleCollection() { 2 },
+                StrokeThickness = 1,
+                Stroke = System.Windows.Media.Brushes.DarkOrange,
+            };
+
+            Line left = new Line()
+            {
+                X1 = 0,
+                X2 = 0,
+                Y1 = 0,
+                Y2 = this.Height,
+                StrokeDashArray = new DoubleCollection() { 2 },
+                StrokeThickness = 1,
+                Stroke = System.Windows.Media.Brushes.DarkOrange,
+            };
+
+            Line right = new Line()
+            {
+                X1 = this.Width,
+                X2 = this.Width,
+                Y1 = 0,
+                Y2 = this.Height,
+                StrokeDashArray = new DoubleCollection() { 2 },
+                StrokeThickness = 1,
+                Stroke = System.Windows.Media.Brushes.DarkOrange,
+            };
+
+            this.Children.Add(top);
+            this.Children.Add(bottom);
+            this.Children.Add(left);
+            this.Children.Add(right);
         }
     }
 }

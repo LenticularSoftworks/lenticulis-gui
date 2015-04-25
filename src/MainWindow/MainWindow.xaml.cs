@@ -47,6 +47,8 @@ namespace lenticulis_gui
         private int capturedTimelineItemColumn;
         private int capturedTimelineItemLength;
 
+        public Cursor SelectedTool;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -216,6 +218,8 @@ namespace lenticulis_gui
 
             WorkCanvas canvas = canvasList[imageID];
             scViewer.Content = canvas;
+
+            canvas.Paint();
 
             return scViewer;
         }
@@ -967,6 +971,8 @@ namespace lenticulis_gui
             Timeline.Children.Remove(item);
 
             item.getLayerObject().dispose();
+
+            RepaintCanvas();
         }
 
         /// <summary>
