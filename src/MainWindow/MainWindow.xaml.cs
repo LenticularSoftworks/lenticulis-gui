@@ -115,18 +115,28 @@ namespace lenticulis_gui
             ScrollViewer leftCanvas = GetCanvas(firstImageID);
             ScrollViewer rightCanvas = GetCanvas(secondImageID);
 
+            GridSplitter gs = new GridSplitter();
+            gs.BorderBrush = Brushes.DodgerBlue;
+            gs.BorderThickness = new Thickness(1.0, 0, 0, 0);
+            gs.Width = 1.0;
+
             if (leftCanvas != null && rightCanvas != null)
             {
                 CanvasPanel.ColumnDefinitions.Clear();
                 CanvasPanel.Children.Clear();
 
                 CanvasPanel.ColumnDefinitions.Add(new ColumnDefinition());
+                ColumnDefinition gs_coldef = new ColumnDefinition();
+                gs_coldef.Width = new GridLength(1.0);
+                CanvasPanel.ColumnDefinitions.Add(gs_coldef);
                 CanvasPanel.ColumnDefinitions.Add(new ColumnDefinition());
 
                 Grid.SetColumn(leftCanvas, 0);
-                Grid.SetColumn(rightCanvas, 1);
+                Grid.SetColumn(gs, 1);
+                Grid.SetColumn(rightCanvas, 2);
 
                 CanvasPanel.Children.Add(leftCanvas);
+                CanvasPanel.Children.Add(gs);
                 CanvasPanel.Children.Add(rightCanvas);
             }
         }
