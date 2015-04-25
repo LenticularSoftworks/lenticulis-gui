@@ -94,7 +94,10 @@
                     <Button ToolTip="Oddálit" Click="ZoomOutButton_Clicked">
                         <Image Source="/lenticulis-gui;component/res/icon/ZoomOut.ico" />
                     </Button>
-
+                    <Separator />
+                    <Button ToolTip="Exportovat" Click="ExportButton_Clicked">
+                        <Image Source="/lenticulis-gui;component/res/icon/Export.ico" />
+                    </Button>
                 </ToolBar>
                 <ToolBar>
                     <RadioButton Style="{x:Null}" GroupName="CanvasSelect" Name="SingleCanvas" Content="Jeden snímek" IsChecked="True" Click="SingleCanvas_Checked" />

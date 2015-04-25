@@ -1173,5 +1173,20 @@ namespace lenticulis_gui
             SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
+        /// <summary>
+        /// Clicked on zoom out button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExportButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            // no project loaded / created
+            if (!ProjectHolder.ValidProject)
+                return;
+
+            ExportWindow ew = new ExportWindow();
+            ew.ShowDialog();
+        }
+
     }
 }
