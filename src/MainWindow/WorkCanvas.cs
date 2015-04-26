@@ -24,8 +24,15 @@ namespace lenticulis_gui
         public int imageID { get; set; }
 
         //drag n drop values
-        bool captured = false;
-        float y_image, x_canvas, x_image, y_canvas;
+        private bool captured = false;
+        private float x_image, x_canvas, y_image, y_canvas, initialAngle, alpha = 0;
+        private double scaleX = 1.0, scaleY = 1.0;
+        private System.Windows.Point centerPoint;
+        private bool topLeft;
+        private bool bottomRight;
+        private bool topRight;
+        private bool bottomLeft;
+        private const int dragTolerance = 10;
 
         private double canvasScaleCached = 1.0;
         public double CanvasScale
@@ -66,10 +73,35 @@ namespace lenticulis_gui
             UIElement source = sender as UIElement;
             Mouse.Capture(source);
             captured = true;
-            y_image = (float)Canvas.GetLeft(source);
+            x_image = (float)Canvas.GetLeft(source);
             x_canvas = (float)e.GetPosition(this).X;
-            x_image = (float)Canvas.GetTop(source);
+            y_image = (float)Canvas.GetTop(source);
             y_canvas = (float)e.GetPosition(this).Y;
+
+            if (MainWindow.SelectedTool == TransformType.Rotate)
+            {
+                System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+
+                float imageCenterX = (float)img.Width / 2.0f;
+                float imageCenterY = (float)img.Height / 2.0f;
+
+                float dx = x_canvas - imageCenterX;
+                float dy = y_canvas - imageCenterY;
+
+                //get initial angle
+                initialAngle = (float)Math.Atan2(dy, dx);
+            }
+
+            if (MainWindow.SelectedTool == TransformType.Scale)
+            {
+                System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+                System.Windows.Point mouse = e.GetPosition(img);
+
+                //set drag position on image
+                SetDragImagePosition(mouse, img.Width, img.Height);
+
+                centerPoint = GetScaleCenterPoint(img.Width, img.Height);
+            }
         }
 
         /// <summary>
@@ -81,18 +113,133 @@ namespace lenticulis_gui
         {
             if (captured)
             {
-                UIElement source = sender as UIElement;
-
-                double x = e.GetPosition(this).X;
-                double y = e.GetPosition(this).Y;
-                y_image += (float)(x - x_canvas);
-                Canvas.SetLeft(source, y_image);
-                x_canvas = (float)x;
-                x_image += (float)(y - y_canvas);
-                Canvas.SetTop(source, x_image);
-                y_canvas = (float)y;
+                switch (MainWindow.SelectedTool)
+                {
+                    case TransformType.Translation: Image_MouseMoveTranslation(sender, e); break;
+                    case TransformType.Scale: Image_MouseMoveScale(sender, e); break;
+                    case TransformType.Rotate: Image_MouseMoveRotate(sender, e); break;
+                }
             }
         }
+
+        /// <summary>
+        /// Translation Mouse move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseMoveTranslation(object sender, MouseEventArgs e)
+        {
+            UIElement source = sender as UIElement;
+
+            double x = e.GetPosition(this).X;
+            double y = e.GetPosition(this).Y;
+
+            x_image += (float)(x - x_canvas);
+
+            Canvas.SetLeft(source, x_image);
+
+            x_canvas = (float)x;
+            y_image += (float)(y - y_canvas);
+
+            Canvas.SetTop(source, y_image);
+
+            y_canvas = (float)y;
+        }
+
+        /// <summary>
+        /// Scale mouse move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseMoveScale(object sender, MouseEventArgs e)
+        {
+            UIElement source = sender as UIElement;
+            System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
+
+            System.Windows.Point mouse = mouse = Mouse.GetPosition(this);
+
+            //scale
+            scaleX = Math.Abs(centerPoint.X - mouse.X) / Math.Abs(centerPoint.X - x_canvas);
+            scaleY = Math.Abs(centerPoint.Y - mouse.Y) / Math.Abs(centerPoint.Y - y_canvas);
+
+            ScaleTransform transform = new ScaleTransform(scaleX, scaleY, centerPoint.X, centerPoint.Y);
+
+            img = SetTransformations(GetLayerObjectByImage(img), img, transform);
+
+            //set image coordinates
+            x_image = (float)Canvas.GetLeft(img);
+            y_image = (float)Canvas.GetTop(img);
+        }
+
+        /// <summary>
+        /// Returns center point for scale transform
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        private System.Windows.Point GetScaleCenterPoint(double width, double height)
+        {
+            System.Windows.Point centerPoint = new System.Windows.Point();
+
+            if (topLeft)
+            {
+                centerPoint.X = width;
+                centerPoint.Y = height;
+            }
+            else if (bottomLeft)
+            {
+                centerPoint.X = width;
+                centerPoint.Y = 0;
+            }
+            else if (bottomRight)
+            {
+                centerPoint.X = 0;
+                centerPoint.Y = 0;
+            }
+            else
+            {
+                centerPoint.X = 0;
+                centerPoint.Y = height;
+            }
+
+            return centerPoint;
+        }
+
+        /// <summary>
+        /// Rotate mouse move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseMoveRotate(object sender, MouseEventArgs e)
+        {
+            UIElement source = sender as UIElement;
+            System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
+
+            float imageCenterX = (float)img.ActualWidth / 2.0f;
+            float imageCenterY = (float)img.ActualHeight / 2.0f;
+
+            float x = (float)e.GetPosition(this).X;
+            float y = (float)e.GetPosition(this).Y;
+
+            //current angle
+            float dx = x - imageCenterX;
+            float dy = y - imageCenterY;
+            float new_angle = (float)Math.Atan2(dy, dx);
+
+            //alpha is final angle
+            alpha = new_angle - initialAngle;
+
+            //to degrees
+            alpha *= 180 / (float)Math.PI;
+
+            RotateTransform rotateTransform = new RotateTransform(alpha + GetLayerObjectByImage(img).InitialAngle)
+            {
+                CenterX = imageCenterX,
+                CenterY= imageCenterY,
+            };
+
+            SetTransformations(GetLayerObjectByImage(img), img, rotateTransform);
+        } 
 
         /// <summary>
         /// Drop image
@@ -103,6 +250,9 @@ namespace lenticulis_gui
         {
             Mouse.Capture(null);
             SetLayerObjectProperties((UIElement) sender);
+            alpha = 0;
+            scaleX = 1.0;
+            scaleY = 1.0;
             captured = false;
         }
 
@@ -123,20 +273,23 @@ namespace lenticulis_gui
                 tr = lo.getTransformation(TransformType.Translation);
                 if (tr != null && lo.Length > 1)
                 {
-                    tr.setVector(tr.TransformX - (x_image - lo.InitialX),
-                                 tr.TransformY - (y_image - lo.InitialY));
+                    tr.setVector(tr.TransformX - (y_image - lo.InitialX),
+                                 tr.TransformY - (x_image - lo.InitialY));
                 }
 
-                lo.InitialX = x_image;
-                lo.InitialY = y_image;
+                lo.InitialX = y_image;
+                lo.InitialY = x_image;
+                lo.InitialAngle = alpha;
+                lo.InitialScaleX = (float)scaleX;
+                lo.InitialScaleY = (float)scaleY;
             }
             else
             {
                 // use reciproc value to be able to eighter interpolate and extrapolate
                 float progress = 1.0f / ((float)(imageID - lo.Column) / (float)(lo.Length - 1));
 
-                float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, x_image) - lo.InitialX;
-                float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, y_image) - lo.InitialY;
+                float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, y_image) - lo.InitialX;
+                float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, x_image) - lo.InitialY;
                 tr = new Transformation(TransformType.Translation, transX, transY, 0);
                 tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
                 lo.setTransformation(tr);
@@ -191,6 +344,7 @@ namespace lenticulis_gui
                 image.Width = imageHolder.width;
                 image.Height = imageHolder.height;
                 image.Stretch = Stretch.Fill;
+                image.MouseMove += ImageCursor_MouseMove;
 
                 this.Children.Add(image);
             }
@@ -209,6 +363,9 @@ namespace lenticulis_gui
         {
             System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
+            //transform
+            image = SetTransformations(lo, image, null);
+
             //source 
             image.Source = source;
 
@@ -217,7 +374,18 @@ namespace lenticulis_gui
             image.MouseMove += Image_MouseMove;
             image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
 
-            //transform
+            return image;
+        }
+
+        /// <summary>
+        /// Set transformations to image
+        /// </summary>
+        /// <param name="lo"></param>
+        /// <param name="image"></param>
+        /// <param name="addedTransform"></param>
+        /// <returns></returns>
+        private System.Windows.Controls.Image SetTransformations(LayerObject lo, System.Windows.Controls.Image image, Transform addedTransform)
+        {
             Transformation trans;
             float progress = 0.0f;
 
@@ -235,8 +403,31 @@ namespace lenticulis_gui
             float scaleX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleX, trans.TransformX);
             float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, trans.TransformY);
 
-            image.LayoutTransform = new RotateTransform(angle);
-            image.LayoutTransform = new ScaleTransform(scaleX, scaleY);
+            TransformGroup transform = new TransformGroup();
+            
+            //if is added transformation
+            if (addedTransform != null)
+            {
+                //order of transformation
+                if (addedTransform.GetType() == typeof(RotateTransform))
+                {
+                    transform.Children.Add(addedTransform);
+                    transform.Children.Add(new ScaleTransform(scaleX, scaleY));
+                }
+                if (addedTransform.GetType() == typeof(ScaleTransform))
+                {
+                    transform.Children.Add(new RotateTransform(angle));
+                    transform.Children.Add(addedTransform);
+                }
+            }
+            else
+            {
+                transform.Children.Add(new RotateTransform(angle));
+                transform.Children.Add(new ScaleTransform(scaleX, scaleY));
+            }
+
+            image.RenderTransform = transform;
+
             Canvas.SetTop(image, positionX);
             Canvas.SetLeft(image, positionY);
 
@@ -326,6 +517,59 @@ namespace lenticulis_gui
             this.Children.Add(bottom);
             this.Children.Add(left);
             this.Children.Add(right);
+        }
+
+        /// <summary>
+        /// Sets cursors by selected tool
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ImageCursor_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+            System.Windows.Point mouse = Mouse.GetPosition(img);
+
+            SetDragImagePosition(mouse, img.Width, img.Height);
+
+            if (MainWindow.SelectedTool == TransformType.Translation)
+            {
+                img.Cursor = Cursors.SizeAll;
+            }
+
+            if (MainWindow.SelectedTool == TransformType.Scale)
+            {
+                if (topLeft || bottomRight)
+                {
+                    img.Cursor = Cursors.SizeNWSE;
+                }
+                else if (bottomLeft || topRight)
+                {
+                    img.Cursor = Cursors.SizeNESW;
+                }
+                else
+                {
+                    img.Cursor = Cursors.Arrow;
+                }
+            }
+
+            if (MainWindow.SelectedTool == TransformType.Rotate)
+            {
+                img.Cursor = Cursors.Hand;
+            }
+        }
+
+        /// <summary>
+        /// Set bool variables of mouse position in image
+        /// </summary>
+        /// <param name="mouse"></param>
+        /// <param name="imageWidth"></param>
+        /// <param name="imageHeight"></param>
+        private void SetDragImagePosition(System.Windows.Point mouse, double imageWidth, double imageHeight)
+        {
+            topLeft = mouse.X < dragTolerance && mouse.X > -dragTolerance && mouse.Y < dragTolerance && mouse.Y > -dragTolerance;
+            bottomRight = mouse.X < dragTolerance + imageWidth && mouse.X > -dragTolerance + imageWidth && mouse.Y < dragTolerance + imageHeight && mouse.Y > -dragTolerance + imageHeight;
+            topRight = mouse.X < dragTolerance + imageWidth && mouse.X > -dragTolerance + imageWidth && mouse.Y < dragTolerance && mouse.Y > -dragTolerance;
+            bottomLeft = mouse.X < dragTolerance && mouse.X > -dragTolerance && mouse.Y < dragTolerance + imageHeight && mouse.Y > -dragTolerance + imageHeight;
         }
     }
 }

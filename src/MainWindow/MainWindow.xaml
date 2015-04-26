@@ -91,15 +91,15 @@
 
             <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical">
                 <ToolBar>
-                    <Button ToolTip="Přesunout vrstvu">
+                    <RadioButton GroupName="ToolSelect" Name="TranslationButton" IsChecked="True"  Style="{x:Null}" ToolTip="Přesunout vrstvu" Click="Translation_Checked">
                         <Image Source="/lenticulis-gui;component/res/icon/Move.ico" Margin="0,0,0,10"/>
-                    </Button>
-                    <Button ToolTip="Změnit velikost vrstvy">
+                    </RadioButton>
+                    <RadioButton GroupName="ToolSelect" Name="ScaleButton" Style="{x:Null}" ToolTip="Změnit velikost vrstvy" Click="Scale_Checked">
                         <Image Source="/lenticulis-gui;component/res/icon/Resize.ico" Margin="0,0,0,10"/>
-                    </Button>
-                    <Button ToolTip="Rotovat vrstvu" >
+                    </RadioButton>
+                    <RadioButton GroupName="ToolSelect" Name="RotateButton" Style="{x:Null}" ToolTip="Rotovat vrstvu" Click="Rotate_Checked">
                         <Image Source="/lenticulis-gui;component/res/icon/Refresh.ico" Margin="0,0,0,10"/>
-                    </Button>
+                    </RadioButton>
                 </ToolBar>
             </ToolBarTray>
 

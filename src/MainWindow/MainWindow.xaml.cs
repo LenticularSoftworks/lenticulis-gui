@@ -47,7 +47,7 @@ namespace lenticulis_gui
         private int capturedTimelineItemColumn;
         private int capturedTimelineItemLength;
 
-        public Cursor SelectedTool;
+        public static TransformType SelectedTool = TransformType.Translation;
 
         public MainWindow()
         {
@@ -1168,6 +1168,36 @@ namespace lenticulis_gui
 
             SetSingleSlider(0);
             ShowSingleCanvas(0);
+        }
+
+        /// <summary>
+        /// Change tool to translation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Translation_Checked(object sender, RoutedEventArgs e)
+        {
+            MainWindow.SelectedTool = TransformType.Translation;
+        }
+
+        /// <summary>
+        /// Change tool to scale
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Scale_Checked(object sender, RoutedEventArgs e)
+        {
+            MainWindow.SelectedTool = TransformType.Scale;
+        }
+
+        /// <summary>
+        /// Change tool to rotate
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Rotate_Checked(object sender, RoutedEventArgs e)
+        {
+            MainWindow.SelectedTool = TransformType.Rotate;
         }
 
         /// <summary>
