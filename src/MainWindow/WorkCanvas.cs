@@ -245,7 +245,7 @@ namespace lenticulis_gui
             RotateTransform rotateTransform = new RotateTransform(alpha + GetLayerObjectByImage(img).InitialAngle)
             {
                 CenterX = imageCenterX,
-                CenterY= imageCenterY,
+                CenterY = imageCenterY,
             };
 
             SetTransformations(GetLayerObjectByImage(img), img, rotateTransform, true);
@@ -319,8 +319,8 @@ namespace lenticulis_gui
                         tr = new Transformation(TransformType.Rotate, 0, 0, angle);
                         break;
                     case TransformType.Scale:
-                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX) - lo.InitialScaleX;
-                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY) - lo.InitialScaleY;
+                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX);
+                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY);
                         tr = new Transformation(TransformType.Scale, scX, scY, 0);
                         break;
                 }
@@ -441,26 +441,40 @@ namespace lenticulis_gui
             float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, trans.TransformY);
 
             TransformGroup transform = new TransformGroup();
-            
+            ImageHolder holder = Storage.Instance.getImageHolder(lo.ResourceId);
             //if is added transformation
             if (addedTransform != null)
             {
                 //order of transformation
                 if (addedTransform.GetType() == typeof(RotateTransform))
                 {
-                    transform.Children.Add(addedTransform);
                     transform.Children.Add(new ScaleTransform(scaleX, scaleY));
+
+                    RotateTransform rt = addedTransform as RotateTransform;
+                    rt.CenterX = holder.width * scaleX / 2.0;
+                    rt.CenterY = holder.height * scaleY / 2.0;
+                    transform.Children.Add(rt);
                 }
                 if (addedTransform.GetType() == typeof(ScaleTransform))
                 {
-                    transform.Children.Add(new RotateTransform(angle));
-                    transform.Children.Add(addedTransform);
+                    ScaleTransform st = addedTransform as ScaleTransform;
+                    //
+                    transform.Children.Add(st);
+
+                    RotateTransform rt = new RotateTransform(angle);
+                    rt.CenterX = holder.width * st.ScaleX / 2.0;
+                    rt.CenterY = holder.height * st.ScaleY / 2.0;
+                    transform.Children.Add(rt);
                 }
             }
             else
             {
-                transform.Children.Add(new RotateTransform(angle));
                 transform.Children.Add(new ScaleTransform(scaleX, scaleY));
+
+                RotateTransform rt = new RotateTransform(angle);
+                rt.CenterX = holder.width * scaleX / 2.0;
+                rt.CenterY = holder.height * scaleY / 2.0;
+                transform.Children.Add(rt);
             }
 
             image.RenderTransform = transform;
