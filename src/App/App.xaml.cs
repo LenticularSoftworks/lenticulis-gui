@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using lenticulis_gui.src.App;
 using lenticulis_gui.src.SupportLib;
 
 namespace lenticulis_gui
@@ -16,9 +17,13 @@ namespace lenticulis_gui
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            // TODO: load stored language
+            if (!LangProvider.Initialize())
+                Shutdown();
 
             SupportLib.initializeMagick();
+
+            base.OnStartup(e);
         }
     }
 }

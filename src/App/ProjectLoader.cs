@@ -43,7 +43,7 @@ namespace lenticulis_gui.src.App
             // There may be various exceptions, but generally they indicates some problem with filesystem (file not found, insufficient permissions, ..)
             catch (Exception)
             {
-                MessageBox.Show("Soubor nebylo možné načíst. Zkontrolujte, zdali je dostupný, a zdali máte práva na jeho přečtení.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_NOT_FOUND"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace lenticulis_gui.src.App
             // this means the XML format was broken
             catch (XmlException)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož se nejedná o soubor platného formátu projektu Lenticulis.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Soubor nebylo možné načíst, jelikož se nejedná o soubor platného formátu projektu Lenticulis.", LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -157,13 +157,13 @@ namespace lenticulis_gui.src.App
             }
             catch (Exception)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
             if (frames <= 0 || layers <= 0)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -217,7 +217,7 @@ namespace lenticulis_gui.src.App
                     // verify, if it's supported format
                     if (!type.Equals("image"))
                     {
-                        MessageBox.Show("Nepodporovaný typ zdroje pro soubor: " + path + " (" + type + ") - projekt byl nejspíše uložen ve vyšší verzi programu", "Nepodporovaný zdroj", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(String.Format(LangProvider.getString("PLE_UNSUPPORTED_TYPE"), path, type), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                         continue;
                     }
 
@@ -235,7 +235,7 @@ namespace lenticulis_gui.src.App
                     // if anything fails, show message about it
                     if (ih == null)
                     {
-                        MessageBox.Show("Nelze nalézt obrázek v umístění: "+path, "Chybějící zdroj", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(LangProvider.getString("PLE_RESOURCE_NOT_FOUND") + path, LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else
                     {
@@ -246,7 +246,7 @@ namespace lenticulis_gui.src.App
             }
             catch (Exception)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -278,7 +278,7 @@ namespace lenticulis_gui.src.App
             }
             catch (Exception)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -317,7 +317,7 @@ namespace lenticulis_gui.src.App
             }
             catch (Exception)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -342,7 +342,7 @@ namespace lenticulis_gui.src.App
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
@@ -362,7 +362,7 @@ namespace lenticulis_gui.src.App
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
@@ -383,7 +383,7 @@ namespace lenticulis_gui.src.App
 
                 if (!result)
                 {
-                    MessageBox.Show("Soubor nebylo možné načíst, jelikož obsahuje chyby.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 

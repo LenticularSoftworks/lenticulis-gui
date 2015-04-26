@@ -52,24 +52,24 @@ namespace lenticulis_gui
             switch (windowType)
             {
                 case "image":
-                    this.Title = "Načítání obrázku";
+                    this.Title = LangProvider.getString("LD_LOADING_IMAGE_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Image");
-                    WhatsGoingOnLabel.Content = "Načítání vybraného obrázku";
+                    WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_IMAGE_TXT");
                     break;
                 case "project":
-                    this.Title = "Načítání projektu";
+                    this.Title = LangProvider.getString("LD_LOADING_PROJECT_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Folder");
-                    WhatsGoingOnLabel.Content = "Načítání vybraného projektu";
+                    WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_PROJECT_TXT");
                     break;
                 case "export":
-                    this.Title = "Exportování návrhu";
+                    this.Title = LangProvider.getString("LD_LOADING_EXPORT_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Export");
-                    WhatsGoingOnLabel.Content = "Exportování návrhu";
+                    WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_EXPORT_TXT");
                     break;
                 default:
-                    this.Title = "Operace";
+                    this.Title = LangProvider.getString("LD_LOADING_GENERAL_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Refresh");
-                    WhatsGoingOnLabel.Content = "Probíhá náročná operace";
+                    WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_GENERAL_TXT");
                     break;
             }
         }

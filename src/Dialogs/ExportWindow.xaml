@@ -1,6 +1,7 @@
 ﻿<Controls:MetroWindow x:Class="lenticulis_gui.src.Dialogs.ExportWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:lenticulis_gui.src.App"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="Export" Height="270" Width="300">
 
@@ -18,24 +19,24 @@
 
     <Grid Margin="0,0,0,0">
 
-        <Label Content="Výstup do složky" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Content="{app:LangConverter str=OUTPUT_DIR}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <TextBox Name="ExportPathEdit" HorizontalAlignment="Left" Height="23" Margin="10,36,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="233" />
         <Button Name="ExportBrowseButton" Content="..." HorizontalAlignment="Left" Margin="248,36,0,0" VerticalAlignment="Top" Width="34" Height="23" Click="ExportBrowseButton_Click" />
 
-        <Label Content="Vzor názvu souboru (%i jako zástupný řetězec)" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Content="{app:LangConverter str=NAME_PATTERN}" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <TextBox Name="ExportPatternEdit" HorizontalAlignment="Left" Height="23" Margin="10,93,0,0" TextWrapping="Wrap" Text="export-%i.png" VerticalAlignment="Top" Width="272" />
 
-        <Label Content="Formát výstupu" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Content="{app:LangConverter str=OUTPUT_FORMAT}" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <ComboBox HorizontalAlignment="Left" Margin="10,159,0,0" VerticalAlignment="Top" Width="128" SelectionChanged="ComboBox_SelectionChanged" SelectedIndex="0">
             <ComboBoxItem Content="PNG"/>
             <ComboBoxItem Content="JPEG"/>
             <ComboBoxItem Content="TIFF"/>
             <ComboBoxItem Content="BMP"/>
         </ComboBox>
-        <Label Content="Kvalita výstupu" HorizontalAlignment="Left" Margin="154,128,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label Content="{app:LangConverter str=OUTPUT_QUALITY}" HorizontalAlignment="Left" Margin="154,128,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <Controls:NumericUpDown Name="QualityNumBox" HorizontalAlignment="Left" Minimum="1" Maximum="100" Height="23" Margin="154,159,0,0" VerticalAlignment="Top" Width="128" Value="70"/>
-        <Button Content="Zrušit" Name="CancelButton" HorizontalAlignment="Left" Margin="207,206,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
-        <Button Content="OK" Name="OKButton" HorizontalAlignment="Left" Margin="127,206,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
+        <Button Content="{app:LangConverter str=CANCEL}" Name="CancelButton" HorizontalAlignment="Left" Margin="207,206,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
+        <Button Content="{app:LangConverter str=OK}" Name="OKButton" HorizontalAlignment="Left" Margin="127,206,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
 
     </Grid>
 </Controls:MetroWindow>

@@ -1,0 +1,159 @@
+/cs;Čeština
+
+## Obecné
+YES=Ano
+NO=Ne
+OK=OK
+CANCEL=Zrušit
+CHOOSE=Vybrat
+LENTICULIS_PROJECT_FILE=Lenticulis projekt
+UNSAVED_WORK=Neuložená práce
+UNSAVED_WORK_CONFIRM_SAVE=Nyní je otevřen jiný projekt. Chcete v něm změny uložit?
+
+# Načítání projektu
+PROJECT_LOAD_ERROR=Chyba při načítání projektu
+PLE_FILE_NOT_FOUND=Soubor nebylo možné načíst. Zkontrolujte, zdali je dostupný, a zdali máte práva na jeho přečtení.
+PLE_FILE_FORMAT=Soubor nebylo možné načíst, jelikož se nejedná o soubor platného formátu projektu Lenticulis.
+PLE_FILE_ERRORS=Soubor nebylo možné načíst, jelikož obsahuje chyby.
+PLE_UNSUPPORTED_TYPE=Nepodporovaný typ zdroje pro soubor: {0} ({1}) - projekt byl nejspíše uložen ve vyšší verzi programu
+PLE_RESOURCE_NOT_FOUND=Nelze nalézt obrázek v umístění: 
+
+# Načítání obrázků
+IMAGE_LOAD_ERROR=Chyba při načítání obrázku
+IML_UNEXPECTED_ERROR=Byla vyvolána neočekávaná výjimka: 
+IML_IMAGE_NOT_FOUND=Obrázek nebyl nalezen
+IML_IMAGE_CORRUPTED=Soubor obrázku je pravděpodobně poškozen
+IML_UNSUPPORTED_DEPTH=Nepodporovaná barevná hloubka
+IML_UNSUPPORTED_FORMAT=Nepodporovaný formát obrázku
+
+## Menu aplikace
+# Soubor
+FILE=Soubor
+NEW_FILE=_Nový
+OPEN_FILE=_Otevřít
+SAVE_FILE=_Uložit
+CLOSE_APP=_Zavřít
+# Úpravy
+EDIT=Ú_pravy
+# O projektu
+ABOUT=O projektu
+GITHUBPAGE=GitHub.com
+TUTORIALS=Tutoriály
+VIDEOTUTS=Videotutoriál
+USER_MANUAL=Uživatelská příručka
+LICENCE=Licence (GPLv3)
+ABOUT_REAL=O projektu
+
+## Toolbox
+UNDO=Zpět
+REDO=Vpřed
+ZOOMIN=Přiblížit
+ZOOMOUT=Oddálit
+EXPORT=Exportovat
+CANVAS_SINGLE=Jeden snímek
+CANVAS_DOUBLE=Dva snímky
+TR_TRANSLATE=Posunout
+TR_ROTATE=Otočit
+TR_SCALE=Škálovat
+
+## Browser
+TAB_COMPUTER=Počítač
+TAB_RECENTLY_USED=Nedávno použité
+MY_COMPUTER=Tento počítač
+COULD_NOT_OPEN=Nelze otevřít
+UNSUPPORTED_TYPE=Nepodporovaný formát
+UNSUPPORTED_TYPE_MSG=Tento formát nelze načíst do projektu
+
+## Timeline
+ADD_LAYER=Přidat vrstvu
+DEL_LAYER=Odebrat vrstvu
+DEL_LAYER_CONFIRM_TITLE=Odebrat vrstvu
+DEL_LAYER_CONFIRM_TEXT=Ve vrstvě se nachází obrázky. Doopravdy chcete vrstvu smazat?
+NO_PROJECT=Není projekt
+NO_PROJECT_MSG=Nebyl vytvořen ani načten žádný projekt. Založte nebo načtěte projekt před přetahováním obrázků na časovou osu.
+
+## O projektu
+ABOUT_WINDOW_TITLE=O projektu
+VERSION_TXT=Verze
+ABOUT_PRODUCT_TXT=Projekt Lenticulus vznikal v rámci předmětu KIV/ZSWI, a to jako semestrální práce třech studentů informatiky a dvou studentů informačních systémů.
+ABOUT_LICENCE_TXT=Program a jeho podpůrná knihovna jsou distribuovány pod licencí GNU GPLv3. Zdrojové kódy jsou k dispozici na:
+TEAM_MEMBERS_TITLE=Členové týmu
+TEAM_LEADER=vedoucí týmu
+TEAM_DEVELOPER=vývoj
+TEAM_DOCUMENTATION=dokumentace
+TEAM_TESTING=testování
+
+## Export
+EXPORT_WINDOW_TITLE=Exportování
+OUTPUT_DIR=Výstup do složky
+NAME_PATTERN=Vzor názvu souboru (%i jako zástupný řetězec)
+OUTPUT_FORMAT=Formát výstupu
+OUTPUT_QUALITY=Kvalita výstupu
+WRONG_OUTPUT_PARAMS=Špatné parametry
+OUT_FILL_DIRECTORY=Vyplňte cestu, kam má program exportovat návrh
+OUT_DIRECTORY_MISSING_CREATE_CONFIRM=Cílová složka neexistuje. Má být programem vytvořena?
+OUT_DIRECTORY_MISSING_TITLE=Složka neexistuje
+OUT_FILL_PATTERN=Vyplňte vzor názvu výstupního souboru
+OUT_FILL_PATTERN_LAMBDA=Použijte ve vzoru zástupné znaky %i pro označení místa, které má program nahradit číslem snímku
+OUT_FILL_QUALITY=Vyplňte kvalitu jako číslo od 1 do 100
+
+## Výběr vrstvy
+CHOOSE_LAYER_WINDOW_TITLE=Výběr vrstvy
+CHOOSE_LAYER_TXT=Vyberte vrstvu načítaného obrázku:
+ALL_LAYERS_MERGED=<všechny sloučené>
+
+## Načítací dialog
+LD_LOADING_PROJECT_TITLE=Načítání projektu
+LD_LOADING_IMAGE_TITLE=Načítání obrázku
+LD_LOADING_EXPORT_TITLE=Exportování návrhu
+LD_LOADING_GENERAL_TITLE=Operace
+LD_LOADING_PROJECT_TXT=Načítání projektu
+LD_LOADING_IMAGE_TXT=Načítání obrázku
+LD_LOADING_EXPORT_TXT=Exportování návrhu
+LD_LOADING_GENERAL_TXT=Operace
+
+## Nový projekt / parametry
+PROPERTIES_WINDOW_TITLE=Vlastnosti projektu
+PROP_PROJECT_NAME=Název projektu
+PROP_DEFAULT_PROJECT_NAME=Můj projekt
+PROP_CANVAS_SIZE=Velikost obrázku
+PROP_SIZE_WIDTH=Šířka:
+PROP_SIZE_HEIGHT=Výška:
+PROP_MISCELLANOUS=Další
+PROP_FRAME_COUNT=Počet snímků:
+PROP_LAYER_COUNT=Počet vrstev:
+PROP_CREATE_ERROR_TITLE=Chyba vytvoření projektu
+PROP_ERR_NAME=Vyplňte název projektu
+PROP_ERR_BOTHVALUES=Vyplňte oba rozměry plátna
+PROP_ERR_FRAME_COUNT=Zadejte počet snímků
+PROP_ERR_LAYER_COUNT=Zadejte počet vrstev
+PROP_ERR_HEIGHT_NEGATIVE=Výška musí být kladné číslo
+PROP_ERR_WIDTH_NEGATIVE=Šířka musí být kladné číslo
+PROP_ERR_FRAMECOUNT_NATURAL=Počet snímků musí být přirozené číslo
+PROP_ERR_LAYERCOUNT_NATURAL=Počet vrstev musí být přirozené číslo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

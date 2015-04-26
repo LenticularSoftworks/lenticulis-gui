@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using lenticulis_gui.src.App;
 using lenticulis_gui.Properties;
 
 namespace lenticulis_gui.src.Dialogs
@@ -24,7 +25,9 @@ namespace lenticulis_gui.src.Dialogs
         {
             InitializeComponent();
 
-            VersionLabel.Content = "Verze " + lenticulis_gui.Properties.Resources.LENTICULIS_VERSION;
+            Title = LangProvider.getString("ABOUT_WINDOW_TITLE");
+
+            VersionLabel.Content = LangProvider.getString("VERSION_TXT") + " " + lenticulis_gui.Properties.Resources.LENTICULIS_VERSION;
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)

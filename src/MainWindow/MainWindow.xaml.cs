@@ -259,7 +259,7 @@ namespace lenticulis_gui
             }
 
             BrowserList.ItemsSource = items;
-            AddressBlock.Text = "Tento počítač";
+            AddressBlock.Text = LangProvider.getString("MY_COMPUTER");
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace lenticulis_gui
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Nelze otevřít", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(ex.Message, LangProvider.getString("COULD_NOT_OPEN"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             else if (browserItem.Dir && browserItem.Path == "root")
@@ -573,7 +573,7 @@ namespace lenticulis_gui
                 //if some item is in last layer
                 if (item.getLayerObject().Layer == lastLayer)
                 {
-                    messageBoxResult = MessageBox.Show("Ve vrstvě se nachází obrázky. Opravdu chcete vrstvu smazat?", "Smazat vrstvu", MessageBoxButton.YesNo);
+                    messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
 
                     break;
                 }
@@ -869,7 +869,7 @@ namespace lenticulis_gui
             //if is not image in acceptable format
             if (!browserItem.Image)
             {
-                MessageBox.Show("Tento formát nelze načíst do projektu", "Nepodporovaný formát", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("UNSUPPORTED_TYPE_MSG"), LangProvider.getString("UNSUPPORTED_TYPE"), MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 return;
             }
@@ -878,7 +878,7 @@ namespace lenticulis_gui
 
             if (Timeline.ColumnDefinitions.Count == 0)
             {
-                MessageBox.Show("Nebyl načten ani vytvořen žádný projekt. Založte nebo načtěte nový projekt před přetahováním obrázků.", "Není projekt", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("NO_PROJECT_MSG"), LangProvider.getString("NO_PROJECT"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1020,7 +1020,7 @@ namespace lenticulis_gui
                 Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
                 dialog.FileName = "projekt";
                 dialog.DefaultExt = ".lcp";
-                dialog.Filter = "Lenticulis projekt (.lcp)|*.lcp";
+                dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE")+" (.lcp)|*.lcp";
 
                 Nullable<bool> res = dialog.ShowDialog();
                 if (res == true)
@@ -1048,7 +1048,7 @@ namespace lenticulis_gui
         {
             if (ProjectHolder.ValidProject)
             {
-                MessageBoxResult res = MessageBox.Show("Nyní je otevřený jiný projekt. Chcete změny v něm uložit?", "Neuložená práce", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult res = MessageBox.Show(LangProvider.getString("UNSAVED_WORK_CONFIRM_SAVE"), LangProvider.getString("UNSAVED_WORK"), MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 switch (res)
                 {
                     // When clicked "Yes", offer saving, and if saving succeeds, proceed to load; otherwise do nothing
@@ -1066,7 +1066,7 @@ namespace lenticulis_gui
             }
 
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = "Lenticulis projekt (.lcp)|*.lcp";
+            dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE")+" (.lcp)|*.lcp";
 
             Nullable<bool> dres = dialog.ShowDialog();
             if (dres == true)

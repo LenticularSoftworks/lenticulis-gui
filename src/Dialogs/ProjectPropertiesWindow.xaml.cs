@@ -24,6 +24,8 @@ namespace lenticulis_gui.src.Dialogs
         public ProjectPropertiesWindow()
         {
             InitializeComponent();
+
+            Title = LangProvider.getString("PROPERTIES_WINDOW_TITLE");
         }
 
         /// <summary>
@@ -47,53 +49,53 @@ namespace lenticulis_gui.src.Dialogs
 
             if (PropertiesProjectName.Text == "")
             {
-                MessageBox.Show("Vyplňte název projektu", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_NAME"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (PropertiesHeight.Value == null || PropertiesWidth.Value == null)
             {
-                MessageBox.Show("Zadejte oba rozměry plátna", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_BOTHVALUES"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (PropertiesImages.Value == null)
             {
-                MessageBox.Show("Zadejte počet snímků", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_FRAME_COUNT"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (PropertiesLayers.Value == null)
             {
-                MessageBox.Show("Zadejte počet vrstev", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_LAYER_COUNT"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             int height = (int)(PropertiesHeight.Value);
             if (height <= 0)
             {
-                MessageBox.Show("Výška musí být kladné číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_HEIGHT_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             int width = (int)(PropertiesWidth.Value);
             if (width <= 0)
             {
-                MessageBox.Show("Šířka musí být kladné číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_WIDTH_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             int images = (int)(PropertiesImages.Value);
             if (images <= 0)
             {
-                MessageBox.Show("Počet snímků musí být přirozené číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_FRAMECOUNT_NATURAL"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             int layers = (int)(PropertiesLayers.Value);
             if (layers <= 0)
             {
-                MessageBox.Show("Počet vrstev musí být přirozené číslo", "Chyba vytvoření projektu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("PROP_ERR_LAYERCOUNT_NATURAL"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

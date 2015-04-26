@@ -15,6 +15,7 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -130,6 +130,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="src\App\Interpolator.cs" />
+    <Compile Include="src\App\LangConverter.cs" />
+    <Compile Include="src\App\LangProvider.cs" />
     <Compile Include="src\App\ProjectLoader.cs" />
     <Compile Include="src\Dialogs\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
@@ -325,7 +327,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)config\*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)config\*" "$(TargetDir)"
+md "$(TargetDir)\lang\"
+copy "$(ProjectDir)config\lang\*" "$(TargetDir)\lang\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

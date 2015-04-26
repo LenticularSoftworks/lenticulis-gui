@@ -26,6 +26,8 @@ namespace lenticulis_gui.src.Dialogs
         public ExportWindow()
         {
             InitializeComponent();
+
+            Title = LangProvider.getString("EXPORT_WINDOW_TITLE");
         }
 
         /// <summary>
@@ -83,14 +85,14 @@ namespace lenticulis_gui.src.Dialogs
             // export path must be filled
             if (ExportPathEdit.Text.Length == 0)
             {
-                MessageBox.Show("Vyplňte cestu, kam má program exportovat návrh", "Špatné parametry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("OUT_FILL_DIRECTORY"), LangProvider.getString("WRONG_OUTPUT_PARAMS"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             // if target directory does not exist, offer creating
             if (!Directory.Exists(@ExportPathEdit.Text))
             {
-                MessageBoxResult res = MessageBox.Show("Cílová složka neexistuje. Má být programem vytvořena?", "Složka neexistuje", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult res = MessageBox.Show(LangProvider.getString("OUT_DIRECTORY_MISSING_CREATE_CONFIRM"), LangProvider.getString("OUT_DIRECTORY_MISSING_TITLE"), MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (res == MessageBoxResult.No)
                     return;
@@ -99,14 +101,14 @@ namespace lenticulis_gui.src.Dialogs
             // export pattern must be filled
             if (ExportPatternEdit.Text.Length == 0)
             {
-                MessageBox.Show("Vyplňte vzor názvu výstupního souboru", "Špatné parametry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("OUT_FILL_PATTERN"), LangProvider.getString("WRONG_OUTPUT_PARAMS"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             // export pattern must contain %i sequence
             if (!ExportPatternEdit.Text.Contains("%i"))
             {
-                MessageBox.Show("Použijte ve vzoru zástupné znaky %i pro označení místa, které program nahradí číslem snímku", "Špatné parametry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("OUT_FILL_PATTERN_LAMBDA"), LangProvider.getString("WRONG_OUTPUT_PARAMS"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -124,7 +126,7 @@ namespace lenticulis_gui.src.Dialogs
             // quality must be between 1 and 100 including
             if (quality <= 0 || quality > 100)
             {
-                MessageBox.Show("Vyplňte kvalitu jako číslo od 1 do 100", "Špatné parametry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LangProvider.getString("OUT_FILL_QUALITY"), LangProvider.getString("WRONG_OUTPUT_PARAMS"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

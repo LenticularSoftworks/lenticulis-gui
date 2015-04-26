@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using lenticulis_gui.src.App;
 
 namespace lenticulis_gui.src.Dialogs
 {
@@ -25,12 +26,14 @@ namespace lenticulis_gui.src.Dialogs
         {
             InitializeComponent();
 
+            Title = LangProvider.getString("CHOOSE_LAYER_WINDOW_TITLE");
+
             ListBoxItem lbi;
 
             LayerListBox.Items.Clear();
 
             lbi = new ListBoxItem();
-            lbi.Content = "<všechny sloučené>";
+            lbi.Content = LangProvider.getString("ALL_LAYERS_MERGED");
             LayerListBox.Items.Add(lbi);
 
             foreach (String layer in layers)

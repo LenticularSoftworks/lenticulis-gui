@@ -89,7 +89,7 @@ namespace lenticulis_gui.src.Containers
             catch (Exception ex)
             {
                 // This should never happen - we don't throw exceptions there
-                System.Windows.MessageBox.Show("Byla vyvolána neočekávaná výjimka: "+ex.Message, "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(LangProvider.getString("IML_UNEXPECTED_ERROR") + ex.Message, LangProvider.getString("IMAGE_LOAD_ERROR"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 return null;
             }
 
@@ -100,16 +100,16 @@ namespace lenticulis_gui.src.Containers
                     switch (tmpId)
                     {
                         case ImageLoader.LOADER_ERROR_IMAGE_NOT_FOUND:
-                            System.Windows.MessageBox.Show("Obrázek nebyl nalezen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show(LangProvider.getString("IML_IMAGE_NOT_FOUND"), LangProvider.getString("IMAGE_LOAD_ERROR"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                             break;
                         case ImageLoader.LOADER_ERROR_IMAGE_CORRUPTED:
-                            System.Windows.MessageBox.Show("Soubor obrázku je pravděpodobně poškozen", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show(LangProvider.getString("IML_IMAGE_CORRUPTED"), LangProvider.getString("IMAGE_LOAD_ERROR"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                             break;
                         case ImageLoader.LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED:
-                            System.Windows.MessageBox.Show("Nepodporovaná barevná hloubka obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show(LangProvider.getString("IML_UNSUPPORTED_DEPTH"), LangProvider.getString("IMAGE_LOAD_ERROR"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                             break;
                         case ImageLoader.LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED:
-                            System.Windows.MessageBox.Show("Nepodporovaný formát obrázku", "Došlo k chybě", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show(LangProvider.getString("IML_UNSUPPORTED_FORMAT"), LangProvider.getString("IMAGE_LOAD_ERROR"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                             break;
                     }
                 }
