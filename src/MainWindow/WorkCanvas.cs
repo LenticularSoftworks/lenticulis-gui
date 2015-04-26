@@ -114,12 +114,13 @@ namespace lenticulis_gui
         {
             System.Windows.Controls.Image droppedImage = source as System.Windows.Controls.Image;
 
+            Transformation tr;
             LayerObject lo = GetLayerObjectByImage(droppedImage);
 
             if (imageID == lo.Column)
             {
                 // if there's some transformation present, preserve destination location by moving its vector
-                Transformation tr = lo.getTransformation(TransformType.Translation);
+                tr = lo.getTransformation(TransformType.Translation);
                 if (tr != null && lo.Length > 1)
                 {
                     tr.setVector(tr.TransformX - (x_image - lo.InitialX),
@@ -134,9 +135,11 @@ namespace lenticulis_gui
                 // use reciproc value to be able to eighter interpolate and extrapolate
                 float progress = 1.0f / ((float)(imageID - lo.Column) / (float)(lo.Length - 1));
 
-                float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, x_image) - lo.InitialX;
-                float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, y_image) - lo.InitialY;
-                lo.setTransformation(new Transformation(TransformType.Translation, transX, transY, 0));
+                float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, x_image) - lo.InitialX;
+                float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, y_image) - lo.InitialY;
+                tr = new Transformation(TransformType.Translation, transX, transY, 0);
+                tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
+                lo.setTransformation(tr);
             }
         }
 
@@ -215,17 +218,22 @@ namespace lenticulis_gui
             image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
 
             //transform
-            InterpolationType interType = InterpolationType.Linear;
+            Transformation trans;
             float progress = 0.0f;
 
             if (lo.Length > 1)
                 progress = (imageID - lo.Column) / (float)(lo.Length - 1);
 
-            float angle = Interpolator.interpolateLinearValue(interType, progress, lo.InitialAngle, lo.InitialAngle + lo.getTransformation(TransformType.Rotate).TransformAngle);
-            float positionX = Interpolator.interpolateLinearValue(interType, progress, lo.InitialX, lo.InitialX + lo.getTransformation(TransformType.Translation).TransformX);
-            float positionY = Interpolator.interpolateLinearValue(interType, progress, lo.InitialY, lo.InitialY + lo.getTransformation(TransformType.Translation).TransformY);
-            float scaleX = Interpolator.interpolateLinearValue(interType, progress, lo.InitialScaleX, lo.getTransformation(TransformType.Scale).TransformX);
-            float scaleY = Interpolator.interpolateLinearValue(interType, progress, lo.InitialScaleY, lo.getTransformation(TransformType.Scale).TransformY);
+            trans = lo.getTransformation(TransformType.Rotate);
+            float angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialAngle, lo.InitialAngle + trans.TransformAngle);
+
+            trans = lo.getTransformation(TransformType.Translation);
+            float positionX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
+            float positionY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialY, lo.InitialY + trans.TransformY);
+
+            trans = lo.getTransformation(TransformType.Scale);
+            float scaleX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleX, trans.TransformX);
+            float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, trans.TransformY);
 
             image.LayoutTransform = new RotateTransform(angle);
             image.LayoutTransform = new ScaleTransform(scaleX, scaleY);

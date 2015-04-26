@@ -400,7 +400,7 @@ namespace lenticulis_gui.src.App
                             vectorX = float.Parse(trel.GetAttribute("vector-x"));
                             vectorY = float.Parse(trel.GetAttribute("vector-y"));
                             break;
-                        case "rotation":
+                        case "rotate":
                             ttype = TransformType.Rotate;
                             angle = float.Parse(trel.GetAttribute("angle"));
                             break;
@@ -431,6 +431,9 @@ namespace lenticulis_gui.src.App
                     Transformation trans = new Transformation(ttype, vectorX, vectorY, angle);
                     trans.Interpolation = itype;
                     lobj.setTransformation(trans);
+
+                    // store interpolation type for specified type of transformation
+                    lobj.TransformInterpolationTypes[ttype] = itype;
                 }
             }
 

@@ -106,6 +106,8 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         private bool transformationChanged = false;
 
+        public Dictionary<TransformType, InterpolationType> TransformInterpolationTypes;
+
         /// <summary>
         /// Constructor - only sets ID of this object by generating a new one from static member,
         /// inits initial state of position, rotation and scale, and creates transformation dictionary
@@ -137,6 +139,7 @@ namespace lenticulis_gui.src.Containers
         private void initTransformationDict()
         {
             Transformations = new Dictionary<TransformType, Transformation>();
+            TransformInterpolationTypes = new Dictionary<TransformType, InterpolationType>();
 
             resetTransformations();
         }
@@ -167,6 +170,8 @@ namespace lenticulis_gui.src.Containers
                     Transformations.Add(tr, new Transformation(tr, 1.0f, 1.0f, 0));
                 else
                     Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
+
+                TransformInterpolationTypes[tr] = InterpolationType.Linear;
             }
         }
 
