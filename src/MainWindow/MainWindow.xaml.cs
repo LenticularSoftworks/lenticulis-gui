@@ -1263,5 +1263,15 @@ namespace lenticulis_gui
             System.Diagnostics.Process.Start("https://www.gnu.org/copyleft/gpl.html");
         }
 
+        /// <summary>
+        /// Clicked on close menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CloseProgram_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
     }
 }

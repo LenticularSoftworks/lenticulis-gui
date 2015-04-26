@@ -43,7 +43,8 @@ namespace lenticulis_gui
             this.dataObject.Visible = true;
 
             //Color
-            this.Background = Brushes.MediumTurquoise;
+            this.Background = new LinearGradientBrush(Color.FromRgb(0x1E, 0x90, 0xFF), Color.FromRgb(0x87, 0xCD, 0xFA), 90.0);
+            this.Margin = new Thickness(0, 0, 0, 1);
 
             //Add label
             string labelContent = this.Text;
@@ -53,6 +54,7 @@ namespace lenticulis_gui
             }
 
             System.Windows.Controls.Label label = new System.Windows.Controls.Label() { Content = labelContent };
+            label.Margin = new Thickness(8, 2, 0, 0);
             this.Children.Add(label);
 
             //Alignment
@@ -126,13 +128,13 @@ namespace lenticulis_gui
             rightResizePanel.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
             rightResizePanel.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
             rightResizePanel.Width = sizeChangePanelWidth;
-            rightResizePanel.Background = Brushes.DodgerBlue;
+            rightResizePanel.Background = Brushes.SteelBlue;
             rightResizePanel.Cursor = System.Windows.Input.Cursors.SizeWE;
 
             leftResizePanel.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             leftResizePanel.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
             leftResizePanel.Width = sizeChangePanelWidth;
-            leftResizePanel.Background = Brushes.DodgerBlue;
+            leftResizePanel.Background = Brushes.SteelBlue;
             leftResizePanel.Cursor = System.Windows.Input.Cursors.SizeWE;
 
             this.Children.Add(rightResizePanel);

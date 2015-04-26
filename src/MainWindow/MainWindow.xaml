@@ -5,7 +5,8 @@
         Title="Lenticulis" Height="600" Width="800"
         WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        SizeChanged="MetroWindow_SizeChanged">
+        SizeChanged="MetroWindow_SizeChanged"
+        BorderBrush="DodgerBlue">
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -32,10 +33,10 @@
                 <Menu>
                     <MenuItem Header="_Soubor">
                         <MenuItem Header="_Nový" Click="NewProjectButton_Click"/>
-                        <MenuItem Header="_Otevřít"/>
-                        <MenuItem Header="_Uložit"/>
+                        <MenuItem Header="_Otevřít" Click="ButtonLoad_Click" />
+                        <MenuItem Header="_Uložit" Click="ButtonSave_Click" />
                         <Separator/>
-                        <MenuItem Header="_Zavřít"/>
+                        <MenuItem Header="_Zavřít" Click="CloseProgram_Click"/>
                     </MenuItem>
                     <MenuItem Header="_Úpravy">
                     </MenuItem>
@@ -109,7 +110,7 @@
                     <ColumnDefinition Width="250"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Width="Auto" BorderThickness="1,1,0,0" BorderBrush="DodgerBlue">
+                <Border Width="Auto">
                     <Grid Name="CanvasPanel" Background="#FFECECEC" />
                 </Border>
 
@@ -117,7 +118,7 @@
                 <GridSplitter Width="3" ShowsPreview="True" VerticalAlignment="Stretch" Background="DodgerBlue" />
 
                 <!-- Browser begin -->
-                <Border Grid.Column="1" BorderThickness="0,1,0,0" BorderBrush="DodgerBlue">
+                <Border Grid.Column="1">
                     <Grid Width="Auto">
                         <TextBox Name="AddressBlock" Height="45" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True"/>
 
