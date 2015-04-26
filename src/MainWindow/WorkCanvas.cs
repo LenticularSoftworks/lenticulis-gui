@@ -33,6 +33,7 @@ namespace lenticulis_gui
         private bool topRight;
         private bool bottomLeft;
         private const int dragTolerance = 10;
+        private TransformType transform;
 
         private double canvasScaleCached = 1.0;
         public double CanvasScale
@@ -78,6 +79,11 @@ namespace lenticulis_gui
             y_image = (float)Canvas.GetTop(source);
             y_canvas = (float)e.GetPosition(this).Y;
 
+            if(MainWindow.SelectedTool == TransformType.Translation)
+            {
+                transform = TransformType.Translation;
+            }
+
             if (MainWindow.SelectedTool == TransformType.Rotate)
             {
                 System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
@@ -90,6 +96,8 @@ namespace lenticulis_gui
 
                 //get initial angle
                 initialAngle = (float)Math.Atan2(dy, dx);
+
+                transform = TransformType.Rotate;
             }
 
             if (MainWindow.SelectedTool == TransformType.Scale)
@@ -101,6 +109,8 @@ namespace lenticulis_gui
                 SetDragImagePosition(mouse, img.Width, img.Height);
 
                 centerPoint = GetScaleCenterPoint(img.Width, img.Height);
+
+                transform = TransformType.Scale;
             }
         }
 
@@ -130,20 +140,20 @@ namespace lenticulis_gui
         private void Image_MouseMoveTranslation(object sender, MouseEventArgs e)
         {
             UIElement source = sender as UIElement;
+            System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
 
             double x = e.GetPosition(this).X;
             double y = e.GetPosition(this).Y;
 
             x_image += (float)(x - x_canvas);
-
-            Canvas.SetLeft(source, x_image);
-
             x_canvas = (float)x;
             y_image += (float)(y - y_canvas);
-
-            Canvas.SetTop(source, y_image);
-
             y_canvas = (float)y;
+
+            img = SetTransformations(GetLayerObjectByImage(img), img, null, false);
+
+            Canvas.SetLeft(img, x_image);
+            Canvas.SetTop(img, y_image);
         }
 
         /// <summary>
@@ -164,7 +174,7 @@ namespace lenticulis_gui
 
             ScaleTransform transform = new ScaleTransform(scaleX, scaleY, centerPoint.X, centerPoint.Y);
 
-            img = SetTransformations(GetLayerObjectByImage(img), img, transform);
+            img = SetTransformations(GetLayerObjectByImage(img), img, transform, true);
 
             //set image coordinates
             x_image = (float)Canvas.GetLeft(img);
@@ -238,7 +248,7 @@ namespace lenticulis_gui
                 CenterY= imageCenterY,
             };
 
-            SetTransformations(GetLayerObjectByImage(img), img, rotateTransform);
+            SetTransformations(GetLayerObjectByImage(img), img, rotateTransform, true);
         } 
 
         /// <summary>
@@ -277,11 +287,20 @@ namespace lenticulis_gui
                                  tr.TransformY - (x_image - lo.InitialY));
                 }
 
-                lo.InitialX = y_image;
-                lo.InitialY = x_image;
-                lo.InitialAngle = alpha;
-                lo.InitialScaleX = (float)scaleX;
-                lo.InitialScaleY = (float)scaleY;
+                if (transform == TransformType.Translation)
+                {
+                    lo.InitialX = y_image;
+                    lo.InitialY = x_image;
+                }
+                if (transform == TransformType.Rotate)
+                {
+                    lo.InitialAngle = alpha;
+                }
+                if (transform == TransformType.Scale)
+                {
+                    lo.InitialScaleX = (float)scaleX;
+                    lo.InitialScaleY = (float)scaleY;
+                }
             }
             else
             {
@@ -381,9 +400,6 @@ namespace lenticulis_gui
         {
             System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
-            //transform
-            image = SetTransformations(lo, image, null);
-
             //source 
             image.Source = source;
 
@@ -391,6 +407,9 @@ namespace lenticulis_gui
             image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
             image.MouseMove += Image_MouseMove;
             image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
+
+            //transform
+            image = SetTransformations(lo, image, null, true);
 
             return image;
         }
@@ -402,7 +421,7 @@ namespace lenticulis_gui
         /// <param name="image"></param>
         /// <param name="addedTransform"></param>
         /// <returns></returns>
-        private System.Windows.Controls.Image SetTransformations(LayerObject lo, System.Windows.Controls.Image image, Transform addedTransform)
+        private System.Windows.Controls.Image SetTransformations(LayerObject lo, System.Windows.Controls.Image image, Transform addedTransform, bool setPosition)
         {
             Transformation trans;
             float progress = 0.0f;
@@ -446,8 +465,11 @@ namespace lenticulis_gui
 
             image.RenderTransform = transform;
 
-            Canvas.SetTop(image, positionX);
-            Canvas.SetLeft(image, positionY);
+            if (setPosition)
+            {
+                Canvas.SetTop(image, positionX);
+                Canvas.SetLeft(image, positionY);
+            }
 
             return image;
         }
