@@ -3,14 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.IO;
 using lenticulis_gui.src.Containers;
 
 namespace lenticulis_gui.src.App
 {
     public static class ProjectSaver
     {
+        /// <summary>
+        /// Delta for comparing floating point values
+        /// </summary>
         private const float FLOAT_DELTA = 0.00001f;
+
+        /// <summary>
+        /// Flag (simple lock) for saving being in progress
+        /// </summary>
         private static bool SavingInProgress = false;
+
+        /// <summary>
+        /// Filename to be used
+        /// </summary>
+        private static Uri SavingFilePath;
 
         /// <summary>
         /// Save project using previously stored project file name (the project was saved in the past)
@@ -29,6 +42,7 @@ namespace lenticulis_gui.src.App
         {
             if (SavingInProgress)
                 return;
+            SavingFilePath = new Uri(filename);
 
             SavingInProgress = true;
 
@@ -118,7 +132,17 @@ namespace lenticulis_gui.src.App
                         ImageHolder ih = Storage.Instance.getImageHolder(obj.ResourceId);
                         if (ih == null)
                             continue;
-                        writeResource(xw, ih.id.ToString(), "image", ih.fileName, ih.psdLayerIndex);
+
+                        String pathToUse = ih.fileName;
+
+                        Uri dir = new Uri(SavingFilePath, ".");
+                        Uri target = new Uri(ih.fileName);
+                        String relPath = Utils.getRelativePath(target.AbsolutePath, dir.AbsolutePath);
+                        // use relative path only when containing less than 3 "folder ups"
+                        if (relPath != null && relPath.Split(new String[] { ".." }, StringSplitOptions.RemoveEmptyEntries).Length < 3)
+                            pathToUse = relPath;
+
+                        writeResource(xw, ih.id.ToString(), "image", relPath, ih.psdLayerIndex);
                     }
                 }
             }

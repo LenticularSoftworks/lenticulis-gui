@@ -12,8 +12,20 @@ namespace lenticulis_gui.src.App
 {
     public class ProjectLoader
     {
+        /// <summary>
+        /// Remapping dictionary (resources numbering may change during load)
+        /// </summary>
         private static Dictionary<int, int> resourceRemap;
+
+        /// <summary>
+        /// maps object id to resource ids
+        /// </summary>
         private static Dictionary<int, int> objectResourceMap;
+
+        /// <summary>
+        /// Loaded file URI
+        /// </summary>
+        private static Uri LoadFilePath;
 
         /// <summary>
         /// Loads project from specified location
@@ -34,6 +46,8 @@ namespace lenticulis_gui.src.App
                 MessageBox.Show("Soubor nebylo možné načíst. Zkontrolujte, zdali je dostupný, a zdali máte práva na jeho přečtení.", "Chyba při načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
+            LoadFilePath = new Uri(filename);
 
             // try to parse document
             XmlDocument doc = new XmlDocument();
@@ -205,6 +219,15 @@ namespace lenticulis_gui.src.App
                     {
                         MessageBox.Show("Nepodporovaný typ zdroje pro soubor: " + path + " (" + type + ") - projekt byl nejspíše uložen ve vyšší verzi programu", "Nepodporovaný zdroj", MessageBoxButton.OK, MessageBoxImage.Error);
                         continue;
+                    }
+
+                    // if the file does not exist, try to resolve relative path
+                    if (!File.Exists(path))
+                    {
+                        Uri baseDir = new Uri(LoadFilePath, ".");
+                        String absPath = Path.Combine(baseDir.AbsolutePath, path);
+
+                        path = Path.GetFullPath((new Uri(absPath)).LocalPath);
                     }
 
                     // load image

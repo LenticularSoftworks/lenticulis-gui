@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace lenticulis_gui.src.App
 {
@@ -124,6 +125,22 @@ namespace lenticulis_gui.src.App
                     return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Deducts relative path to given folder
+        /// </summary>
+        /// <param name="filePath">absolute path to file</param>
+        /// <param name="folderFromPath">absolute path to folder, source of searching</param>
+        /// <returns>relative path from folder to file</returns>
+        public static String getRelativePath(String filePath, String folderFromPath)
+        {
+            Uri pathUri = new Uri(filePath);
+            // Folders must end in a slash
+            if (!folderFromPath.EndsWith(Path.DirectorySeparatorChar.ToString()) && !folderFromPath.EndsWith("/"))
+                folderFromPath += Path.DirectorySeparatorChar;
+            Uri folderUri = new Uri(folderFromPath);
+            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
     }
 }
