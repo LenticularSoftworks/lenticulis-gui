@@ -35,8 +35,8 @@
         <Label Content="{app:LangConverter str=PROP_MISCELLANOUS}" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="{app:LangConverter str=PROP_FRAME_COUNT}" HorizontalAlignment="Left" Margin="11,173,0,0" VerticalAlignment="Top"/>
         <Label Content="{app:LangConverter str=PROP_LAYER_COUNT}" HorizontalAlignment="Left" Margin="11,197,0,0" VerticalAlignment="Top"/>
-        <Controls:NumericUpDown Name="PropertiesImages" Value="1" Minimum="1" HorizontalAlignment="Left" Height="22" Margin="93,174,0,0" VerticalAlignment="Top" Width="34"/>
-        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" HorizontalAlignment="Left" Height="22" Margin="93,201,0,0" VerticalAlignment="Top" Width="34"/>
+        <Controls:NumericUpDown Name="PropertiesImages" Value="1" Minimum="1" Maximum="100" HorizontalAlignment="Left" Height="22" Margin="93,174,0,0" VerticalAlignment="Top" Width="34"/>
+        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" Maximum="30" HorizontalAlignment="Left" Height="22" Margin="93,201,0,0" VerticalAlignment="Top" Width="34"/>
 
         <Button Name="CancelButton" Content="{app:LangConverter str=CANCEL}" HorizontalAlignment="Left" Margin="198,235,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click" RenderTransformOrigin="0.433,0.525"/>
         <Button Name="OKButton" Content="{app:LangConverter str=OK}" HorizontalAlignment="Left" Margin="118,235,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
