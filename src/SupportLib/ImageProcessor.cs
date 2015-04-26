@@ -43,6 +43,9 @@ namespace lenticulis_gui.src.SupportLib
                     if (current == null)
                         continue;
 
+                    if (!current.Visible)
+                        continue;
+
                     SupportLib.loadImage(current.ResourceId);
 
                     resource = Storage.Instance.getImageHolder(current.ResourceId);
