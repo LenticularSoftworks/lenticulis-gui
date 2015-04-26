@@ -37,9 +37,13 @@
                         <MenuItem Header="{app:LangConverter str=OPEN_FILE}" Click="ButtonLoad_Click" />
                         <MenuItem Header="{app:LangConverter str=SAVE_FILE}" Click="ButtonSave_Click" />
                         <Separator/>
+                        <MenuItem Header="{app:LangConverter str=EXPORT}" Click="ExportButton_Clicked" />
+                        <Separator/>
                         <MenuItem Header="{app:LangConverter str=CLOSE_APP}" Click="CloseProgram_Click"/>
                     </MenuItem>
                     <MenuItem Header="{app:LangConverter str=EDIT}">
+                        <MenuItem Header="{app:LangConverter str=UNDO}" Click="UndoButton_Click"/>
+                        <MenuItem Header="{app:LangConverter str=REDO}" Click="RedoButton_Click"/>
                     </MenuItem>
                     <MenuItem Header="{app:LangConverter str=ABOUT}">
                         <MenuItem Header="{app:LangConverter str=GITHUBPAGE}" Click="OpenGithub_Click" />
@@ -66,10 +70,10 @@
                         <Image Source="/lenticulis-gui;component/res/icon/Folder.ico" />
                     </Button>
                     <Separator />
-                    <Button ToolTip="{app:LangConverter str=UNDO}">
+                    <Button ToolTip="{app:LangConverter str=UNDO}" Click="UndoButton_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Undo.ico" />
                     </Button>
-                    <Button ToolTip="{app:LangConverter str=REDO}">
+                    <Button ToolTip="{app:LangConverter str=REDO}" Click="RedoButton_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Redo.ico" />
                     </Button>
                     <Separator />

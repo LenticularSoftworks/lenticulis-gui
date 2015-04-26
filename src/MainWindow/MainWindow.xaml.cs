@@ -1303,5 +1303,25 @@ namespace lenticulis_gui
             Close();
         }
 
+        /// <summary>
+        /// Clicked "Undo" button (menu item or toolbar)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            //
+        }
+
+        /// <summary>
+        /// Clicked "Redo" button (menu item or toolbar)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RedoButton_Click(object sender, RoutedEventArgs e)
+        {
+            //
+        }
+
     }
 }
