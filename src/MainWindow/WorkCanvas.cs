@@ -264,7 +264,7 @@ namespace lenticulis_gui
         {
             System.Windows.Controls.Image droppedImage = source as System.Windows.Controls.Image;
 
-            Transformation tr;
+            Transformation tr = null;
             LayerObject lo = GetLayerObjectByImage(droppedImage);
 
             if (imageID == lo.Column)
@@ -288,11 +288,29 @@ namespace lenticulis_gui
                 // use reciproc value to be able to eighter interpolate and extrapolate
                 float progress = 1.0f / ((float)(imageID - lo.Column) / (float)(lo.Length - 1));
 
-                float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, y_image) - lo.InitialX;
-                float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, x_image) - lo.InitialY;
-                tr = new Transformation(TransformType.Translation, transX, transY, 0);
-                tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
-                lo.setTransformation(tr);
+                switch (MainWindow.SelectedTool)
+                {
+                    case TransformType.Translation:
+                        float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, y_image) - lo.InitialX;
+                        float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, x_image) - lo.InitialY;
+                        tr = new Transformation(TransformType.Translation, transX, transY, 0);
+                        break;
+                    case TransformType.Rotate:
+                        float angle = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Rotate], progress, lo.InitialAngle, alpha) - lo.InitialAngle;
+                        tr = new Transformation(TransformType.Rotate, 0, 0, angle);
+                        break;
+                    case TransformType.Scale:
+                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX) - lo.InitialScaleX;
+                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY) - lo.InitialScaleY;
+                        tr = new Transformation(TransformType.Scale, scX, scY, 0);
+                        break;
+                }
+
+                if (tr != null)
+                {
+                    tr.Interpolation = lo.TransformInterpolationTypes[MainWindow.SelectedTool];
+                    lo.setTransformation(tr);
+                }
             }
         }
 
