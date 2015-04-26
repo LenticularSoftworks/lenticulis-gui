@@ -36,11 +36,14 @@ namespace lenticulis_gui.src.Dialogs
             lbi.Content = LangProvider.getString("ALL_LAYERS_MERGED");
             LayerListBox.Items.Add(lbi);
 
-            foreach (String layer in layers)
+            if (layers != null)
             {
-                lbi = new ListBoxItem();
-                lbi.Content = layer;
-                LayerListBox.Items.Add(lbi);
+                foreach (String layer in layers)
+                {
+                    lbi = new ListBoxItem();
+                    lbi.Content = layer;
+                    LayerListBox.Items.Add(lbi);
+                }
             }
         }
 
