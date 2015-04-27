@@ -1,0 +1,160 @@
+﻿/en;English
+
+## Obecné
+YES=Yes
+NO=No
+OK=OK
+CANCEL=Cancel
+CHOOSE=Choose
+LENTICULIS_PROJECT_FILE=Lenticulis project
+UNSAVED_WORK=Unsaved work
+UNSAVED_WORK_CONFIRM_SAVE=Another project is opened at this time. Should the program save your work?
+
+# Načítání projektu
+PROJECT_LOAD_ERROR=Error when loading project
+PLE_FILE_NOT_FOUND=The file could not be loaded. Ensure that the file really does exist, and you have sufficient rights.
+PLE_FILE_FORMAT=The file could not be loaded. File format does not correspond to a valid Lenticulis project file format.
+PLE_FILE_ERRORS=The file contains errors, and could not be loaded.
+PLE_UNSUPPORTED_TYPE=Unsupported resource type for resource: {0} ({1}) - the project was probably saved in newer version of application.
+PLE_RESOURCE_NOT_FOUND=The image could not be found in following location: 
+
+# Načítání obrázků
+IMAGE_LOAD_ERROR=Error when loading image
+IML_UNEXPECTED_ERROR=An unexpected exception was thrown: 
+IML_IMAGE_NOT_FOUND=The image could not be found.
+IML_IMAGE_CORRUPTED=Image file is probably corrupted.
+IML_UNSUPPORTED_DEPTH=Unsupported color depth in requested image.
+IML_UNSUPPORTED_FORMAT=Unsupported image format.
+
+## Menu aplikace
+# Soubor
+FILE=File
+NEW_FILE=_New
+OPEN_FILE=_Open
+SAVE_FILE=_Save
+CLOSE_APP=_Close
+# Úpravy
+EDIT=_Edit
+CHOOSELANG=Program language
+# O projektu
+ABOUT=About
+GITHUBPAGE=GitHub.com
+TUTORIALS=Tutorials
+VIDEOTUTS=Videotutorial
+USER_MANUAL=User manual
+LICENCE=Licence (GPLv3)
+ABOUT_REAL=About
+
+## Toolbox
+UNDO=Undo
+REDO=Redo
+ZOOMIN=Zoom in
+ZOOMOUT=Zoom out
+EXPORT=Export
+CANVAS_SINGLE=Single view
+CANVAS_DOUBLE=Dual view
+TR_TRANSLATE=Move
+TR_ROTATE=Rotate
+TR_SCALE=Scale
+
+## Browser
+TAB_COMPUTER=My Computer
+TAB_RECENTLY_USED=Recently used
+MY_COMPUTER=My Computer
+COULD_NOT_OPEN=Could not be opened
+UNSUPPORTED_TYPE=Unsupported format
+UNSUPPORTED_TYPE_MSG=This format could not be load into project
+
+## Timeline
+ADD_LAYER=Add layer
+DEL_LAYER=Remove layer
+DEL_LAYER_CONFIRM_TITLE=Remove layer
+DEL_LAYER_CONFIRM_TEXT=The layer contains images. Should it be removed anyway?
+NO_PROJECT=No project
+NO_PROJECT_MSG=No project has been created or loaded. Please, create one, or load an existing one before working with images.
+
+## O projektu
+ABOUT_WINDOW_TITLE=About project
+VERSION_TXT=Version
+ABOUT_PRODUCT_TXT=Project Lenticulis was created as semestral work within subject KIV/ZSWI. The team consisted of three computer science students, and two informatics students.
+ABOUT_LICENCE_TXT=Application and support library are distributed under GNU GPLv3 licence. Source code is available at:
+TEAM_MEMBERS_TITLE=Team members
+TEAM_LEADER=team leader
+TEAM_DEVELOPER=developer
+TEAM_DOCUMENTATION=documentation
+TEAM_TESTING=testing
+
+## Export
+EXPORT_WINDOW_TITLE=Export
+OUTPUT_DIR=Output directory
+NAME_PATTERN=File name pattern (%i as substitute)
+OUTPUT_FORMAT=Output format
+OUTPUT_QUALITY=Output quality
+WRONG_OUTPUT_PARAMS=Wrong parameters
+OUT_FILL_DIRECTORY=Fill in the path, where images should be exported
+OUT_DIRECTORY_MISSING_CREATE_CONFIRM=The destination directory does not exist. Should the application create it?
+OUT_DIRECTORY_MISSING_TITLE=Directory does not exist
+OUT_FILL_PATTERN=Fill in the file name pattern
+OUT_FILL_PATTERN_LAMBDA=Use the substitute characters %i, to mark place, where the application should place the key frame number
+OUT_FILL_QUALITY=Fill in quality, as integer from 1 to 100
+
+## Výběr vrstvy
+CHOOSE_LAYER_WINDOW_TITLE=Layer choosing
+CHOOSE_LAYER_TXT=Choose the layer to be loaded:
+ALL_LAYERS_MERGED=<all merged>
+
+## Načítací dialog
+LD_LOADING_PROJECT_TITLE=Loading project
+LD_LOADING_IMAGE_TITLE=Loading image
+LD_LOADING_EXPORT_TITLE=Exporting
+LD_LOADING_GENERAL_TITLE=Operation
+LD_LOADING_PROJECT_TXT=Project is loading
+LD_LOADING_IMAGE_TXT=Image is loading
+LD_LOADING_EXPORT_TXT=Exporting
+LD_LOADING_GENERAL_TXT=Operation
+
+## Nový projekt / parametry
+PROPERTIES_WINDOW_TITLE=Project properties
+PROP_PROJECT_NAME=Project name
+PROP_DEFAULT_PROJECT_NAME=My project
+PROP_CANVAS_SIZE=Image size
+PROP_SIZE_WIDTH=Width:
+PROP_SIZE_HEIGHT=Height:
+PROP_MISCELLANOUS=Miscellaneous
+PROP_FRAME_COUNT=Frame count:
+PROP_LAYER_COUNT=Layer count:
+PROP_CREATE_ERROR_TITLE=Error when creating project
+PROP_ERR_NAME=Fill in your project name
+PROP_ERR_BOTHVALUES=Fill in both image dimensions
+PROP_ERR_FRAME_COUNT=Fill in frame count
+PROP_ERR_LAYER_COUNT=Fill in layer count
+PROP_ERR_HEIGHT_NEGATIVE=Height has to be positive number
+PROP_ERR_WIDTH_NEGATIVE=Width has to be positive number
+PROP_ERR_FRAMECOUNT_NATURAL=Frame count must be natural number
+PROP_ERR_LAYERCOUNT_NATURAL=Layer count must be natural number
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
