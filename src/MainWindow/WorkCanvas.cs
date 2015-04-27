@@ -295,6 +295,16 @@ namespace lenticulis_gui
                     if (tr != null && lo.Length > 1)
                         tr.setAngle(tr.TransformAngle - (alpha - lo.InitialAngle));
                 }
+                else if (MainWindow.SelectedTool == TransformType.Scale)
+                {
+                    tr = lo.getTransformation(TransformType.Scale);
+                    // apply back logic only when any scale transformation was set
+                    if (tr != null && lo.Length > 1 && (Math.Abs(tr.TransformX) > 0.001 || Math.Abs(tr.TransformY) > 0.001) )
+                    {
+                        tr.setVector(tr.TransformX - ((float)scaleX - lo.InitialScaleX),
+                                     tr.TransformY - ((float)scaleY - lo.InitialScaleY));
+                    }
+                }
 
                 if (transform == TransformType.Translation)
                 {
@@ -328,8 +338,8 @@ namespace lenticulis_gui
                         tr = new Transformation(TransformType.Rotate, 0, 0, angle);
                         break;
                     case TransformType.Scale:
-                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX);
-                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY);
+                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX) - lo.InitialScaleX;
+                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY) - lo.InitialScaleY;
                         tr = new Transformation(TransformType.Scale, scX, scY, 0);
                         break;
                 }
@@ -446,8 +456,8 @@ namespace lenticulis_gui
             float positionY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialY, lo.InitialY + trans.TransformY);
 
             trans = lo.getTransformation(TransformType.Scale);
-            float scaleX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleX, trans.TransformX);
-            float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, trans.TransformY);
+            float scaleX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleX, lo.InitialScaleX + trans.TransformX);
+            float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, lo.InitialScaleY + trans.TransformY);
 
             TransformGroup transform = new TransformGroup();
             ImageHolder holder = Storage.Instance.getImageHolder(lo.ResourceId);

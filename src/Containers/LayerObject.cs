@@ -166,11 +166,7 @@ namespace lenticulis_gui.src.Containers
             var values = Enum.GetValues(typeof(TransformType));
             foreach (TransformType tr in values)
             {
-                if (tr == TransformType.Scale)
-                    Transformations.Add(tr, new Transformation(tr, 1.0f, 1.0f, 0));
-                else
-                    Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
-
+                Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
                 TransformInterpolationTypes[tr] = InterpolationType.Linear;
             }
         }
