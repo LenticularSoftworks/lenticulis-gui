@@ -44,6 +44,8 @@
                     <MenuItem Header="{app:LangConverter str=EDIT}">
                         <MenuItem Header="{app:LangConverter str=UNDO}" Click="UndoButton_Click"/>
                         <MenuItem Header="{app:LangConverter str=REDO}" Click="RedoButton_Click"/>
+                        <Separator/>
+                        <MenuItem Name="LangChooserItem" Header="{app:LangConverter str=CHOOSELANG}"/>
                     </MenuItem>
                     <MenuItem Header="{app:LangConverter str=ABOUT}">
                         <MenuItem Header="{app:LangConverter str=GITHUBPAGE}" Click="OpenGithub_Click" />

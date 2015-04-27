@@ -55,6 +55,26 @@ namespace lenticulis_gui
 
             GetDrives();
 
+            // Get available languages
+            Dictionary<String, String> availableLangs = LangProvider.GetAvailableLangs();
+            // and fetch them to menu items as available options
+            LangChooserItem.Items.Clear();
+            foreach (KeyValuePair<String, String> kvp in availableLangs)
+            {
+                // create new menu item
+                MenuItem mi = new MenuItem();
+                mi.Header = kvp.Value;
+                // assign click event to change all we want
+                mi.Click += new RoutedEventHandler(delegate(object o, RoutedEventArgs args)
+                {
+                    // change language
+                    LangProvider.UseLanguage(kvp.Key);
+                    // and update all bindings
+                    LangDataSource.UpdateDataSources();
+                });
+                LangChooserItem.Items.Add(mi);
+            }
+
             timelineList = new List<TimelineItem>();
         }
 
