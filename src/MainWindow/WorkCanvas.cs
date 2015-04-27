@@ -280,11 +280,20 @@ namespace lenticulis_gui
             if (imageID == lo.Column)
             {
                 // if there's some transformation present, preserve destination location by moving its vector
-                tr = lo.getTransformation(TransformType.Translation);
-                if (tr != null && lo.Length > 1)
+                if (MainWindow.SelectedTool == TransformType.Translation)
                 {
-                    tr.setVector(tr.TransformX - (y_image - lo.InitialX),
-                                 tr.TransformY - (x_image - lo.InitialY));
+                    tr = lo.getTransformation(TransformType.Translation);
+                    if (tr != null && lo.Length > 1)
+                    {
+                        tr.setVector(tr.TransformX - (y_image - lo.InitialX),
+                                     tr.TransformY - (x_image - lo.InitialY));
+                    }
+                }
+                else if (MainWindow.SelectedTool == TransformType.Rotate)
+                {
+                    tr = lo.getTransformation(TransformType.Rotate);
+                    if (tr != null && lo.Length > 1)
+                        tr.setAngle(tr.TransformAngle - (alpha - lo.InitialAngle));
                 }
 
                 if (transform == TransformType.Translation)
