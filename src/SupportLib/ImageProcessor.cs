@@ -64,8 +64,8 @@ namespace lenticulis_gui.src.SupportLib
                         trans = current.getTransformation(TransformType.Scale);
                         if (trans != null)
                         {
-                            tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, trans.TransformX));
-                            tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, trans.TransformY));
+                            tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
+                            tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
                             SupportLib.resizeImage(tmp_x, tmp_y);
                         }
 
