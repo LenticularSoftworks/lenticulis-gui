@@ -146,6 +146,9 @@ namespace lenticulis_gui
 
             System.Windows.Point mouse = mouse = Mouse.GetPosition(this);
 
+            FrameworkElement element = sender as FrameworkElement;
+            Rect bounds = element.TransformToVisual(this).TransformBounds(new Rect(element.RenderSize));
+
             //center point of scale - bounding box center
             double centerX = img.RenderSize.Width / 2.0;
             double centerY = img.RenderSize.Height / 2.0;
@@ -204,10 +207,23 @@ namespace lenticulis_gui
         {
             Mouse.Capture(null);
 
-            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+            FrameworkElement element = sender as FrameworkElement;
+            Rect bounds = element.TransformToVisual(this).TransformBounds(new Rect(element.RenderSize));
 
-            x_image = (float)Canvas.GetLeft(img);
-            y_image = (float)Canvas.GetTop(img);
+            if (MainWindow.SelectedTool == TransformType.Scale)
+            {
+                x_image = (float)bounds.Left;
+                y_image = (float)bounds.Top;
+            }
+            else
+            {
+                System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+
+                x_image = (float)Canvas.GetLeft(img);
+                y_image = (float)Canvas.GetTop(img);
+            }
+
+            SetLayerObjectProperties(sender as UIElement);
 
             alpha = 0;
             scaleX = 1.0;
@@ -572,7 +588,8 @@ namespace lenticulis_gui
         /// <param name="mouse"></param>
         /// <param name="imageWidth"></param>
         /// <param name="imageHeight"></param>
-        private void SetDragImagePosition(System.Windows.Point mouse, double imageWidth, double imageHeight){
+        private void SetDragImagePosition(System.Windows.Point mouse, double imageWidth, double imageHeight)
+        {
             double centerX = imageWidth / 2.0;
             double centerY = imageHeight / 2.0;
 
@@ -583,4 +600,3 @@ namespace lenticulis_gui
         }
     }
 }
-
