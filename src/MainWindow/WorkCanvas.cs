@@ -205,10 +205,9 @@ namespace lenticulis_gui
             Mouse.Capture(null);
 
             System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+
             x_image = (float)Canvas.GetLeft(img);
             y_image = (float)Canvas.GetTop(img);
-
-            SetLayerObjectProperties((UIElement)sender);
 
             alpha = 0;
             scaleX = 1.0;
