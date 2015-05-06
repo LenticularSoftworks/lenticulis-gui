@@ -28,6 +28,7 @@ namespace lenticulis_gui
         private bool captured = false;
         private float x_image, x_canvas, y_image, y_canvas, initialAngle, alpha = 0;
         private double scaleX = 1.0, scaleY = 1.0;
+        private double scaleStartX, scaleStartY;
         private UIElement capturedElement = null;
 
         private double canvasScaleCached = 1.0;
@@ -75,7 +76,18 @@ namespace lenticulis_gui
             y_image = (float)Canvas.GetTop(source);
             y_canvas = (float)e.GetPosition(this).Y;
 
-            if (MainWindow.SelectedTool == TransformType.Rotate)
+            LayerObject obj = GetLayerObjectByImage(source as System.Windows.Controls.Image);
+            float progress = 0.0f;
+            // if the image is longer than 1 frame, and column is not the initial one, set proper progress
+            if (obj.Length > 1 && imageID != obj.Column)
+                progress = 1.0f / ((float)(imageID - obj.Column) / (float)(obj.Length - 1));
+
+            if (MainWindow.SelectedTool == TransformType.Scale)
+            {
+                scaleStartX = Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Scale], progress, obj.InitialScaleX, obj.InitialScaleX + obj.getTransformation(TransformType.Scale).TransformX);
+                scaleStartY = Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Scale], progress, obj.InitialScaleY, obj.InitialScaleY + obj.getTransformation(TransformType.Scale).TransformY);
+            }
+            else if (MainWindow.SelectedTool == TransformType.Rotate)
             {
                 System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
 
@@ -145,8 +157,8 @@ namespace lenticulis_gui
             System.Windows.Point mouse = mouse = Mouse.GetPosition(this);
 
             //scale
-            scaleX = (mouse.X - x_image) / (x_canvas - x_image);
-            scaleY = (mouse.Y - y_image) / (y_canvas - y_image);
+            scaleX = scaleStartX * (mouse.X - x_image) / (x_canvas - x_image);
+            scaleY = scaleStartY * (mouse.Y - y_image) / (y_canvas - y_image);
 
             if (scaleX < 0.0 || scaleY < 0.0)
                 return;
