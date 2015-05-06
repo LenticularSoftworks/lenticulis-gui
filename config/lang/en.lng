@@ -29,10 +29,10 @@ IML_UNSUPPORTED_FORMAT=Unsupported image format.
 ## Menu aplikace
 # Soubor
 FILE=File
-NEW_FILE=_New
-OPEN_FILE=_Open
-SAVE_FILE=_Save
-CLOSE_APP=_Close
+NEW_FILE=New
+OPEN_FILE=Open
+SAVE_FILE=Save
+CLOSE_APP=Close
 # Úpravy
 EDIT=_Edit
 CHOOSELANG=Program language
@@ -72,6 +72,8 @@ DEL_LAYER_CONFIRM_TITLE=Remove layer
 DEL_LAYER_CONFIRM_TEXT=The layer contains images. Should it be removed anyway?
 NO_PROJECT=No project
 NO_PROJECT_MSG=No project has been created or loaded. Please, create one, or load an existing one before working with images.
+ITEM_OVERLAPS_MSG=In this position is another image. Place actual image to another position.
+ITEM_OVERLAPS=Image can not be placed at this position.
 
 ## O projektu
 ABOUT_WINDOW_TITLE=About project
@@ -132,6 +134,8 @@ PROP_ERR_HEIGHT_NEGATIVE=Height has to be positive number
 PROP_ERR_WIDTH_NEGATIVE=Width has to be positive number
 PROP_ERR_FRAMECOUNT_NATURAL=Frame count must be natural number
 PROP_ERR_LAYERCOUNT_NATURAL=Layer count must be natural number
+NEW_PROJECT_CONFIRM_TEXT=Do you want to save existing project?
+NEW_PROJECT_CONFIRM_TITLE=Unsaved project
 
 
 

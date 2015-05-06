@@ -28,6 +28,7 @@ namespace lenticulis_gui
         private bool captured = false;
         private float x_image, x_canvas, y_image, y_canvas, initialAngle, alpha = 0;
         private double scaleX = 1.0, scaleY = 1.0;
+        private UIElement capturedElement = null;
 
         private double canvasScaleCached = 1.0;
         public double CanvasScale
@@ -66,6 +67,7 @@ namespace lenticulis_gui
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             UIElement source = sender as UIElement;
+            capturedElement = source;
             Mouse.Capture(source);
             captured = true;
             x_image = (float)Canvas.GetLeft(source);
@@ -95,6 +97,8 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Image_MouseMove(object sender, MouseEventArgs e)
         {
+            sender = capturedElement;
+
             if (captured)
             {
                 switch (MainWindow.SelectedTool)
@@ -113,8 +117,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Image_MouseMoveTranslation(object sender, MouseEventArgs e)
         {
-            UIElement source = sender as UIElement;
-            System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
+            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
 
             double x = e.GetPosition(this).X;
             double y = e.GetPosition(this).Y;
@@ -155,11 +158,10 @@ namespace lenticulis_gui
         /// <summary>
         /// Rotate mouse move
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="source"></param>
         /// <param name="e"></param>
-        private void Image_MouseMoveRotate(object sender, MouseEventArgs e)
+        private void Image_MouseMoveRotate(object source, MouseEventArgs e)
         {
-            UIElement source = sender as UIElement;
             System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
 
             float imageCenterX = (float)img.RenderSize.Width / 2.0f;
@@ -197,19 +199,18 @@ namespace lenticulis_gui
         {
             Mouse.Capture(null);
 
-            FrameworkElement element = sender as FrameworkElement;
-
-            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+            System.Windows.Controls.Image img = capturedElement as System.Windows.Controls.Image;
 
             x_image = (float)Canvas.GetLeft(img);
             y_image = (float)Canvas.GetTop(img);
 
-            SetLayerObjectProperties(sender as UIElement);
+            SetLayerObjectProperties(capturedElement);
 
             alpha = 0;
             scaleX = 1.0;
             scaleY = 1.0;
             captured = false;
+            capturedElement = null;
         }
 
         /// <summary>

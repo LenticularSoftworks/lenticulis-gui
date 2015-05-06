@@ -74,8 +74,6 @@ namespace lenticulis_gui
                 });
                 LangChooserItem.Items.Add(mi);
             }
-
-            timelineList = new List<TimelineItem>();
         }
 
         /// <summary>
@@ -88,6 +86,7 @@ namespace lenticulis_gui
             SetImageCount(imageCount);
             AddTimelineHeader();
             AddTimelineLayer(layerCount);
+            timelineList = new List<TimelineItem>();
 
             canvasList = new List<WorkCanvas>();
             SetWorkCanvasList();
@@ -336,6 +335,7 @@ namespace lenticulis_gui
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, LangProvider.getString("COULD_NOT_OPEN"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                    GetDrives();
                 }
             }
             else if (browserItem.Dir && browserItem.Path == "root")
@@ -643,17 +643,12 @@ namespace lenticulis_gui
         /// </summary>
         public void ClearTimeline()
         {
-            TimelineItem[] toDelete = timelineList.ToArray();
-
-            // Remove each timeline item
-            for (int i = 0; i < toDelete.Length; i++)
-                RemoveTimelineItem(toDelete[i]);
-
-            // Remove all rows except the first one
-            for (int i = Timeline.RowDefinitions.Count - 1; i > 0; i--)
-                Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[i]);
+            Timeline.RowDefinitions.Clear();
+            Timeline.ColumnDefinitions.Clear();
+            TimelineHeader.ColumnDefinitions.Clear();
 
             ProjectHolder.layers.Clear();
+            ProjectHolder.LayerCount = 0;
         }
 
         /// <summary>
@@ -925,6 +920,10 @@ namespace lenticulis_gui
                     AddTimelineItem(newItem);
                 }
             }
+            else
+            {
+                MessageBox.Show(LangProvider.getString("ITEM_OVERLAPS_MSG"), LangProvider.getString("ITEM_OVERLAPS"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         /// <summary>
@@ -1156,6 +1155,17 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void NewProjectButton_Click(object sender, RoutedEventArgs e)
         {
+            if (ProjectHolder.ValidProject)
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show(LangProvider.getString("NEW_PROJECT_CONFIRM_TEXT"), LangProvider.getString("NEW_PROJECT_CONFIRM_TITLE"), MessageBoxButton.YesNo);
+
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    SaveRoutine();
+                    return;
+                }
+            }
+
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();
         }

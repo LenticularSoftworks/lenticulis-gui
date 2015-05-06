@@ -29,12 +29,12 @@ IML_UNSUPPORTED_FORMAT=Nepodporovaný formát obrázku
 ## Menu aplikace
 # Soubor
 FILE=Soubor
-NEW_FILE=_Nový
-OPEN_FILE=_Otevřít
-SAVE_FILE=_Uložit
-CLOSE_APP=_Zavřít
+NEW_FILE=Nový
+OPEN_FILE=Otevřít
+SAVE_FILE=Uložit
+CLOSE_APP=Zavřít
 # Úpravy
-EDIT=Ú_pravy
+EDIT=Úpravy
 CHOOSELANG=Jazyk prostředí
 # O projektu
 ABOUT=O projektu
@@ -72,6 +72,8 @@ DEL_LAYER_CONFIRM_TITLE=Odebrat vrstvu
 DEL_LAYER_CONFIRM_TEXT=Ve vrstvě se nachází obrázky. Doopravdy chcete vrstvu smazat?
 NO_PROJECT=Není projekt
 NO_PROJECT_MSG=Nebyl vytvořen ani načten žádný projekt. Založte nebo načtěte projekt před přetahováním obrázků na časovou osu.
+ITEM_OVERLAPS_MSG=Na pozici se nachází jiný obrázek. Vložte aktuální obrázek na jinou pozici.
+ITEM_OVERLAPS=Obrázek nelze umístit
 
 ## O projektu
 ABOUT_WINDOW_TITLE=O projektu
@@ -132,7 +134,8 @@ PROP_ERR_HEIGHT_NEGATIVE=Výška musí být kladné číslo
 PROP_ERR_WIDTH_NEGATIVE=Šířka musí být kladné číslo
 PROP_ERR_FRAMECOUNT_NATURAL=Počet snímků musí být přirozené číslo
 PROP_ERR_LAYERCOUNT_NATURAL=Počet vrstev musí být přirozené číslo
-
+NEW_PROJECT_CONFIRM_TEXT=Přejete si uložit otevřený projekt?
+NEW_PROJECT_CONFIRM_TITLE=Neuložený projekt
 
 
 
