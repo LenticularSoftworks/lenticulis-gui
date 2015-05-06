@@ -25,7 +25,7 @@ namespace lenticulis_gui.src.SupportLib
             // working variables
             float tmp_angle;
             uint tmp_x, tmp_y;
-            int final_x, final_y;
+            int final_x, final_y, final_width, final_height, w_delta, h_delta;
             float progress;
             LayerObject current;
             Transformation trans;
@@ -53,6 +53,12 @@ namespace lenticulis_gui.src.SupportLib
                     final_x = (int)current.InitialX;
                     final_y = (int)current.InitialY;
 
+                    final_width = (int)resource.width;
+                    final_height = (int)resource.height;
+
+                    w_delta = 0;
+                    h_delta = 0;
+
                     if (current.hasTransformations())
                     {
                         if (current.Length > 1)
@@ -67,6 +73,10 @@ namespace lenticulis_gui.src.SupportLib
                             tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
                             tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
                             SupportLib.resizeImage(tmp_x, tmp_y);
+
+                            // store final_width/_height so we can then compute the center of bounding box
+                            final_width = (int)tmp_x;
+                            final_height = (int)tmp_y;
                         }
 
                         // then for rotation
@@ -75,6 +85,18 @@ namespace lenticulis_gui.src.SupportLib
                         {
                             tmp_angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialAngle, current.InitialAngle + trans.TransformAngle);
                             SupportLib.rotateImage(tmp_angle);
+
+                            // we have to increase final_width/_height to match the dimensions of bounding box
+                            // so we can then place image preciselly on canvas
+                            double w_now = final_width;
+                            double h_now = final_height;
+                            double angle_rad = ((double)tmp_angle) * Math.PI / 180.0;
+                            final_width = (int)Math.Ceiling(w_now * Math.Cos(angle_rad) + h_now * Math.Sin(angle_rad));
+                            final_height = (int)Math.Ceiling(w_now * Math.Sin(angle_rad) + h_now * Math.Cos(angle_rad));
+
+                            // the bounding box also moves a bit from original position
+                            w_delta = (int)((final_width - w_now) / 2);
+                            h_delta = (int)((final_height - h_now) / 2);
                         }
 
                         // and finally to translation, because image composition is done with coordinates to use
@@ -86,6 +108,10 @@ namespace lenticulis_gui.src.SupportLib
                             final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
                         }
                     }
+
+                    // we place image using its center, so final_x should be increased by half the width, and final_y by half the height
+                    final_x += final_height / 2 - h_delta;
+                    final_y += final_width / 2 - w_delta;
 
                     // place image onto canvas
                     SupportLib.compositeImage(final_y, final_x);
