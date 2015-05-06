@@ -98,7 +98,7 @@ namespace lenticulis_gui
                 float dy = y_canvas - imageCenterY;
 
                 //get initial angle
-                initialAngle = (float)Math.Atan2(dy, dx);
+                initialAngle = (float)Math.Atan2(dy, dx) - (float)(Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Rotate], progress, 0, obj.getTransformation(TransformType.Rotate).TransformAngle)*Math.PI/180.0);
             }
         }
 
@@ -255,7 +255,7 @@ namespace lenticulis_gui
                 {
                     tr = lo.getTransformation(TransformType.Rotate);
                     if (tr != null && lo.Length > 1)
-                        tr.setAngle(tr.TransformAngle - (alpha - lo.InitialAngle));
+                        tr.setAngle(tr.TransformAngle - (alpha));
 
                     lo.InitialAngle += alpha;
                 }
