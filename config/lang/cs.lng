@@ -33,6 +33,7 @@ NEW_FILE=Nový
 OPEN_FILE=Otevřít
 SAVE_FILE=Uložit
 CLOSE_APP=Zavřít
+PROJ_PROPS=Vlastnosti projektu
 # Úpravy
 EDIT=Úpravy
 CHOOSELANG=Jazyk prostředí
@@ -140,6 +141,8 @@ PROP_ERR_FRAMECOUNT_NATURAL=Počet snímků musí být přirozené číslo
 PROP_ERR_LAYERCOUNT_NATURAL=Počet vrstev musí být přirozené číslo
 NEW_PROJECT_CONFIRM_TEXT=Přejete si uložit otevřený projekt?
 NEW_PROJECT_CONFIRM_TITLE=Neuložený projekt
+PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Konflikt
+PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se nachází obrázky. Mají být odstraněny?
 
 
 

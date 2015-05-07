@@ -21,7 +21,7 @@
     
     <Grid>
         <Label Content="{app:LangConverter str=PROP_PROJECT_NAME}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBox Name="PropertiesProjectName" HorizontalAlignment="Left" Height="23" Margin="15,36,0,0" TextWrapping="Wrap" Text="{app:LangConverter str=PROP_DEFAULT_PROJECT_NAME}" VerticalAlignment="Top" Width="258" />
+        <TextBox Name="PropertiesProjectName" HorizontalAlignment="Left" Height="23" Margin="15,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="258" />
 
         <Label Content="{app:LangConverter str=PROP_CANVAS_SIZE}" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="{app:LangConverter str=PROP_SIZE_WIDTH}" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>

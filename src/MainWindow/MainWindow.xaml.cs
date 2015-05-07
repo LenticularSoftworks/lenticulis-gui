@@ -88,6 +88,14 @@ namespace lenticulis_gui
             AddTimelineLayer(layerCount);
             timelineList = new List<TimelineItem>();
 
+            RefreshCanvasList();
+        }
+
+        /// <summary>
+        /// Refreshes all stored canvases according to actual properties
+        /// </summary>
+        public void RefreshCanvasList()
+        {
             canvasList = new List<WorkCanvas>();
             SetWorkCanvasList();
             ShowSingleCanvas(0);
@@ -489,22 +497,58 @@ namespace lenticulis_gui
                     colDef = new ColumnDefinition();
                     colDef.MinWidth = columnMinWidth;
                     TimelineHeader.ColumnDefinitions.Add(colDef);
+
+                    System.Windows.Controls.Label label = new System.Windows.Controls.Label()
+                    {
+                        Content = "#" + (current + i + 1),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
+
+                    Grid.SetColumn(label, current + i);
+
+                    TimelineHeader.Children.Add(label);
                 }
             }
             // removing some frames
             else if (newcount < current)
             {
+                bool removeConfirmed = false;
+
+                foreach (TimelineItem item in timelineList)
+                {
+                    LayerObject lobj = item.getLayerObject();
+                    // if some item is in deleted images
+                    if (lobj != null)
+                    {
+                        if (lobj.Column + lobj.Length - 1 >= newcount)
+                        {
+                            if (!removeConfirmed)
+                            {
+                                MessageBoxResult mres = MessageBox.Show(LangProvider.getString("PROP_ERR_IMAGES_IN_DELETED_FRAMES"), LangProvider.getString("PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE"), MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                                if (mres == MessageBoxResult.Yes)
+                                    removeConfirmed = true;
+                                else
+                                    return;
+                            }
+
+                            RemoveTimelineItem(item);
+                        }
+                    }
+                }
+
                 // delete N last elements
-                for (int i = current - 1; i > newcount - 1; i++)
+                for (int i = current - 1; i > newcount - 1; i--)
                 {
                     Timeline.ColumnDefinitions.Remove(Timeline.ColumnDefinitions[i]);
                     TimelineHeader.ColumnDefinitions.Remove(TimelineHeader.ColumnDefinitions[i]);
+                    TimelineHeader.Children.Remove(Timeline.Children[i]);
                 }
-
-                // TODO: check for existing layer objects in there columns !
             }
 
             ProjectHolder.ImageCount = newcount;
+
+            SetTimelineVerticalLines();
+            SetTimelineHorizontalLines();
         }
 
         /// <summary>
@@ -549,6 +593,14 @@ namespace lenticulis_gui
         /// </summary>
         private void SetTimelineVerticalLines()
         {
+            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
+            {
+                Border el = Timeline.Children[i] as Border;
+                // all vertical lines
+                if (el != null && el.BorderThickness.Right > 0)
+                    Timeline.Children.RemoveAt(i);
+            }
+
             //Create and add vertical border
             for (int i = 0; i < ProjectHolder.ImageCount; i++)
             {
@@ -559,6 +611,32 @@ namespace lenticulis_gui
                 Grid.SetRowSpan(verticalBorder, ProjectHolder.LayerCount);
 
                 Timeline.Children.Add(verticalBorder);
+            }
+        }
+
+        /// <summary>
+        /// Add vertical lines
+        /// </summary>
+        private void SetTimelineHorizontalLines()
+        {
+            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
+            {
+                Border el = Timeline.Children[i] as Border;
+                // all vertical lines
+                if (el != null && el.BorderThickness.Bottom > 0)
+                    Timeline.Children.RemoveAt(i);
+            }
+
+            //Create and add vertical border
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
+            {
+                Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
+                horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
+
+                Grid.SetRow(horizontalBorder, i);
+                Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
+
+                Timeline.Children.Add(horizontalBorder);
             }
         }
 
@@ -639,6 +717,43 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Updates layer count
+        /// </summary>
+        /// <param name="newcount">new layer count</param>
+        public void UpdateLayerCount(int newcount)
+        {
+            if (newcount == ProjectHolder.LayerCount)
+                return;
+
+            if (newcount > ProjectHolder.LayerCount)
+            {
+                AddTimelineLayer(newcount - ProjectHolder.LayerCount);
+            }
+            else
+            {
+                MessageBoxResult messageBoxResult = MessageBoxResult.Yes;
+
+                foreach (TimelineItem item in timelineList)
+                {
+                    //if some item is in last layer
+                    if (item.getLayerObject().Layer + 1 > newcount)
+                    {
+                        messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
+
+                        break;
+                    }
+                }
+
+                // remove last layers
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    while (ProjectHolder.LayerCount > newcount)
+                        RemoveLastLayer();
+                }
+            }
+        }
+
+        /// <summary>
         /// Clears timeline
         /// </summary>
         public void ClearTimeline()
@@ -646,6 +761,7 @@ namespace lenticulis_gui
             Timeline.RowDefinitions.Clear();
             Timeline.ColumnDefinitions.Clear();
             TimelineHeader.ColumnDefinitions.Clear();
+            TimelineHeader.Children.Clear();
 
             ProjectHolder.layers.Clear();
             ProjectHolder.LayerCount = 0;
@@ -1185,8 +1301,23 @@ namespace lenticulis_gui
                 }
             }
 
+            ProjectHolder.ValidProject = false;
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();
+        }
+
+        /// <summary>
+        /// Opens dialog with project properties
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProjectPropertiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectHolder.ValidProject)
+            {
+                ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
+                ppw.ShowDialog();
+            }
         }
 
         /// <summary>

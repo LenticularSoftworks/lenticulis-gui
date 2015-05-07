@@ -33,6 +33,7 @@ NEW_FILE=New
 OPEN_FILE=Open
 SAVE_FILE=Save
 CLOSE_APP=Close
+PROJ_PROPS=Project properties
 # Úpravy
 EDIT=_Edit
 CHOOSELANG=Program language
@@ -140,6 +141,8 @@ PROP_ERR_FRAMECOUNT_NATURAL=Frame count must be natural number
 PROP_ERR_LAYERCOUNT_NATURAL=Layer count must be natural number
 NEW_PROJECT_CONFIRM_TEXT=Do you want to save existing project?
 NEW_PROJECT_CONFIRM_TITLE=Unsaved project
+PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Conflict
+PROP_ERR_IMAGES_IN_DELETED_FRAMES=There are images in the area you are about to remove. Should they be removed?
 
 
 

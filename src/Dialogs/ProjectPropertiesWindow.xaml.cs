@@ -26,6 +26,17 @@ namespace lenticulis_gui.src.Dialogs
             InitializeComponent();
 
             Title = LangProvider.getString("PROPERTIES_WINDOW_TITLE");
+
+            if (ProjectHolder.ValidProject)
+            {
+                PropertiesProjectName.Text = ProjectHolder.ProjectName;
+                PropertiesHeight.Value = ProjectHolder.Height;
+                PropertiesWidth.Value = ProjectHolder.Width;
+                PropertiesImages.Value = ProjectHolder.ImageCount;
+                PropertiesLayers.Value = ProjectHolder.LayerCount;
+            }
+            else
+                PropertiesProjectName.Text = LangProvider.getString("PROP_DEFAULT_PROJECT_NAME");
         }
 
         /// <summary>
@@ -45,7 +56,8 @@ namespace lenticulis_gui.src.Dialogs
         /// <param name="e"></param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectHolder.cleanUp();
+            if (!ProjectHolder.ValidProject)
+                ProjectHolder.cleanUp();
 
             if (PropertiesProjectName.Text == "")
             {
@@ -102,10 +114,21 @@ namespace lenticulis_gui.src.Dialogs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = height;
             ProjectHolder.Width = width;
-            ProjectHolder.ValidProject = true;
 
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
-            mw.SetProjectProperties(images, layers);
+
+            if (ProjectHolder.ValidProject)
+            {
+                mw.UpdateImageCount(images);
+                mw.UpdateLayerCount(layers);
+                mw.RefreshCanvasList();
+            }
+            else
+            {
+                mw.SetProjectProperties(images, layers);
+            }
+
+            ProjectHolder.ValidProject = true;
 
             this.Close();
         }
