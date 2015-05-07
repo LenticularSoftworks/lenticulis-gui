@@ -3,7 +3,7 @@
         xmlns:app="clr-namespace:lenticulis_gui.src.App"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="TransformationsWindow" Height="300" Width="300">
+        Title="TransformationsWindow" Height="300" Width="362">
 
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
@@ -21,18 +21,27 @@
 
     <Grid>
         <Label Content="{app:LangConverter str=LABEL_PROP_TRANSLATION}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="TranslationEditX" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
-        <TextBox Name="TranslationEditY" HorizontalAlignment="Left" Height="23" Margin="88,41,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73" RenderTransformOrigin="0.519,0.479"/>
-        <ComboBox Name="TranslationInterpolation" HorizontalAlignment="Left" Margin="190,42,0,0" VerticalAlignment="Top" Width="92"/>
+        <TextBox Name="TranslationEditX" HorizontalAlignment="Left" Height="23" Margin="32,41,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
+        <TextBox Name="TranslationEditY" HorizontalAlignment="Left" Height="23" Margin="142,41,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73" RenderTransformOrigin="0.519,0.479"/>
         <Label Content="{app:LangConverter str=LABEL_PROP_ROTATION}" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="RotationEdit" HorizontalAlignment="Left" Height="23" Margin="10,100,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
+        <TextBox Name="RotationEdit" HorizontalAlignment="Left" Height="23" Margin="32,102,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
         <Label Content="{app:LangConverter str=LABEL_PROP_SCALE}" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="ScaleEditX" HorizontalAlignment="Left" Height="23" Margin="10,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
-        <TextBox Name="ScaleEditY" HorizontalAlignment="Left" Height="23" Margin="88,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
-        <ComboBox Name="RotationInterpolation" HorizontalAlignment="Left" Margin="190,100,0,0" VerticalAlignment="Top" Width="92"/>
-        <ComboBox Name="ScaleInterpolation" HorizontalAlignment="Left" Margin="190,155,0,0" VerticalAlignment="Top" Width="91"/>
-        <Button Name="OKButton" Click="OKButton_Click" Content="{app:LangConverter str=OK}" HorizontalAlignment="Left" Margin="206,238,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Name="CancelButton" Click="CancelButton_Click" Content="{app:LangConverter str=CANCEL}" HorizontalAlignment="Left" Margin="126,238,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox Name="ScaleEditX" HorizontalAlignment="Left" Height="23" Margin="32,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
+        <TextBox Name="ScaleEditY" HorizontalAlignment="Left" Height="23" Margin="142,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="73"/>
+
+        <ComboBox Name="TranslationInterpolation" HorizontalAlignment="Left" Margin="252,41,0,0" VerticalAlignment="Top" Width="92"/>
+        <ComboBox Name="RotationInterpolation" HorizontalAlignment="Left" Margin="252,100,0,0" VerticalAlignment="Top" Width="92"/>
+        <ComboBox Name="ScaleInterpolation" HorizontalAlignment="Left" Margin="252,154,0,0" VerticalAlignment="Top" Width="92"/>
+
+        <Button Name="OKButton" Click="OKButton_Click" Content="{app:LangConverter str=OK}" HorizontalAlignment="Left" Margin="189,235,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="CancelButton" Click="CancelButton_Click" Content="{app:LangConverter str=CANCEL}" HorizontalAlignment="Left" Margin="269,235,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <Label Content="X:" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
+        <Label Content="Y:" HorizontalAlignment="Left" Margin="118,41,0,0" VerticalAlignment="Top"/>
+        <Label Content="{app:LangConverter str=LABEL_TEXT_DEGREES}" HorizontalAlignment="Left" Margin="105,102,0,0" VerticalAlignment="Top"/>
+        <Label Content="X:" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top"/>
+        <Label Content="Y:" HorizontalAlignment="Left" Margin="118,154,0,0" VerticalAlignment="Top"/>
+        <Label Content="{app:LangConverter str=LABEL_INTERPOLATION_TYPE}" HorizontalAlignment="Left" Margin="247,10,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Controls:MetroWindow>
