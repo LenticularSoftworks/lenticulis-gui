@@ -937,6 +937,7 @@ namespace lenticulis_gui
             newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.delete.Click += TimelineDelete_Click;
+            newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
 
             // add into timeline
             Timeline.Children.Add(newItem);
@@ -969,6 +970,24 @@ namespace lenticulis_gui
             // if not yet there, add it
             if (!found)
                 LastUsedList.Items.Add(new BrowserItem(name, path, extension, false));
+        }
+
+        /// <summary>
+        /// Sets position and length to spread item across the layer, if possible
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimelineSpreadItem_Click(object sender, RoutedEventArgs e)
+        {
+            // if there's more than one object in layer, do not allow this
+            if (ProjectHolder.layers[capturedTimelineItem.getLayerObject().Layer].getLayerObjects().Count > 1)
+            {
+                capturedTimelineItem = null;
+                MessageBox.Show(LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT"), LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+            capturedTimelineItem.SetPosition(capturedTimelineItem.getLayerObject().Layer, 0, ProjectHolder.ImageCount);
+            capturedTimelineItem = null;
         }
 
         /// <summary>

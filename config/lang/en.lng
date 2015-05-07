@@ -74,6 +74,10 @@ NO_PROJECT=No project
 NO_PROJECT_MSG=No project has been created or loaded. Please, create one, or load an existing one before working with images.
 ITEM_OVERLAPS_MSG=In this position is another image. Place actual image to another position.
 ITEM_OVERLAPS=Image can not be placed at this position.
+ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE=Conflict
+ITEM_CANNOT_BE_SPREAD_CONFLICT=Image cannot be spread across whole layer, because the layer contains more images.
+REMOVE_TIMELINE_ITEM=Remove
+SPREAD_TIMELINE_ITEM=Spread to all frames
 
 ## O projektu
 ABOUT_WINDOW_TITLE=About project

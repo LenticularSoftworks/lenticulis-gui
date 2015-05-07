@@ -74,6 +74,10 @@ NO_PROJECT=Není projekt
 NO_PROJECT_MSG=Nebyl vytvořen ani načten žádný projekt. Založte nebo načtěte projekt před přetahováním obrázků na časovou osu.
 ITEM_OVERLAPS_MSG=Na pozici se nachází jiný obrázek. Vložte aktuální obrázek na jinou pozici.
 ITEM_OVERLAPS=Obrázek nelze umístit
+ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE=Konflikt
+ITEM_CANNOT_BE_SPREAD_CONFLICT=Obrázek nelze rozšířit po celé vrstvě, jelikož vrstva obsahuje ještě jiné obrázky.
+REMOVE_TIMELINE_ITEM=Odstranit
+SPREAD_TIMELINE_ITEM=Přes všechny snímky
 
 ## O projektu
 ABOUT_WINDOW_TITLE=O projektu

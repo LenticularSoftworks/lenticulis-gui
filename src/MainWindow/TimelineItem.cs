@@ -25,7 +25,7 @@ namespace lenticulis_gui
         public WrapPanel leftResizePanel;
 
         //context menu items
-        public MenuItem delete;
+        public MenuItem delete, spreadMenuItem;
 
         //size of resize panel
         private const int sizeChangePanelWidth = 5;
@@ -151,14 +151,20 @@ namespace lenticulis_gui
             //set public menu item
             delete = new MenuItem()
             {
-                Header = "Odstranit",
+                Header = LangProvider.getString("REMOVE_TIMELINE_ITEM"),
                 Icon = new Image()
                 {
                     Source = Utils.iconResourceToImageSource("Erase")
                 }
             };
 
+            spreadMenuItem = new MenuItem()
+            {
+                Header = LangProvider.getString("SPREAD_TIMELINE_ITEM")
+            };
+
             cMenu.Items.Add(delete);
+            cMenu.Items.Add(spreadMenuItem);
 
             this.ContextMenu = cMenu;
         }
