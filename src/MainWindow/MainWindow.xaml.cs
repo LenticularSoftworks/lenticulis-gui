@@ -1168,6 +1168,8 @@ namespace lenticulis_gui
             
             RefreshTimelineItemPosition();
             RepaintCanvas();
+
+            capturedTimelineItemContext = null;
         }
 
         /// <summary>
@@ -1205,6 +1207,8 @@ namespace lenticulis_gui
             
             RefreshTimelineItemPosition();
             RepaintCanvas();
+
+            capturedTimelineItemContext = null;
         }
 
         /// <summary>
@@ -1317,7 +1321,7 @@ namespace lenticulis_gui
             Point mouse = Mouse.GetPosition(Timeline);
 
             //Position in grid calculated from mouse position and grid dimensions
-            layerContext = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
+            layerContext = (int)(mouse.Y /rowHeight);
         }
 
         /// <summary>
