@@ -83,6 +83,7 @@ namespace lenticulis_gui
         /// <param name="layerCount"></param>
         public void SetProjectProperties(int imageCount, int layerCount)
         {
+            Timeline.Children.Clear();
             SetImageCount(imageCount);
             AddTimelineHeader();
             AddTimelineLayer(layerCount);
