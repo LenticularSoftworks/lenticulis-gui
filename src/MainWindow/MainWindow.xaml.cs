@@ -1120,7 +1120,7 @@ namespace lenticulis_gui
             newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
             newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-            newItem.delete.Click += TimelineDelete_Click;
+            newItem.deleteMenuItem.Click += TimelineDelete_Click;
             newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
             newItem.transformMenuItem.Click += TimelineTransformItem_Click;
             newItem.layerUp.Click += LayerUp_Click;
