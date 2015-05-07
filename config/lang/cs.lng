@@ -9,6 +9,7 @@ CHOOSE=Vybrat
 LENTICULIS_PROJECT_FILE=Lenticulis projekt
 UNSAVED_WORK=Neuložená práce
 UNSAVED_WORK_CONFIRM_SAVE=Nyní je otevřen jiný projekt. Chcete v něm změny uložit?
+PSD_FORMAT_NAME=Formát Adobe Photoshop
 
 # Načítání projektu
 PROJECT_LOAD_ERROR=Chyba při načítání projektu
@@ -146,6 +147,8 @@ NEW_PROJECT_CONFIRM_TEXT=Přejete si uložit otevřený projekt?
 NEW_PROJECT_CONFIRM_TITLE=Neuložený projekt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Konflikt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se nachází obrázky. Mají být odstraněny?
+PROP_PSD_AS_INPUT=Vytvořit z PSD:
+PSD_SOURCE_INVALID=Nelze načíst vybraný PSD soubor!
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformace

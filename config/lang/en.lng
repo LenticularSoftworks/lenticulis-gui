@@ -9,6 +9,7 @@ CHOOSE=Choose
 LENTICULIS_PROJECT_FILE=Lenticulis project
 UNSAVED_WORK=Unsaved work
 UNSAVED_WORK_CONFIRM_SAVE=Another project is opened at this time. Should the program save your work?
+PSD_FORMAT_NAME=Adobe Photoshop Format
 
 # Načítání projektu
 PROJECT_LOAD_ERROR=Error when loading project
@@ -146,6 +147,8 @@ NEW_PROJECT_CONFIRM_TEXT=Do you want to save existing project?
 NEW_PROJECT_CONFIRM_TITLE=Unsaved project
 PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Conflict
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=There are images in the area you are about to remove. Should they be removed?
+PROP_PSD_AS_INPUT=Create from PSD:
+PSD_SOURCE_INVALID=Chosen PSD could not be loaded!
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformations

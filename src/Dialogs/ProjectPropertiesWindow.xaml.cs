@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
+using lenticulis_gui.src.SupportLib;
 using MahApps.Metro.Controls;
 
 namespace lenticulis_gui.src.Dialogs
@@ -35,9 +36,22 @@ namespace lenticulis_gui.src.Dialogs
                 PropertiesWidth.Value = ProjectHolder.Width;
                 PropertiesImages.Value = ProjectHolder.ImageCount;
                 PropertiesLayers.Value = ProjectHolder.LayerCount;
+
+                // do not enable PSD source when not creating new project
+                SourcePSDPathEdit.IsEnabled = false;
+                SourcePSDBrowseButton.IsEnabled = false;
             }
             else // if not, just use defaults
+            {
                 PropertiesProjectName.Text = LangProvider.getString("PROP_DEFAULT_PROJECT_NAME");
+            }
+
+            SourcePSDPathEdit.TextChanged += delegate(object sender, TextChangedEventArgs e) {
+                if (SourcePSDPathEdit.Text.Length > 0)
+                    PropertiesLayers.IsEnabled = false;
+                else
+                    PropertiesLayers.IsEnabled = true;
+            };
         }
 
         /// <summary>
@@ -117,6 +131,22 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
+            // if creating project, and using PSD as source..
+            if (!ProjectHolder.ValidProject && SourcePSDPathEdit.Text.Length > 0)
+            {
+                StringBuilder sb = new StringBuilder(1024);
+                // retrieve layer count
+                int count = SupportLib.SupportLib.getLayerInfo(Utils.getCString(SourcePSDPathEdit.Text), sb);
+                // count lower or equal zero means error - the file does not exist or has corrupted format
+                if (count <= 0)
+                {
+                    MessageBox.Show(LangProvider.getString("PSD_SOURCE_INVALID"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                layers = count;
+            }
+
             // set all properties according to actual data in inputs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = height;
@@ -137,12 +167,53 @@ namespace lenticulis_gui.src.Dialogs
             {
                 // just hardly set frame and layer count
                 mw.SetProjectProperties(images, layers);
+
+                // if there was PSD specified; we can now be sure, the PSD is valid
+                if (SourcePSDPathEdit.Text.Length > 0)
+                {
+                    String filepath = SourcePSDPathEdit.Text;
+                    ImageHolder ih;
+
+                    // extract bare file name
+                    String[] expl = filepath.Split('\\');
+                    String fileBareName = expl[expl.Length - 1];
+
+                    // for each layer, load PSD layer, and put it into project
+                    for (int i = 1; i <= layers; i++)
+                    {
+                        // load PSD with current layer
+                        ih = ImageHolder.loadImage(filepath, true, i);
+
+                        // create timeline item
+                        TimelineItem newItem = new TimelineItem(layers - i, 0, images, fileBareName);
+                        newItem.getLayerObject().ResourceId = ih.id;
+
+                        // and put it into timeline, etc.
+                        mw.AddTimelineItem(newItem);
+                    }
+                }
             }
 
             // in every case, we have valid project now
             ProjectHolder.ValidProject = true;
 
             this.Close();
+        }
+
+        /// <summary>
+        /// When clicked on source PSD browse button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SourcePSDBrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            // open dialog to search for needed PSD
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = LangProvider.getString("PSD_FORMAT_NAME") + " (.psd)|*.psd";
+
+            Nullable<bool> dres = dialog.ShowDialog();
+            if (dres == true)
+                SourcePSDPathEdit.Text = dialog.FileName;
         }
     }
 }
