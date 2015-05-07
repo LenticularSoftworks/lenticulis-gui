@@ -25,7 +25,7 @@ namespace lenticulis_gui
         public WrapPanel leftResizePanel;
 
         //context menu items
-        public MenuItem delete, spreadMenuItem, transformMenuItem;
+        public MenuItem delete, spreadMenuItem, transformMenuItem, layerUp, layerDown;
 
         //size of resize panel
         private const int sizeChangePanelWidth = 5;
@@ -168,9 +168,22 @@ namespace lenticulis_gui
                 Header = LangProvider.getString("TRANSFORMATIONS_TIMELINE_ITEM")
             };
 
+            layerUp = new MenuItem()
+            {
+                Header = LangProvider.getString("LAYER_UP")
+            };
+
+            layerDown = new MenuItem()
+            {
+                Header = LangProvider.getString("LAYER_DOWN")
+            };
+
             cMenu.Items.Add(delete);
             cMenu.Items.Add(spreadMenuItem);
             cMenu.Items.Add(transformMenuItem);
+            cMenu.Items.Add(new Separator());
+            cMenu.Items.Add(layerUp);
+            cMenu.Items.Add(layerDown);
 
             this.ContextMenu = cMenu;
         }

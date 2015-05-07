@@ -48,11 +48,19 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
-        /// Increment layer id when adding new layer at first position
+        /// Increment layer id (position) when adding new layer at first position
         /// </summary>
         public void incrementLayerId()
         {
             this.id++;
+        }
+
+        /// <summary>
+        /// Decrement layer id (position) when layer move
+        /// </summary>
+        public void decrementLayerId()
+        {
+            this.id--;
         }
 
         /// <summary>

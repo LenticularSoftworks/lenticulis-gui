@@ -39,7 +39,11 @@ namespace lenticulis_gui
 
         //drag n drop captured items
         private TimelineItem capturedTimelineItem = null;
+        private TimelineItem capturedTimelineItemContext = null;
         private WrapPanel capturedResizePanel = null;
+
+        //layer number for layer move up/down
+        private int layerContext;
 
         //drag n drop captured coords and dimensions
         private double capturedX;
@@ -825,7 +829,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimelineItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void TimelineItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
             {
@@ -840,6 +844,16 @@ namespace lenticulis_gui
                 capturedX = mouse.X;
                 capturedY = mouse.Y;
             }
+        }
+
+        /// <summary>
+        /// Set captured item for timeline item context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimelineItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            capturedTimelineItemContext = (TimelineItem)sender;
         }
 
         /// <summary>
@@ -1102,18 +1116,95 @@ namespace lenticulis_gui
         public void AddTimelineItem(TimelineItem newItem)
         {
             timelineList.Add(newItem);
-            newItem.MouseDown += TimelineItem_MouseDown;
+            newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
+            newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
             newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.delete.Click += TimelineDelete_Click;
             newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
             newItem.transformMenuItem.Click += TimelineTransformItem_Click;
+            newItem.layerUp.Click += LayerUp_Click;
+            newItem.layerDown.Click += LayerDown_Click;
 
             // add into timeline
             Timeline.Children.Add(newItem);
 
             //repaint canvas
             canvasList[newItem.getLayerObject().Column].Paint();
+        }
+
+        /// <summary>
+        /// Event for layer move down
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LayerDown_Click(object sender, RoutedEventArgs e)
+        {
+            int layer;
+
+            //switch between click to empty column or timeline item
+            if (capturedTimelineItemContext == null)
+            {
+                layer = layerContext;
+            }
+            else
+            {
+                layer = capturedTimelineItemContext.getLayerObject().Layer;
+            }
+
+            //if it is last layer
+            if(layer == ProjectHolder.LayerCount - 1) 
+            {
+                return;
+            }
+
+            //change layer id (position)
+            ProjectHolder.layers[layer].incrementLayerId();
+            ProjectHolder.layers[layer + 1].decrementLayerId();
+
+            Layer tmp = ProjectHolder.layers[layer + 1];
+            ProjectHolder.layers.RemoveAt(layer + 1);
+            ProjectHolder.layers.Insert(layer, tmp);
+            
+            RefreshTimelineItemPosition();
+            RepaintCanvas();
+        }
+
+        /// <summary>
+        /// Event for layer move up
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LayerUp_Click(object sender, RoutedEventArgs e)
+        {
+            int layer;
+
+            //switch between click to empty column or timeline item
+            if (capturedTimelineItemContext == null)
+            {
+                layer = layerContext;
+            }
+            else
+            {
+                layer = capturedTimelineItemContext.getLayerObject().Layer;
+            }
+
+            //if it is first layer
+            if (layer == 0)
+            {
+                return;
+            }
+
+            //change layer id (position)
+            ProjectHolder.layers[layer].decrementLayerId();
+            ProjectHolder.layers[layer - 1].incrementLayerId();
+
+            Layer tmp = ProjectHolder.layers[layer];
+            ProjectHolder.layers.RemoveAt(layer);
+            ProjectHolder.layers.Insert(layer - 1, tmp);
+            
+            RefreshTimelineItemPosition();
+            RepaintCanvas();
         }
 
         /// <summary>
@@ -1150,14 +1241,14 @@ namespace lenticulis_gui
         private void TimelineSpreadItem_Click(object sender, RoutedEventArgs e)
         {
             // if there's more than one object in layer, do not allow this
-            if (ProjectHolder.layers[capturedTimelineItem.getLayerObject().Layer].getLayerObjects().Count > 1)
+            if (ProjectHolder.layers[capturedTimelineItemContext.getLayerObject().Layer].getLayerObjects().Count > 1)
             {
-                capturedTimelineItem = null;
+                capturedTimelineItemContext = null;
                 MessageBox.Show(LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT"), LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            capturedTimelineItem.SetPosition(capturedTimelineItem.getLayerObject().Layer, 0, ProjectHolder.ImageCount);
-            capturedTimelineItem = null;
+            capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.getLayerObject().Layer, 0, ProjectHolder.ImageCount);
+            capturedTimelineItemContext = null;
         }
 
         /// <summary>
@@ -1167,9 +1258,9 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void TimelineTransformItem_Click(object sender, RoutedEventArgs e)
         {
-            TransformationsWindow twin = new TransformationsWindow(capturedTimelineItem);
+            TransformationsWindow twin = new TransformationsWindow(capturedTimelineItemContext);
             twin.ShowDialog();
-            capturedTimelineItem = null;
+            capturedTimelineItemContext = null;
         }
 
         /// <summary>
@@ -1180,9 +1271,9 @@ namespace lenticulis_gui
         private void TimelineDelete_Click(object sender, RoutedEventArgs e)
         {
             //remove from list and from timeline
-            RemoveTimelineItem(capturedTimelineItem);
+            RemoveTimelineItem(capturedTimelineItemContext);
 
-            capturedTimelineItem = null;
+            capturedTimelineItemContext = null;
         }
 
         /// <summary>
@@ -1214,6 +1305,19 @@ namespace lenticulis_gui
 
             capturedTimelineItem = null;
             capturedResizePanel = null;
+        }
+
+        /// <summary>
+        /// Get layer by mouse event when right click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timeline_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            //Position in grid calculated from mouse position and grid dimensions
+            layerContext = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
         }
 
         /// <summary>

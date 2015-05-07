@@ -80,6 +80,8 @@ ITEM_CANNOT_BE_SPREAD_CONFLICT=Obrázek nelze rozšířit po celé vrstvě, jeli
 REMOVE_TIMELINE_ITEM=Odstranit
 SPREAD_TIMELINE_ITEM=Přes všechny snímky
 TRANSFORMATIONS_TIMELINE_ITEM=Transformace
+LAYER_UP=Posun vrstvy nahoru
+LAYER_DOWN=Posun vrstvy dolů
 
 ## O projektu
 ABOUT_WINDOW_TITLE=O projektu

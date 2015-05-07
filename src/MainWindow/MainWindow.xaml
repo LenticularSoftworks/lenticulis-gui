@@ -196,7 +196,13 @@
                         </Grid.RowDefinitions>
                     </Grid>
                     <Grid Name="Timeline" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          MouseLeftButtonUp="Timeline_MouseLeftButtonUp" MouseMove="Timeline_MouseMove" AllowDrop="True" Drop="Timeline_DropHandler">
+                          MouseLeftButtonUp="Timeline_MouseLeftButtonUp" MouseRightButtonUp="Timeline_MouseRightButtonUp" MouseMove="Timeline_MouseMove" AllowDrop="True" Drop="Timeline_DropHandler">
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Name="LayerUp" Header="{app:LangConverter str=LAYER_UP}" Click="LayerUp_Click" />
+                                <MenuItem Name="LayerDown" Header="{app:LangConverter str=LAYER_DOWN}" Click="LayerDown_Click" />
+                            </ContextMenu>
+                        </Grid.ContextMenu>
                     </Grid>
                 </DockPanel>
             </ScrollViewer>

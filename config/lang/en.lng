@@ -80,6 +80,8 @@ ITEM_CANNOT_BE_SPREAD_CONFLICT=Image cannot be spread across whole layer, becaus
 REMOVE_TIMELINE_ITEM=Remove
 SPREAD_TIMELINE_ITEM=Spread to all frames
 TRANSFORMATIONS_TIMELINE_ITEM=Transformations
+LAYER_UP=Layer up
+LAYER_DOWN=Layer down
 
 ## O projektu
 ABOUT_WINDOW_TITLE=About project
