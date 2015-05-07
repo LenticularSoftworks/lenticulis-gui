@@ -151,7 +151,7 @@ namespace lenticulis_gui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0.5-beta.
+        ///   Looks up a localized string similar to 0.6-beta.
         /// </summary>
         public static string LENTICULIS_VERSION {
             get {
