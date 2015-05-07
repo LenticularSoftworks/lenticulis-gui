@@ -48,6 +48,14 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
+        /// Increment layer id when adding new layer at first position
+        /// </summary>
+        public void incrementLayerId()
+        {
+            this.id++;
+        }
+
+        /// <summary>
         /// Removes layer object from layer, regardless of its presence
         /// </summary>
         /// <param name="obj">Object to be removed from this layer</param>

@@ -596,12 +596,49 @@ namespace lenticulis_gui
 
                 Timeline.Children.Add(horizontalBorder);
 
+                //increment id of existing layers
+                IncrementLayerId();
+
                 // create layer object and put it into layer list in project holder class
-                Layer layer = new Layer(ProjectHolder.LayerCount - 1);
-                ProjectHolder.layers.Add(layer);
+                Layer layer = new Layer(0);
+                ProjectHolder.layers.Insert(0, layer);
             }
 
             SetTimelineVerticalLines();
+
+            //Layer has been set. Refresh existing timeline items with new properties
+            RefreshTimelineItemPosition();
+        }
+
+        /// <summary>
+        /// Increments id in all existing layers.
+        /// </summary>
+        private void IncrementLayerId()
+        {
+            foreach (Layer l in ProjectHolder.layers)
+            {
+                l.incrementLayerId();
+            }
+        }
+
+        /// <summary>
+        /// Refresh timeline items position.
+        /// </summary>
+        private void RefreshTimelineItemPosition()
+        {
+            // return if timeline list is not set
+            if (timelineList == null)
+            {
+                return;
+            }
+
+            foreach (TimelineItem item in timelineList)
+            {
+                LayerObject lo = item.getLayerObject();
+
+                //refresh position with new layer object properties
+                item.SetPosition(lo.Layer, lo.Column, lo.Length);
+            }
         }
 
         /// <summary>
