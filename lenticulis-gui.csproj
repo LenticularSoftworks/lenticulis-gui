@@ -157,6 +157,9 @@
     <Compile Include="src\Dialogs\ProjectPropertiesWindow.xaml.cs">
       <DependentUpon>ProjectPropertiesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\Dialogs\TransformationsWindow.xaml.cs">
+      <DependentUpon>TransformationsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\MainWindow\BrowserItem.cs" />
     <Compile Include="src\MainWindow\WorkCanvas.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
@@ -180,6 +183,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="src\Dialogs\ProjectPropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Dialogs\TransformationsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

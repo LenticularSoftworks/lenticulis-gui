@@ -94,12 +94,15 @@ namespace lenticulis_gui
         /// <summary>
         /// Refreshes all stored canvases according to actual properties
         /// </summary>
-        public void RefreshCanvasList()
+        public void RefreshCanvasList(bool resetSlider = true)
         {
             canvasList = new List<WorkCanvas>();
             SetWorkCanvasList();
-            ShowSingleCanvas(0);
-            SetSingleSlider(0);
+            if (resetSlider)
+            {
+                ShowSingleCanvas(0);
+                SetSingleSlider(0);
+            }
         }
 
         /// <summary>
@@ -242,7 +245,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="imageID"></param>
         /// <returns></returns>
-        private ScrollViewer GetCanvas(int imageID)
+        public ScrollViewer GetCanvas(int imageID)
         {
             if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
             {
@@ -259,6 +262,18 @@ namespace lenticulis_gui
             canvas.Paint();
 
             return scViewer;
+        }
+
+        /// <summary>
+        /// Retrieves canvas currently drawn on canvas panel
+        /// </summary>
+        /// <returns>current canvas element</returns>
+        public ScrollViewer GetCurrentCanvas()
+        {
+            if (CanvasPanel.Children.Count == 0)
+                return null;
+
+            return CanvasPanel.Children[0] as ScrollViewer;
         }
 
         /// <summary>
@@ -1054,6 +1069,7 @@ namespace lenticulis_gui
             newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
             newItem.delete.Click += TimelineDelete_Click;
             newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
+            newItem.transformMenuItem.Click += TimelineTransformItem_Click;
 
             // add into timeline
             Timeline.Children.Add(newItem);
@@ -1103,6 +1119,18 @@ namespace lenticulis_gui
                 return;
             }
             capturedTimelineItem.SetPosition(capturedTimelineItem.getLayerObject().Layer, 0, ProjectHolder.ImageCount);
+            capturedTimelineItem = null;
+        }
+
+        /// <summary>
+        /// Sets position and length to spread item across the layer, if possible
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimelineTransformItem_Click(object sender, RoutedEventArgs e)
+        {
+            TransformationsWindow twin = new TransformationsWindow(capturedTimelineItem);
+            twin.ShowDialog();
             capturedTimelineItem = null;
         }
 

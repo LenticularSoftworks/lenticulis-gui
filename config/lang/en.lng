@@ -79,6 +79,7 @@ ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE=Conflict
 ITEM_CANNOT_BE_SPREAD_CONFLICT=Image cannot be spread across whole layer, because the layer contains more images.
 REMOVE_TIMELINE_ITEM=Remove
 SPREAD_TIMELINE_ITEM=Spread to all frames
+TRANSFORMATIONS_TIMELINE_ITEM=Transformations
 
 ## O projektu
 ABOUT_WINDOW_TITLE=About project
@@ -144,6 +145,19 @@ NEW_PROJECT_CONFIRM_TITLE=Unsaved project
 PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Conflict
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=There are images in the area you are about to remove. Should they be removed?
 
+## Okno transformací
+TRANSFORMATION_WINDOW_TITLE=Transformations
+LABEL_PROP_TRANSLATION=Translation
+LABEL_PROP_ROTATION=Rotation
+LABEL_PROP_SCALE=Scale
+MSG_TRANS_ERROR=Error
+MSG_TRANSLATION_NOT_FLOAT=Translation value must be numeric type!
+MSG_ROTATION_NOT_FLOAT=Rotation value must be numeric type!
+MSG_SCALE_NOT_FLOAT=Scale value must be numeric type!
+CBOX_INTERP_ITEM_LINEAR=Linear
+CBOX_INTERP_ITEM_QUADRATIC=Quadratic
+CBOX_INTERP_ITEM_CUBIC=Cubic
+CBOX_INTERP_ITEM_GONIOMETRIC=Goniometric
 
 
 

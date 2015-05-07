@@ -79,6 +79,7 @@ ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE=Konflikt
 ITEM_CANNOT_BE_SPREAD_CONFLICT=Obrázek nelze rozšířit po celé vrstvě, jelikož vrstva obsahuje ještě jiné obrázky.
 REMOVE_TIMELINE_ITEM=Odstranit
 SPREAD_TIMELINE_ITEM=Přes všechny snímky
+TRANSFORMATIONS_TIMELINE_ITEM=Transformace
 
 ## O projektu
 ABOUT_WINDOW_TITLE=O projektu
@@ -144,6 +145,19 @@ NEW_PROJECT_CONFIRM_TITLE=Neuložený projekt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Konflikt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se nachází obrázky. Mají být odstraněny?
 
+## Okno transformací
+TRANSFORMATION_WINDOW_TITLE=Transformace
+LABEL_PROP_TRANSLATION=Posun
+LABEL_PROP_ROTATION=Rotace
+LABEL_PROP_SCALE=Škála
+MSG_TRANS_ERROR=Chyba
+MSG_TRANSLATION_NOT_FLOAT=Hodnota posunu musí být číselného typu!
+MSG_ROTATION_NOT_FLOAT=Hodnota rotace musí být číselného typu!
+MSG_SCALE_NOT_FLOAT=Hodnota škály musí být číselného typu!
+CBOX_INTERP_ITEM_LINEAR=Lineární
+CBOX_INTERP_ITEM_QUADRATIC=Kvadratická
+CBOX_INTERP_ITEM_CUBIC=Kubická
+CBOX_INTERP_ITEM_GONIOMETRIC=Goniometrická
 
 
 
