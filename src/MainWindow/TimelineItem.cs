@@ -18,35 +18,60 @@ namespace lenticulis_gui
     /// </summary>
     public class TimelineItem : Grid
     {
+        /// <summary>
+        /// Text printed on timeline item
+        /// </summary>
         public string Text { get; set; }
 
-        //resize panels
+        /// <summary>
+        /// Resize panel on the right
+        /// </summary>
         public WrapPanel rightResizePanel;
+
+        /// <summary>
+        /// Resize panel on the left
+        /// </summary>
         public WrapPanel leftResizePanel;
 
-        //context menu items
-        public MenuItem delete, spreadMenuItem, transformMenuItem, layerUp, layerDown;
+        /// <summary>
+        /// Context menu items
+        /// </summary>
+        public MenuItem deleteMenuItem, spreadMenuItem, transformMenuItem, layerUp, layerDown;
 
-        //size of resize panel
+        /// <summary>
+        /// Size of resize panel
+        /// </summary>
         private const int sizeChangePanelWidth = 5;
 
-        // data storage class
+        /// <summary>
+        /// Data storage class
+        /// </summary>
         private LayerObject dataObject;
 
+        /// <summary>
+        /// The only one constructor, just retains item settings and position
+        /// </summary>
+        /// <param name="layer">ID of layer, where does this item belong</param>
+        /// <param name="column">keyframe (column) where this item starts</param>
+        /// <param name="length">how many keyframes (columns) does this item occupy?</param>
+        /// <param name="text">text present on this control</param>
         public TimelineItem(int layer, int column, int length, string text)
             : base()
         {
+            // create new layerobject assigned to this timeline item
             dataObject = new LayerObject();
 
+            // sets position in grid
             SetPosition(layer, column, length);
             this.Text = text;
             this.dataObject.Visible = true;
 
-            //Color
+            // assigns color
             this.Background = new LinearGradientBrush(Color.FromRgb(0x1E, 0x90, 0xFF), Color.FromRgb(0x87, 0xCD, 0xFA), 90.0);
+            // and some margin
             this.Margin = new Thickness(0, 0, 0, 1);
 
-            //Add label
+            // add label on it, to tell the user, what's the image name
             string labelContent = this.Text;
             if (this.Text.Length > 15)
             {
@@ -57,17 +82,18 @@ namespace lenticulis_gui
             label.Margin = new Thickness(8, 2, 0, 0);
             this.Children.Add(label);
 
-            //Alignment
+            // Alignment of this item
             this.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
             this.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
 
+            // adds control helpers, like resize panels, visibility button and context menu
             AddResizePanel();
             AddVisibilityButton();
             AddContextMenu();
         }
 
         /// <summary>
-        /// Set grid settings
+        /// Set grid settings - position and size (span)
         /// </summary>
         private void SetGridSettings()
         {
@@ -81,6 +107,7 @@ namespace lenticulis_gui
         /// </summary>
         private void AddVisibilityButton()
         {
+            // button used for toggling visibility
             ToggleButton btn = new ToggleButton()
             {
                 Width = 20,
@@ -89,6 +116,7 @@ namespace lenticulis_gui
                 Margin = new Thickness(0, 0, 2 * sizeChangePanelWidth, 0),
                 Content = new Image()
                 {
+                    // default is visible with "eye" icon
                     Source = Utils.iconResourceToImageSource("Eye")
                 }
             };
@@ -100,17 +128,21 @@ namespace lenticulis_gui
                 Image content = (Image)source.Content;
                 LayerObject lobj = ((TimelineItem)source.Parent).getLayerObject();
 
+                // if visible, make it invisible
                 if (lobj.Visible)
                 {
                     lobj.Visible = false;
+                    // change icon to strikeout eye
                     content.Source = Utils.iconResourceToImageSource("EyeStrikeOut");
                 }
                 else
                 {
                     lobj.Visible = true;
+                    // change icon back to normal eye
                     content.Source = Utils.iconResourceToImageSource("Eye");
                 }
 
+                // repaint stuff on canvases
                 RepaintChange();
             });
 
@@ -148,8 +180,8 @@ namespace lenticulis_gui
         {
             ContextMenu cMenu = new ContextMenu();
 
-            //set public menu item
-            delete = new MenuItem()
+            // delete item - for removing timeline item from project
+            deleteMenuItem = new MenuItem()
             {
                 Header = LangProvider.getString("REMOVE_TIMELINE_ITEM"),
                 Icon = new Image()
@@ -158,27 +190,31 @@ namespace lenticulis_gui
                 }
             };
 
+            // spread to whole layer - for spreading from image 0 to last one
             spreadMenuItem = new MenuItem()
             {
                 Header = LangProvider.getString("SPREAD_TIMELINE_ITEM")
             };
 
+            // option for opening transformations window
             transformMenuItem = new MenuItem()
             {
                 Header = LangProvider.getString("TRANSFORMATIONS_TIMELINE_ITEM")
             };
 
+            // option for moving parent layer up
             layerUp = new MenuItem()
             {
                 Header = LangProvider.getString("LAYER_UP")
             };
 
+            // option for moving parent layer down
             layerDown = new MenuItem()
             {
                 Header = LangProvider.getString("LAYER_DOWN")
             };
 
-            cMenu.Items.Add(delete);
+            cMenu.Items.Add(deleteMenuItem);
             cMenu.Items.Add(spreadMenuItem);
             cMenu.Items.Add(transformMenuItem);
             cMenu.Items.Add(new Separator());
@@ -196,6 +232,7 @@ namespace lenticulis_gui
         /// <param name="length"></param>
         public void SetPosition(int layer, int column, int length)
         {
+            // all those parameters needs to be zero or greater
             if (column >= 0 && layer >= 0 && length > 0)
             {
                 this.dataObject.Layer = layer;
@@ -213,28 +250,24 @@ namespace lenticulis_gui
         /// </summary>
         private void RepaintChange()
         {
-            //main window object
+            // main window object
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
             if (mw == null)
                 return;
 
-            //repaint canvas
+            // repaint canvas
             mw.RepaintCanvas();
         }
 
         /// <summary>
-        /// True if timelien item is in position [row, column]
+        /// True if timeline item is in position [row, column]
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <returns></returns>
         public bool IsInPosition(int row, int column)
         {
-            if (this.dataObject.Layer == row && column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length))
-            {
-                return true;
-            }
-            else return false;
+            return (this.dataObject.Layer == row && column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length));
         }
 
         /// <summary>
@@ -244,11 +277,7 @@ namespace lenticulis_gui
         /// <returns></returns>
         public bool IsInColumn(int column)
         {
-            if (column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length))
-            {
-                return true;
-            }
-            else return false;
+            return (column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length));
         }
 
         /// <summary>
@@ -260,6 +289,10 @@ namespace lenticulis_gui
             return dataObject;
         }
 
+        /// <summary>
+        /// Overrides default method; returns just text from control label
+        /// </summary>
+        /// <returns>text identifier</returns>
         public override string ToString()
         {
             return Text;

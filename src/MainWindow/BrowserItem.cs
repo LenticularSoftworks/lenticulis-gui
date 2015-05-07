@@ -14,15 +14,48 @@ namespace lenticulis_gui
     /// </summary>
     class BrowserItem
     {
+        /// <summary>
+        /// Item filename (or folder name)
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Item file path (or folder path)
+        /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// File extension (if any)
+        /// </summary>
         public string Extension { get; set; }
+
+        /// <summary>
+        /// Is this item a directory?
+        /// </summary>
         public bool Dir { get; set; }
+
+        /// <summary>
+        /// Used icon identifier
+        /// </summary>
         public string Ico { get; set; }
+
+        /// <summary>
+        /// Is this item an image?
+        /// </summary>
         public bool Image { get; set; }
 
+        /// <summary>
+        /// Path to icon resource files
+        /// </summary>
         private const string PATH = "/lenticulis-gui;component/res/icon/";
 
+        /// <summary>
+        /// The only one constructor
+        /// </summary>
+        /// <param name="name">name of item</param>
+        /// <param name="path">path to item</param>
+        /// <param name="extension">item extension (if any)</param>
+        /// <param name="dir">is directory?</param>
         public BrowserItem(string name, string path, string extension, bool dir)
         {
             this.Name = name;
@@ -30,6 +63,8 @@ namespace lenticulis_gui
             this.Extension = extension.ToLower();
             this.Dir = dir;
 
+            // if it's recognized and supported file extension, this flag would change icon and add
+            // the drag'n'drop capability
             Image = Utils.IsAcceptedImageExtension(Extension);
             FindIcon();
         }

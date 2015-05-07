@@ -21,6 +21,7 @@ namespace lenticulis_gui
             if (!LangProvider.Initialize())
                 Shutdown();
 
+            // initialize support library - to create mappings for memory it needs, etc.
             SupportLib.initializeMagick();
 
             base.OnStartup(e);

@@ -56,7 +56,7 @@ namespace lenticulis_gui.src.App
         public LangDataSource(String val)
         {
             stringName = val;
-            // add to static list
+            // add to static list, to "sign up" for translation changes
             instances.Add(this);
         }
 
@@ -74,6 +74,7 @@ namespace lenticulis_gui.src.App
         /// <param name="propertyName"></param>
         public void NotifyPropertyChanged(String propertyName = "")
         {
+            // this will propagate propertyChanged event to control, so it changes its bound value
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -83,11 +84,15 @@ namespace lenticulis_gui.src.App
         /// </summary>
         public static void UpdateDataSources()
         {
+            // go through all instances of data source, and proceed notify on value property
             foreach (LangDataSource ds in instances)
                 ds.NotifyPropertyChanged("Value");
         }
     }
 
+    /// <summary>
+    /// Markup extension for translating output strings
+    /// </summary>
     public class LangConverter : MarkupExtension
     {
         [ConstructorArgument("str")]
@@ -120,6 +125,7 @@ namespace lenticulis_gui.src.App
             if (str == null)
                 return "";
 
+            // create new binding to be returned - this allows changing value at any time
             var binding = new Binding("Value")
             {
                 Source = new LangDataSource(str.ToString())

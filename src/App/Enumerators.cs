@@ -10,9 +10,9 @@ namespace lenticulis_gui.src.App
     /// </summary>
     public enum TransformType
     {
-        Translation,
-        Rotate,
-        Scale
+        Translation,    // movement
+        Rotate,         // rotation
+        Scale           // resizing
     };
 
     /// <summary>

@@ -121,11 +121,12 @@ namespace lenticulis_gui.src.App
                 CurrentLang = DEFAULT_LANG;
             }
 
+            // get file, the language is stored in
             String filename = AvailableLangs[CurrentLang].Key;
 
             CurrentLangStrings = new Dictionary<String, String>();
 
-            // read all translations
+            // read all translations, and fetch them to dictionary
             StreamReader f = new StreamReader(filename);
             String line;
             while (!f.EndOfStream)
@@ -136,10 +137,15 @@ namespace lenticulis_gui.src.App
                 if (line.StartsWith("#"))
                     continue;
 
+                // the language file is formatted like MY_CONSTANT=Some translated text
+                // so split by equality mark
                 String[] str = line.Split('=');
+                // there has to be at least one equality mark per translation file line!
                 if (str.Length < 2)
                     continue;
 
+                // then cut the string, to allow any other equation marks to be present
+                // in translated texts, so "MY_CONSTANT=Degrees = default" won't be split two times
                 CurrentLangStrings.Add(str[0], line.Substring(str[0].Length + 1));
             }
         }
@@ -151,6 +157,7 @@ namespace lenticulis_gui.src.App
         /// <returns>translated string</returns>
         public static String getString(String input)
         {
+            // look up string in dictionary, and return the translation, if available
             if (CurrentLangStrings.ContainsKey(input))
                 return CurrentLangStrings[input];
             return input;

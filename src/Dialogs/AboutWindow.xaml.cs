@@ -27,11 +27,13 @@ namespace lenticulis_gui.src.Dialogs
 
             Title = LangProvider.getString("ABOUT_WINDOW_TITLE");
 
+            // we retrieve version programatically instead of using layout macro
             VersionLabel.Content = LangProvider.getString("VERSION_TXT") + " " + lenticulis_gui.Properties.Resources.LENTICULIS_VERSION;
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
+            // only starts default action when clicking on webpage link
             System.Diagnostics.Process.Start(e.Uri.ToString());
         }
     }

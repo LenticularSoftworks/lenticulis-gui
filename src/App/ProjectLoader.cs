@@ -58,7 +58,7 @@ namespace lenticulis_gui.src.App
             // this means the XML format was broken
             catch (XmlException)
             {
-                MessageBox.Show("Soubor nebylo možné načíst, jelikož se nejedná o soubor platného formátu projektu Lenticulis.", LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LangProvider.getString("PLE_FILE_FORMAT"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -100,22 +100,22 @@ namespace lenticulis_gui.src.App
 
             // at first, parse project properties
             XmlNodeList nl = el.GetElementsByTagName("properties");
-            if (!loadProperties(nl[0] as XmlElement))
+            if (nl.Count == 0 || !loadProperties(nl[0] as XmlElement))
                 return false;
 
             // then resources used
             nl = el.GetElementsByTagName("resources");
-            if (!loadResources(nl[0] as XmlElement))
+            if (nl.Count == 0 || !loadResources(nl[0] as XmlElement))
                 return false;
 
             // then objects (instances of resources)
             nl = el.GetElementsByTagName("objects");
-            if (!loadObjects(nl[0] as XmlElement))
+            if (nl.Count == 0 || !loadObjects(nl[0] as XmlElement))
                 return false;
 
             // and finally layers
             nl = el.GetElementsByTagName("layers");
-            if (!loadLayers(nl[0] as XmlElement))
+            if (nl.Count == 0 || !loadLayers(nl[0] as XmlElement))
                 return false;
 
             return true;
@@ -161,6 +161,7 @@ namespace lenticulis_gui.src.App
                 return false;
             }
 
+            // frames and layers has to be valid natural numbers (1 and more)
             if (frames <= 0 || layers <= 0)
             {
                 MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
@@ -202,6 +203,8 @@ namespace lenticulis_gui.src.App
                     type = el.GetAttribute("type");
 
                     psdlayer = -1;
+                    // PSD layer doesn't have to be included - when it's not, it means we will load
+                    // whole PSD file, not just one layer
                     if (el.HasAttribute("psd-layer"))
                     {
                         try
@@ -210,7 +213,8 @@ namespace lenticulis_gui.src.App
                         }
                         catch (Exception)
                         {
-                            //
+                            MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
+                            return false;
                         }
                     }
 
@@ -268,11 +272,13 @@ namespace lenticulis_gui.src.App
 
             try
             {
+                // each object must have ID and resourceID defined
                 foreach (XmlElement el in nl.OfType<XmlElement>())
                 {
                     id = int.Parse(el.GetAttribute("id"));
                     resourceId = int.Parse(el.GetAttribute("id"));
 
+                    // store object in remapping dictionary to be able to resolve it later
                     objectResourceMap.Add(id, resourceRemap[resourceId]);
                 }
             }
@@ -294,6 +300,7 @@ namespace lenticulis_gui.src.App
         {
             XmlNodeList nl = element.GetElementsByTagName("layer");
 
+            // just goes through all layers and load them one by one
             foreach (XmlElement el in nl.OfType<XmlElement>())
             {
                 if (!loadLayer(el))
@@ -311,6 +318,7 @@ namespace lenticulis_gui.src.App
         private static bool loadLayer(XmlElement element)
         {
             int layerId;
+            // each layer has to have its layer ID ("position" in layer list)
             try
             {
                 layerId = int.Parse(element.GetAttribute("id"));
@@ -321,6 +329,7 @@ namespace lenticulis_gui.src.App
                 return false;
             }
 
+            // and here comes some fun
             int objId, frameStart, frameEnd;
             float objX, objY, objAngle, objScaleX, objScaleY;
 
@@ -328,6 +337,7 @@ namespace lenticulis_gui.src.App
 
             XmlNodeList objects = element.GetElementsByTagName("object");
 
+            // go through all "object" elements in parent layer element, and parse their attributes
             foreach (XmlElement el in objects.OfType<XmlElement>())
             {
                 // set defaults
@@ -349,12 +359,15 @@ namespace lenticulis_gui.src.App
                 // optional parameters
                 try
                 {
+                    // initial X and Y position
                     if (el.HasAttribute("x"))
                         objX = float.Parse(el.GetAttribute("x"));
                     if (el.HasAttribute("y"))
                         objY = float.Parse(el.GetAttribute("y"));
+                    // initial angle
                     if (el.HasAttribute("angle"))
                         objAngle = float.Parse(el.GetAttribute("angle"));
+                    // initial X and Y scale
                     if (el.HasAttribute("scale-x"))
                         objScaleX = float.Parse(el.GetAttribute("scale-x"));
                     if (el.HasAttribute("scale-y"))
@@ -368,7 +381,11 @@ namespace lenticulis_gui.src.App
 
                 // load the object into timeline
                 int resourceId = 0;
+
+                // retrieves image holder of previously loaded and prepared resource
                 ImageHolder hldr = Storage.Instance.getImageHolder(objectResourceMap[objId]);
+
+                // resolve extension, filename, and bare path
                 String[] expl = hldr.fileName.Split('.');
                 String extension = expl[expl.Length-1];
                 expl = hldr.fileName.Split('\\');
@@ -379,8 +396,10 @@ namespace lenticulis_gui.src.App
                 String loadFileName = hldr.fileName;
                 if (hldr.psdLayerIndex > -1)
                     loadFileName = loadFileName + "["+hldr.psdLayerIndex+"]";
+                // puts resource on canvas, the timeline object would be created later
                 bool result = mw.LoadAndPutResource(loadFileName, extension, true, out resourceId);
 
+                // loading errors results in false response, so it indicates, that previously used file is now inaccessible
                 if (!result)
                 {
                     MessageBox.Show(LangProvider.getString("PLE_FILE_ERRORS"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
@@ -403,14 +422,18 @@ namespace lenticulis_gui.src.App
                 lobj.InitialScaleX = objScaleX;
                 lobj.InitialScaleY = objScaleY;
 
+                // load transformations, if there are any (they are not mandatory, but often they are present)
                 XmlNodeList transformations = el.GetElementsByTagName("transform");
                 foreach (XmlElement trel in transformations.OfType<XmlElement>())
                 {
+                    // type is mandatory attribute
                     String type = trel.GetAttribute("type");
+                    // initial values
                     float vectorX = 0.0f, vectorY = 0.0f, angle = 0.0f;
 
                     TransformType ttype = TransformType.Translation;
 
+                    // each transform type has its own set of mandatory parameters
                     switch (type)
                     {
                         case "translation":
@@ -429,12 +452,15 @@ namespace lenticulis_gui.src.App
                             break;
                     }
 
+                    // default interpolation type is linear, may be something else (not mandatory)
                     String interpolation = "linear";
                     if (trel.HasAttribute("interpolation"))
                         interpolation = trel.GetAttribute("interpolation");
 
                     InterpolationType itype = InterpolationType.Linear;
 
+                    // convert string-represented interpolation types to enum values
+                    // fallback to linear, when invalid interpolation type defined
                     switch (interpolation)
                     {
                         case "linear":
@@ -451,6 +477,7 @@ namespace lenticulis_gui.src.App
                             break;
                     }
 
+                    // and finally create transformation, and store it within the object
                     Transformation trans = new Transformation(ttype, vectorX, vectorY, angle);
                     trans.Interpolation = itype;
                     lobj.setTransformation(trans);

@@ -1475,6 +1475,7 @@ namespace lenticulis_gui
                 }
             }
 
+            ProjectHolder.cleanUp();
             ProjectHolder.ValidProject = false;
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();

@@ -28,6 +28,9 @@ namespace lenticulis_gui.src.Dialogs
             InitializeComponent();
 
             Title = LangProvider.getString("EXPORT_WINDOW_TITLE");
+
+            // starting value is "PNG", but quality can be set only when exporting to JPEG
+            QualityNumBox.IsEnabled = false;
         }
 
         /// <summary>
@@ -37,6 +40,7 @@ namespace lenticulis_gui.src.Dialogs
         /// <param name="e"></param>
         private void ExportBrowseButton_Click(object sender, RoutedEventArgs e)
         {
+            // opens folder browser, so we can locate the project export directory
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
@@ -60,6 +64,8 @@ namespace lenticulis_gui.src.Dialogs
             ComboBoxItem remItem = e.RemovedItems[0] as ComboBoxItem;
             ComboBoxItem addedItem = e.AddedItems[0] as ComboBoxItem;
 
+            String extNew = addedItem.Content.ToString().ToLower();
+
             // extract current extension
             String[] splstr = ExportPatternEdit.Text.Split('.');
             if (splstr != null && splstr.Length > 0)
@@ -69,10 +75,14 @@ namespace lenticulis_gui.src.Dialogs
                 // and if it's equal to removed item extension, replace it with added item extension
                 if (ext.Equals(remItem.Content.ToString().ToLower()))
                 {
-                    ExportPatternEdit.Text = ExportPatternEdit.Text.Substring(0, ExportPatternEdit.Text.Length - ext.Length) + addedItem.Content.ToString().ToLower();
-                    return;
+                    ExportPatternEdit.Text = ExportPatternEdit.Text.Substring(0, ExportPatternEdit.Text.Length - ext.Length) + extNew;
                 }
             }
+
+            if (extNew == "jpeg")
+                QualityNumBox.IsEnabled = true;
+            else
+                QualityNumBox.IsEnabled = false;
         }
 
         /// <summary>

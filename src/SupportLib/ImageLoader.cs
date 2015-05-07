@@ -18,9 +18,21 @@ namespace lenticulis_gui.src.SupportLib
 {
     static class ImageLoader
     {
+        /// <summary>
+        /// Image file has not been found, or is not accessible
+        /// </summary>
         public const int LOADER_ERROR_IMAGE_NOT_FOUND = -1;
+        /// <summary>
+        /// Image file is corrupted in any (fatal) way
+        /// </summary>
         public const int LOADER_ERROR_IMAGE_CORRUPTED = -2;
+        /// <summary>
+        /// Image has unsupported color depth
+        /// </summary>
         public const int LOADER_ERROR_IMAGE_DEPTH_UNSUPPORTED = -3;
+        /// <summary>
+        /// Image has unsupported format (i.e. ImageMagick driver is missing)
+        /// </summary>
         public const int LOADER_ERROR_IMAGE_FORMAT_UNSUPPORTED = -4;
 
         /// <summary>
@@ -39,6 +51,7 @@ namespace lenticulis_gui.src.SupportLib
             IntPtr colorSpaceTarget;
             UIntPtr widthTarget, heightTarget;
             void* mmdata;
+            // register image using support library function
             int id = SupportLib.registerImageP(Utils.getCString(filename), formatTarget, out colorSpaceTarget, out widthTarget, out heightTarget, out mmdata);
 
             format = formatTarget.ToString();

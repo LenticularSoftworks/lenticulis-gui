@@ -31,36 +31,48 @@ namespace lenticulis_gui.src.SupportLib
             Transformation trans;
             ImageHolder resource;
 
+            // file path pattern successfully built from supplied params
             String builtPathPattern = path + (path[path.Length - 1] == '\\' ? "" : "\\") + filenamePattern;
 
+            // we are exporting frame by frame
             for (int keyframe = 0; keyframe < objects.Length; keyframe++)
             {
+                // this creates new image canvas, and prepares everything for drawing
                 SupportLib.initializeCanvas((uint)ProjectHolder.Width, (uint)ProjectHolder.Height);
 
+                // now we go through all objects in all layers in that keyframe
+                // the order is important - last placed image is on top of everything
                 for (int layer = objects[keyframe].Length - 1; layer >= 0; layer--)
                 {
                     current = objects[keyframe][layer];
                     if (current == null)
                         continue;
 
+                    // do not export layers, that are hidden
                     if (!current.Visible)
                         continue;
 
+                    // this tells support library imageprocessor to work with image of specified ID
                     SupportLib.loadImage(current.ResourceId);
 
+                    // we also retrieve instance from our container, where we store i.e. dimensions, etc.
                     resource = Storage.Instance.getImageHolder(current.ResourceId);
 
+                    // final X, Y - we will mess a bit with it later
                     final_x = (int)current.InitialX;
                     final_y = (int)current.InitialY;
 
                     final_width = (int)resource.width;
                     final_height = (int)resource.height;
 
+                    // temp variables, that are set when rotating image - more is written a bit further
                     w_delta = 0;
                     h_delta = 0;
 
+                    // the next block is applicable only when there are some transformations
                     if (current.hasTransformations())
                     {
+                        // calculate progress on current frame
                         if (current.Length > 1)
                             progress = (float)(keyframe - current.Column) / (float)(current.Length - 1);
                         else
@@ -70,6 +82,7 @@ namespace lenticulis_gui.src.SupportLib
                         trans = current.getTransformation(TransformType.Scale);
                         if (trans != null)
                         {
+                            // resize image, if needed, according to progress and transform vector setting
                             tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
                             tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
                             SupportLib.resizeImage(tmp_x, tmp_y);
@@ -100,26 +113,28 @@ namespace lenticulis_gui.src.SupportLib
                         }
 
                         // and finally to translation, because image composition is done with coordinates to use
-                        
                         trans = current.getTransformation(TransformType.Translation);
                         if (trans != null)
                         {
+                            // we just store coordinates, then we will work a bit with this value, so save it for later use
                             final_x = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
                             final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
                         }
                     }
 
                     // we place image using its center, so final_x should be increased by half the width, and final_y by half the height
+                    // also we subtract w_delta and h_delta - these are values got as moved coordinates of bounding box during rotation (around center)
                     final_x += final_height / 2 - h_delta;
                     final_y += final_width / 2 - w_delta;
 
                     // place image onto canvas
                     SupportLib.compositeImage(final_y, final_x);
 
+                    // this properly frees original image
                     SupportLib.finalizeImage();
                 }
 
-                // export to formatted file
+                // export to file, using formatted file path
                 String filename = builtPathPattern.Replace("%i", (keyframe + 1).ToString());
                 SupportLib.exportCanvas(Utils.getCString(filename), quality);
             }

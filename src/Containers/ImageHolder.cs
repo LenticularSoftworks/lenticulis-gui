@@ -63,6 +63,8 @@ namespace lenticulis_gui.src.Containers
         /// Static factory method for building ImageHolder class
         /// </summary>
         /// <param name="path">Path of image to be loaded</param>
+        /// <param name="reportError">when true, the messagebox will apear on error</param>
+        /// <param name="psdLayerIdentifier">if we are about to load specific layer from PSD, this is >= 0</param>
         /// <returns>build ImageHolder instance based on input path</returns>
         public static unsafe ImageHolder loadImage(String path, bool reportError = true, int psdLayerIdentifier = -1)
         {
@@ -93,6 +95,7 @@ namespace lenticulis_gui.src.Containers
                 return null;
             }
 
+            // negative return value means error
             if (tmpId < 0)
             {
                 if (reportError)

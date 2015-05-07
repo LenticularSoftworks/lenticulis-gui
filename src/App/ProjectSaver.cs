@@ -123,6 +123,7 @@ namespace lenticulis_gui.src.App
         {
             xw.WriteStartElement("resources");
             {
+                // we need to retrieve links to used resources from layer objects
                 for (int i = 0; i < ProjectHolder.layers.Count; i++)
                 {
                     List<LayerObject> objects = ProjectHolder.layers[i].getLayerObjects();
@@ -159,11 +160,13 @@ namespace lenticulis_gui.src.App
         /// <param name="psdlayer">PSD layer identifier, or null for other formats</param>
         private static void writeResource(XmlWriter xw, String id, String type, String path, int psdlayer = -1)
         {
+            // write resource, with its id, type and path to it
             xw.WriteStartElement("resource");
             {
                 xw.WriteAttributeString("id", id);
                 xw.WriteAttributeString("type", type);
                 xw.WriteAttributeString("path", path);
+                // psd layer may be specified (-1 = all or 'not specified', both means the same when dealing with PSD)
                 if (psdlayer > -1)
                     xw.WriteAttributeString("psd-layer", psdlayer.ToString());
             }
@@ -225,9 +228,11 @@ namespace lenticulis_gui.src.App
         /// <param name="layer">layer to be saved</param>
         private static void writeLayer(XmlWriter xw, Layer layer)
         {
+            // store layer element, and write Id attribute (mandatory)
             xw.WriteStartElement("layer");
             xw.WriteAttributeString("id", layer.getId().ToString());
             {
+                // then write all layer objects
                 List<LayerObject> objects = layer.getLayerObjects();
                 for (int i = 0; i < objects.Count; i++)
                     writeLayerObject(xw, objects[i]);

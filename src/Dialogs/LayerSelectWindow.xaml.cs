@@ -28,18 +28,22 @@ namespace lenticulis_gui.src.Dialogs
 
             Title = LangProvider.getString("CHOOSE_LAYER_WINDOW_TITLE");
 
+            // prepare listbox items
             ListBoxItem lbi;
-
             LayerListBox.Items.Clear();
 
+            // at first, include "general" item, which means "all merged layers"
             lbi = new ListBoxItem();
             lbi.Content = LangProvider.getString("ALL_LAYERS_MERGED");
             LayerListBox.Items.Add(lbi);
 
+            // if there are some layers
             if (layers != null)
             {
+                // go through each of them
                 foreach (String layer in layers)
                 {
+                    // and add it as listbox item
                     lbi = new ListBoxItem();
                     lbi.Content = layer;
                     LayerListBox.Items.Add(lbi);
@@ -54,6 +58,7 @@ namespace lenticulis_gui.src.Dialogs
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            // store the selection and close dialog - the caller will take the selection and use it
             selectedLayer = LayerListBox.SelectedIndex;
             Close();
         }

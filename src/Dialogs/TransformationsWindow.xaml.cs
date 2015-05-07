@@ -23,6 +23,10 @@ namespace lenticulis_gui.src.Dialogs
     {
         private TimelineItem sourceItem;
 
+        /// <summary>
+        /// Only one constructor - just retains item we are setting transformations into
+        /// </summary>
+        /// <param name="titem">timeline item, where we put our modifications</param>
         public TransformationsWindow(TimelineItem titem)
         {
             InitializeComponent();
@@ -82,11 +86,21 @@ namespace lenticulis_gui.src.Dialogs
             ScaleInterpolation.SelectedIndex = interpPos[tr.Interpolation];
         }
 
+        /// <summary>
+        /// User clicked on cancel button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// User clicked on OK button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             float transX, transY, rot, scaleX, scaleY;
@@ -127,9 +141,11 @@ namespace lenticulis_gui.src.Dialogs
                 cbi = TranslationInterpolation.SelectedItem as ComboBoxItem;
                 if (cbi != null && cbi.Name.Substring(4).Equals(it.ToString()))
                     lobj.getTransformation(TransformType.Translation).Interpolation = it;
+
                 cbi = RotationInterpolation.SelectedItem as ComboBoxItem;
                 if (cbi != null && cbi.Name.Substring(4).Equals(it.ToString()))
                     lobj.getTransformation(TransformType.Rotate).Interpolation = it;
+
                 cbi = ScaleInterpolation.SelectedItem as ComboBoxItem;
                 if (cbi != null && cbi.Name.Substring(4).Equals(it.ToString()))
                     lobj.getTransformation(TransformType.Scale).Interpolation = it;
