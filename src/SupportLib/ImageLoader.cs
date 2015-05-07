@@ -150,12 +150,23 @@ namespace lenticulis_gui.src.SupportLib
         {
             StringBuilder layerTarget = new StringBuilder(4092);
 
+            // retrieves layer info using support library
             int lcount = SupportLib.getLayerInfo(Utils.getCString(path), layerTarget);
 
-            if (layerTarget.ToString().Length == 0)
+            // retrieve string, and trim it, just in case there's some glitch
+            String layerStr = layerTarget.ToString().Trim();
+
+            // this means we have no layers at all (we don't have PSD file, apparently)
+            if (layerStr.Length == 0)
                 return null;
 
-            String[] linfo = layerTarget.ToString().Split(';');
+            // now we have valid sequence of layers delimited by semicolon, i.e. vrstva1;vrstva2;domecek;zelena louka;pozadi
+
+            // if layer string ends with semicolon, cut it off to not become layer with empty identifier
+            if (layerStr.EndsWith(";"))
+                layerStr = layerStr.Substring(0, layerStr.Length - 1);
+
+            String[] linfo = layerStr.Split(';');
 
             return new List<String>(linfo);
         }
@@ -165,6 +176,7 @@ namespace lenticulis_gui.src.SupportLib
         /// </summary>
         public static void unloadAllImages()
         {
+            // just call support library to free all registered images
             SupportLib.clearRegisteredImages();
         }
     }
