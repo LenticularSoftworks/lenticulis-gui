@@ -362,8 +362,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Return layer object by Image
         /// </summary>
-        /// <param name="droppedImage"></param>
-        /// <returns></returns>
+        /// <param name="droppedImage">Image</param>
+        /// <returns>Instance of LayerObject</returns>
         private LayerObject GetLayerObjectByImage(System.Windows.Controls.Image droppedImage)
         {
             List<LayerObject> layerObjects = GetImages();

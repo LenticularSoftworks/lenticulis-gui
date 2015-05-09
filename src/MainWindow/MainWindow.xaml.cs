@@ -27,30 +27,45 @@ namespace lenticulis_gui
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        //timeline column dimensions
+        /// <summary>
+        /// timeline column dimensions
+        /// </summary>
         private const int rowHeight = 30;
         private const int columnMinWidth = 150;
 
-        //timeline item list
+        /// <summary>
+        /// timeline item list
+        /// </summary>
         public List<TimelineItem> timelineList;
 
-        //canvas list
+        /// <summary>
+        /// canvas list
+        /// </summary>
         private List<WorkCanvas> canvasList;
 
-        //drag n drop captured items
+        /// <summary>
+        /// drag n drop captured items
+        /// </summary>
         private TimelineItem capturedTimelineItem = null;
         private TimelineItem capturedTimelineItemContext = null;
         private WrapPanel capturedResizePanel = null;
 
-        //layer number for layer move up/down
+        /// <summary>
+        /// layer number for layer move up/down
+        /// </summary>
         private int layerContext;
 
-        //drag n drop captured coords and dimensions
+        /// <summary>
+        /// drag n drop captured coords and dimensions
+        /// </summary>
         private double capturedX;
         private double capturedY;
         private int capturedTimelineItemColumn;
         private int capturedTimelineItemLength;
 
+        /// <summary>
+        /// Selected tranfromation tool
+        /// </summary>
         public static TransformType SelectedTool = TransformType.Translation;
 
         public MainWindow()
@@ -83,8 +98,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Set image and layer count
         /// </summary>
-        /// <param name="imageCount"></param>
-        /// <param name="layerCount"></param>
+        /// <param name="imageCount">image count</param>
+        /// <param name="layerCount">layer count</param>
         public void SetProjectProperties(int imageCount, int layerCount)
         {
             Timeline.Children.Clear();
@@ -126,7 +141,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Show single canvas
         /// </summary>
-        /// <param name="imageID"></param>
+        /// <param name="imageID">image number</param>
         private void ShowSingleCanvas(int imageID)
         {
             ScrollViewer canvas = GetCanvas(imageID);
@@ -143,8 +158,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Splits canvas in two 
         /// </summary>
-        /// <param name="firstImageID"></param>
-        /// <param name="secondImageID"></param>
+        /// <param name="firstImageID">number of first (start) image</param>
+        /// <param name="secondImageID">number of second(end) image</param>
         private void ShowDoubleCanvas(int firstImageID, int secondImageID)
         {
             ScrollViewer leftCanvas = GetCanvas(firstImageID);
@@ -179,8 +194,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Adds range slider under the canvas
         /// </summary>
-        /// <param name="firstImageID"></param>
-        /// <param name="secondImageID"></param>
+        /// <param name="firstImageID">number of first (start) image</param>
+        /// <param name="secondImageID">number of second(end) image</param>
         private void SetRangeSlider(int firstImageID, int secondImageID)
         {
             RangeSlider slider = new RangeSlider();
@@ -204,7 +219,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Adds slider under the canvas
         /// </summary>
-        /// <param name="imageID"></param>
+        /// <param name="imageID">number of image</param>
         private void SetSingleSlider(int imageID)
         {
             Slider slider = new Slider();
@@ -248,8 +263,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Get cavnas by image ID and return with scrollbar
         /// </summary>
-        /// <param name="imageID"></param>
-        /// <returns></returns>
+        /// <param name="imageID">number of image</param>
+        /// <returns>single scrollable canvas</returns>
         public ScrollViewer GetCanvas(int imageID)
         {
             if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
@@ -351,7 +366,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Open folder by selected item in browser
         /// </summary>
-        /// <param name="browserItem"></param>
+        /// <param name="browserItem">selected browser item</param>
         private void Browser_DoubleClick(BrowserItem browserItem)
         {
             if (browserItem.Dir && browserItem.Path != "root")
@@ -501,6 +516,10 @@ namespace lenticulis_gui
             SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
         }
 
+        /// <summary>
+        /// Updates image count in opened project
+        /// </summary>
+        /// <param name="newcount">new image count</param>
         public void UpdateImageCount(int newcount)
         {
             int current = ProjectHolder.ImageCount;
@@ -928,7 +947,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Time line item shift
         /// </summary>
-        /// <param name="columnWidth"></param>
+        /// <param name="columnWidth">column width</param>
         private void TimelineItemShift(double columnWidth)
         {
             Point mouse = Mouse.GetPosition(Timeline);
@@ -971,9 +990,9 @@ namespace lenticulis_gui
         /// <summary>
         /// Set timeline item position in grid
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="length"></param>
+        /// <param name="row">row number</param>
+        /// <param name="column">column number</param>
+        /// <param name="length">image length (column span)</param>
         private void SetTimelineItemPosition(int row, int column, int length)
         {
             bool overlap = TimelineItemOverlap(column, row, length);
@@ -989,9 +1008,9 @@ namespace lenticulis_gui
         /// <summary>
         /// Returns true if timeline item overlaps another
         /// </summary>
-        /// <param name="timelineColumn"></param>
-        /// <param name="timelineRow"></param>
-        /// <param name="timelineLength"></param>
+        /// <param name="timelineColumn">column number</param>
+        /// <param name="timelineRow">row (layer) number</param>
+        /// <param name="timelineLength">length (column span)</param>
         /// <returns></returns>
         private bool TimelineItemOverlap(int timelineColumn, int timelineRow, int timelineLength)
         {
@@ -1042,8 +1061,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Browser drag handler
         /// </summary>
-        /// <param name="browserItem"></param>
-        /// <param name="parent"></param>
+        /// <param name="browserItem">dragged browser item</param>
+        /// <param name="parent">parent component</param>
         private void Browser_Click(BrowserItem browserItem, ListBox parent)
         {
             // dragged item has to be instance of browserItem
@@ -1421,7 +1440,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="source"></param>
         /// <param name="point"></param>
-        /// <returns></returns>
+        /// <returns>object data of selected element in listbox</returns>
         private static object GetObjectDataFromPoint(ListBox source, Point point)
         {
             UIElement element = source.InputHitTest(point) as UIElement;

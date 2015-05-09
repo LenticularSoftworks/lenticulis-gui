@@ -227,9 +227,9 @@ namespace lenticulis_gui
         /// <summary>
         /// Set position of timeline item in grid
         /// </summary>
-        /// <param name="layer"></param>
-        /// <param name="column"></param>
-        /// <param name="length"></param>
+        /// <param name="layer">layer number (row)</param>
+        /// <param name="column">column number</param>
+        /// <param name="length">length (column span)</param>
         public void SetPosition(int layer, int column, int length)
         {
             // all those parameters needs to be zero or greater
@@ -262,9 +262,9 @@ namespace lenticulis_gui
         /// <summary>
         /// True if timeline item is in position [row, column]
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
+        /// <param name="row">row number</param>
+        /// <param name="column"> column number</param>
+        /// <returns>True if item is in position [row, column]</returns>
         public bool IsInPosition(int row, int column)
         {
             return (this.dataObject.Layer == row && column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length));
@@ -273,8 +273,8 @@ namespace lenticulis_gui
         /// <summary>
         /// True if timelien item is in column
         /// </summary>
-        /// <param name="column"></param>
-        /// <returns></returns>
+        /// <param name="column">Column number</param>
+        /// <returns>true if item is in column</returns>
         public bool IsInColumn(int column)
         {
             return (column >= this.dataObject.Column && column < (this.dataObject.Column + this.dataObject.Length));
