@@ -50,6 +50,16 @@ namespace lenticulis_gui.src.App
         public static List<Layer> layers = new List<Layer>();
 
         /// <summary>
+        /// DPI
+        /// </summary>
+        public static int Dpi { get; set; }
+
+        /// <summary>
+        /// LPI
+        /// </summary>
+        public static int Lpi { get; set; }
+
+        /// <summary>
         /// Force cleanup of whole project - clears all layers, its objects, and restores default settings
         /// This should be done after program startup, and before loading project, or creating new project
         /// </summary>

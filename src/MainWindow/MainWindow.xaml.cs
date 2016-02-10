@@ -1678,6 +1678,30 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Action to generate shifts for 3D print
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Generate3D_Click(object sender, RoutedEventArgs e)
+        {
+            //Input values
+            double viewDist = Convert.ToDouble(ViewDist3D.Value);
+            double viewAngle = Convert.ToDouble(ViewAngle3D.Value);
+
+            //TODO layers
+            double[] depthArray = new double[ProjectHolder.LayerCount];
+            double step = 1 / (double) ProjectHolder.LayerCount; //5 inches range (TEMP)
+            for (int i = 0; i < depthArray.Length; i++)
+            {
+                depthArray[i] = 0.5 - i * step;
+            }
+
+            Generator3D.Generate3D(viewDist, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
+
+            RepaintCanvas();
+        }
+
+        /// <summary>
         /// Clicked "Undo" button (menu item or toolbar)
         /// </summary>
         /// <param name="sender"></param>

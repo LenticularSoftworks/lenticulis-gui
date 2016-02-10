@@ -1,4 +1,4 @@
-﻿/cs;Čeština
+/cs;Čeština
 
 ## Obecné
 YES=Ano
@@ -131,6 +131,7 @@ PROP_DEFAULT_PROJECT_NAME=Můj projekt
 PROP_CANVAS_SIZE=Velikost obrázku
 PROP_SIZE_WIDTH=Šířka:
 PROP_SIZE_HEIGHT=Výška:
+PROP_PRINT=Tisk/3D
 PROP_MISCELLANOUS=Další
 PROP_FRAME_COUNT=Počet snímků:
 PROP_LAYER_COUNT=Počet vrstev:
@@ -139,6 +140,8 @@ PROP_ERR_NAME=Vyplňte název projektu
 PROP_ERR_BOTHVALUES=Vyplňte oba rozměry plátna
 PROP_ERR_FRAME_COUNT=Zadejte počet snímků
 PROP_ERR_LAYER_COUNT=Zadejte počet vrstev
+PROP_ERR_DPI=Zadejte DPI
+PROP_ERR_LPI=Zadejte LPI
 PROP_ERR_HEIGHT_NEGATIVE=Výška musí být kladné číslo
 PROP_ERR_WIDTH_NEGATIVE=Šířka musí být kladné číslo
 PROP_ERR_FRAMECOUNT_NATURAL=Počet snímků musí být přirozené číslo
@@ -149,6 +152,7 @@ PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Konflikt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se nachází obrázky. Mají být odstraněny?
 PROP_PSD_AS_INPUT=Vytvořit z PSD:
 PSD_SOURCE_INVALID=Nelze načíst vybraný PSD soubor!
+PROP_FRAME_CNT_TEXT=Zvolený počet snímků je vyšší než doporučený pro parametry DPI a LPI
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformace
@@ -166,7 +170,12 @@ CBOX_INTERP_ITEM_GONIOMETRIC=Goniometrická
 LABEL_TEXT_DEGREES=stupňů
 LABEL_INTERPOLATION_TYPE=Typ interpolace
 
-
+## 3D panel
+VIEW_DIST=Pozorovací vzdálenost
+FOREGROUND=Popředí
+BACKGROUND=Pozadí
+VIEW_ANGLE=Zorný úhel
+GENERATE=Generovat
 
 
 

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="clr-namespace:lenticulis_gui.src.App"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="Vlastnosti projektu" Height="333" Width="331" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="Vlastnosti projektu" Height="486.971" Width="331" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
@@ -32,17 +32,24 @@
             <ComboBoxItem IsSelected="True">px</ComboBoxItem>
         </ComboBox>
 
-        <Label Content="{app:LangConverter str=PROP_MISCELLANOUS}" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" FontWeight="Bold" />
-        <Label Content="{app:LangConverter str=PROP_PSD_AS_INPUT}" HorizontalAlignment="Left" Margin="11,174,0,0" VerticalAlignment="Top"/>
-        <Label Content="{app:LangConverter str=PROP_FRAME_COUNT}" HorizontalAlignment="Left" Margin="11,198,0,0" VerticalAlignment="Top"/>
-        <Label Content="{app:LangConverter str=PROP_LAYER_COUNT}" HorizontalAlignment="Left" Margin="11,222,0,0" VerticalAlignment="Top"/>
-        <Controls:NumericUpDown Name="PropertiesImages" Value="1" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="123,199,0,0" VerticalAlignment="Top" Width="64"/>
-        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="123,226,0,0" VerticalAlignment="Top" Width="64"/>
+        <Label Content="{app:LangConverter str=PROP_MISCELLANOUS}" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" FontWeight="Bold" Width="131" />
+        <Label Content="{app:LangConverter str=PROP_PSD_AS_INPUT}" HorizontalAlignment="Left" Margin="10,263,0,0" VerticalAlignment="Top"/>
+        <Label Content="{app:LangConverter str=PROP_FRAME_COUNT}" HorizontalAlignment="Left" Margin="10,293,0,0" VerticalAlignment="Top"/>
+        <Label Content="{app:LangConverter str=PROP_LAYER_COUNT}" HorizontalAlignment="Left" Margin="11,324,0,0" VerticalAlignment="Top"/>
+        <Controls:NumericUpDown Name="PropertiesImages" Value="1" ValueChanged="PropertiesPrint_ValueChanged" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,293,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.484,0.282"/>
+        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,324,0,0" VerticalAlignment="Top" Width="64"/>
+        
+        <TextBox Name="SourcePSDPathEdit" HorizontalAlignment="Left" Height="23" Margin="128,262,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="153"/>
+        <Button Name="SourcePSDBrowseButton" Content="..." HorizontalAlignment="Left" Margin="286,263,0,0" VerticalAlignment="Top" Width="34" Height="23" Click="SourcePSDBrowseButton_Click" />
 
-        <Button Name="CancelButton" Content="{app:LangConverter str=CANCEL}" HorizontalAlignment="Left" Margin="240,270,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click" RenderTransformOrigin="0.433,0.525"/>
-        <Button Name="OKButton" Content="{app:LangConverter str=OK}" HorizontalAlignment="Left" Margin="160,270,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
-        <TextBox Name="SourcePSDPathEdit" HorizontalAlignment="Left" Height="23" Margin="123,172,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="153"/>
-        <Button Name="SourcePSDBrowseButton" Content="..." HorizontalAlignment="Left" Margin="281,172,0,0" VerticalAlignment="Top" Width="34" Height="23" Click="SourcePSDBrowseButton_Click" />
+        <Label Content="{app:LangConverter str=PRINT}" HorizontalAlignment="Left" Margin="11,147,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+        <Label Content="DPI" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top"/>
+        <Label Content="LPI" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top"/>
+        <Controls:NumericUpDown x:Name="PropertiesDPI" Value="300" LostFocus="PropertiesPrint_ValueChanged" HorizontalAlignment="Left" Minimum="1" Margin="53,178,0,0" VerticalAlignment="Top" Width="102"/>
+        <Controls:NumericUpDown x:Name="PropertiesLPI" Value="25" LostFocus="PropertiesPrint_ValueChanged" HorizontalAlignment="Left" Minimum="1" Margin="53,205,0,0" VerticalAlignment="Top" Width="102"/>
 
+        <TextBlock Name="PropertiesStatus" TextWrapping="Wrap" Margin="10,355,5,40" />
+        <Button Name="CancelButton" Content="{app:LangConverter str=CANCEL}" HorizontalAlignment="Left" Margin="240,423,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click" RenderTransformOrigin="0.433,0.525"/>
+        <Button Name="OKButton" Content="{app:LangConverter str=OK}" HorizontalAlignment="Left" Margin="152,423,0,0" VerticalAlignment="Top" Width="75" Click="OKButton_Click"/>
     </Grid>
 </Controls:MetroWindow>

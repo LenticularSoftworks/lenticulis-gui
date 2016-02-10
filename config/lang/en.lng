@@ -1,4 +1,4 @@
-﻿/en;English
+/en;English
 
 ## Obecné
 YES=Yes
@@ -131,6 +131,7 @@ PROP_DEFAULT_PROJECT_NAME=My project
 PROP_CANVAS_SIZE=Image size
 PROP_SIZE_WIDTH=Width:
 PROP_SIZE_HEIGHT=Height:
+PROP_PRINT=Print/3D
 PROP_MISCELLANOUS=Miscellaneous
 PROP_FRAME_COUNT=Frame count:
 PROP_LAYER_COUNT=Layer count:
@@ -139,6 +140,8 @@ PROP_ERR_NAME=Fill in your project name
 PROP_ERR_BOTHVALUES=Fill in both image dimensions
 PROP_ERR_FRAME_COUNT=Fill in frame count
 PROP_ERR_LAYER_COUNT=Fill in layer count
+PROP_ERR_DPI=Fill in DPI
+PROP_ERR_LPI=Fill in LPI
 PROP_ERR_HEIGHT_NEGATIVE=Height has to be positive number
 PROP_ERR_WIDTH_NEGATIVE=Width has to be positive number
 PROP_ERR_FRAMECOUNT_NATURAL=Frame count must be natural number
@@ -149,6 +152,7 @@ PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Conflict
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=There are images in the area you are about to remove. Should they be removed?
 PROP_PSD_AS_INPUT=Create from PSD:
 PSD_SOURCE_INVALID=Chosen PSD could not be loaded!
+PROP_FRAME_CNT_TEXT=Selected frame count is higher than recommended for LPI and DPI parameters
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformations
@@ -165,6 +169,13 @@ CBOX_INTERP_ITEM_CUBIC=Cubic
 CBOX_INTERP_ITEM_GONIOMETRIC=Goniometric
 LABEL_TEXT_DEGREES=degrees
 LABEL_INTERPOLATION_TYPE=Interpolation type
+
+## 3D panel
+VIEW_DIST=View distance
+FOREGROUND=Foreground
+BACKGROUND=Background
+VIEW_ANGLE=View angle
+GENERATE=Generate
 
 
 

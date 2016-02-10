@@ -99,6 +99,20 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
+            //DPI
+            if (PropertiesDPI.Value == null)
+            {
+                MessageBox.Show(LangProvider.getString("PROP_ERR_DPI"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            //LPI
+            if (PropertiesLPI.Value == null)
+            {
+                MessageBox.Show(LangProvider.getString("PROP_ERR_LPI"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // height must be an integer larger than zero
             int height = (int)(PropertiesHeight.Value);
             if (height <= 0)
@@ -131,6 +145,9 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
+            int dpi = (int)PropertiesDPI.Value;
+            int lpi = (int)PropertiesLPI.Value;
+
             // if creating project, and using PSD as source..
             if (!ProjectHolder.ValidProject && SourcePSDPathEdit.Text.Length > 0)
             {
@@ -151,6 +168,8 @@ namespace lenticulis_gui.src.Dialogs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = height;
             ProjectHolder.Width = width;
+            ProjectHolder.Dpi = dpi;
+            ProjectHolder.Lpi = lpi;
 
             // get main window
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
@@ -215,5 +234,38 @@ namespace lenticulis_gui.src.Dialogs
             if (dres == true)
                 SourcePSDPathEdit.Text = dialog.FileName;
         }
+
+        /// <summary>
+        /// Check recommended frame count
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PropertiesPrint_ValueChanged(object sender, EventArgs e)
+        {
+            if (PropertiesDPI == null || PropertiesLPI == null || PropertiesImages == null)
+                return;
+
+            if (PropertiesDPI.Value == null || PropertiesLPI.Value == null || PropertiesImages.Value == null)
+                return;
+
+            int dpi = (int)PropertiesDPI.Value;
+            int lpi = (int)PropertiesLPI.Value;
+            int frames = (int)PropertiesImages.Value;
+
+            //recommended frame count = DPI / LPI
+            int framesRec = dpi / lpi;
+
+            //Warning message appears
+            if (frames > framesRec)
+            {
+                PropertiesStatus.Text = LangProvider.getString("PROP_FRAME_CNT_TEXT") + ": " + framesRec;
+            }
+            else
+            {
+                PropertiesStatus.Text = "";
+            }
+        }
+
+
     }
 }
