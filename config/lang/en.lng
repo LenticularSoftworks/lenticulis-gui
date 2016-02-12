@@ -170,12 +170,13 @@ CBOX_INTERP_ITEM_GONIOMETRIC=Goniometric
 LABEL_TEXT_DEGREES=degrees
 LABEL_INTERPOLATION_TYPE=Interpolation type
 
-## 3D panel
+## 3D
 VIEW_DIST=View distance
 FOREGROUND=Foreground
 BACKGROUND=Background
 VIEW_ANGLE=View angle
 GENERATE=Generate
+
 
 
 

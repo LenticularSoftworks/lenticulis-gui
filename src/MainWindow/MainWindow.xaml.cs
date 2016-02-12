@@ -1684,20 +1684,27 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Generate3D_Click(object sender, RoutedEventArgs e)
         {
+            if (!ProjectHolder.ValidProject || timelineList.Count == 0)
+                return;
+
             //Input values
-            double viewDist = Convert.ToDouble(ViewDist3D.Value);
-            double viewAngle = Convert.ToDouble(ViewAngle3D.Value);
+            double viewDist = Convert.ToDouble(ViewDist3D.Text);
+            double viewAngle = Convert.ToDouble(ViewAngle3D.Text);
+            double foreground = Convert.ToDouble(Foreground3D.Text);
+            double background = Convert.ToDouble(Background3D.Text);
 
             //TODO layers
             double[] depthArray = new double[ProjectHolder.LayerCount];
-            double step = 1 / (double) ProjectHolder.LayerCount; //5 inches range (TEMP)
+            double step = (foreground - background) / (double) ProjectHolder.LayerCount;
             for (int i = 0; i < depthArray.Length; i++)
             {
-                depthArray[i] = 0.5 - i * step;
+                depthArray[i] = foreground - i * step;
             }
 
+            //set new positions
             Generator3D.Generate3D(viewDist, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
 
+            //repaint result
             RepaintCanvas();
         }
 

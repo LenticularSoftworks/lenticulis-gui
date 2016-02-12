@@ -172,15 +172,34 @@
                             </Grid>
                         </Border>
                         <!-- Browser end -->
+                        <!-- 3D begin -->
                         <Grid Grid.Row="1">
-                            <Label Content="3D" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Width="30" Height="30" Background="#FF5EB5C9"/>
-                            <Label HorizontalAlignment="Left" Content="{app:LangConverter str=VIEW_DIST}" Margin="3,35,0,193"/>
-                            <Label HorizontalAlignment="Left" Content="{app:LangConverter str=VIEW_ANGLE}" Margin="3,68,0,164"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Content="3D" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Width="30" Height="30" Background="#FF5EB5C9"/>
 
-                            <Controls:NumericUpDown Name="ViewDist3D" Minimum="0" Margin="124,35,24,200" Value="36"/>
-                            <Controls:NumericUpDown Name="ViewAngle3D" Minimum="0" Margin="124,70,25,164" Height="27" Value="49"/>
-                            <Button Name="Generate3D" Content="{app:LangConverter str=GENERATE}" Click="Generate3D_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,149,69" Width="81" />
+                            <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Content="{app:LangConverter str=VIEW_DIST}" />
+                            <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Content="{app:LangConverter str=VIEW_ANGLE}"  />
+                            <Label Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Content="{app:LangConverter str=FOREGROUND}" />
+                            <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Content="{app:LangConverter str=BACKGROUND}" />
+
+                            <TextBox Grid.Column="1" Grid.Row="1" Name="ViewDist3D" Text="36" />
+                            <TextBox Grid.Column="1" Grid.Row="2" Name="ViewAngle3D" Text="49" />
+                            <TextBox Grid.Column="1" Grid.Row="3" Name="Foreground3D" />
+                            <TextBox Grid.Column="1" Grid.Row="4" Name="Background3D" />
+                            <Button Grid.Column="0" Grid.Row="5" Name="Generate3D" Content="{app:LangConverter str=GENERATE}" Click="Generate3D_Click" />
                         </Grid>
+                        <!-- 3D end-->
                     </Grid>
                 </ScrollViewer>
             </Grid>

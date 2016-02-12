@@ -170,7 +170,7 @@ CBOX_INTERP_ITEM_GONIOMETRIC=Goniometrická
 LABEL_TEXT_DEGREES=stupňů
 LABEL_INTERPOLATION_TYPE=Typ interpolace
 
-## 3D panel
+## 3D
 VIEW_DIST=Pozorovací vzdálenost
 FOREGROUND=Popředí
 BACKGROUND=Pozadí

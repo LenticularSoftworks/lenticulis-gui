@@ -16,11 +16,6 @@ namespace lenticulis_gui.src.App
         private static int viewZoneDistance;
 
         /// <summary>
-        /// DPI
-        /// </summary>
-        private static double dpi;
-
-        /// <summary>
         /// Average eye distance in inches
         /// </summary>
         private const double eyeDistance = 2.5f;
@@ -37,13 +32,11 @@ namespace lenticulis_gui.src.App
         /// <param name="viewAngle">View angle in degrees</param>
         /// <param name="imageCount">Number of frames</param>
         /// <param name="width">Width of image</param>
-        /// <param name="inputDpi">DPI</param>
+        /// <param name="dpi">DPI</param>
         /// <param name="timelineList">List of objects in project</param>
         /// <param name="depthArray">Array of depths of layers</param>
-        public static void Generate3D(double viewDistance, double viewAngle, int imageCount, int width, double inputDpi, List<TimelineItem> timelineList, double[] depthArray)
+        public static void Generate3D(double viewDistance, double viewAngle, int imageCount, int width, double dpi, List<TimelineItem> timelineList, double[] depthArray)
         {
-            //set DPI
-            dpi = inputDpi;
             //image step for left and right eye
             viewZoneDistance = CalculateZoneDistance(viewDistance, viewAngle, imageCount);
 
@@ -58,8 +51,8 @@ namespace lenticulis_gui.src.App
                 int layer = item.getLayerObject().Layer;
 
                 //new positions
-                float newLeft = CalcSingleEyeImage(positionX, width, viewDistance, depthArray[layer], true) + positionX;
-                float newRight = CalcSingleEyeImage(positionX, width, viewDistance, depthArray[layer], false) + positionX;
+                float newLeft = CalcSingleEyeImage(positionX, width, dpi, viewDistance, depthArray[layer], true) + positionX;
+                float newRight = CalcSingleEyeImage(positionX, width, dpi, viewDistance, depthArray[layer], false) + positionX;
 
                 //transform in image (start column + viewZoneDistance - 1)
                 int rightEyeImage = lo.Column + viewZoneDistance - 1;
@@ -95,11 +88,12 @@ namespace lenticulis_gui.src.App
         /// </summary>
         /// <param name="initX">initial coordinate X [px]</param>
         /// <param name="width">width of image [px]</param>
+        /// <param name="dpi">DPI</param>
         /// <param name="viewDistance">view distance [in]</param>
         /// <param name="objectDistance">object distance from focal pane [in] (+ is closer to observer)</param>
         /// <param name="left">if true returns shift for left eye, lse for right eye</param>
         /// <returns>Pixel shift fro minitial position</returns>
-        private static int CalcSingleEyeImage(double initX, int width, double viewDistance, double objectDistance, bool left)
+        private static int CalcSingleEyeImage(double initX, int width, double dpi, double viewDistance, double objectDistance, bool left)
         {
             //convert to inches
             double initXInch = initX / dpi;
