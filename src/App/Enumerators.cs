@@ -26,4 +26,10 @@ namespace lenticulis_gui.src.App
         Goniometric,    // y(t) = sin(t*pi/2)
         Cubic           // y(t) = 4*(t-1/2)^3 + 1/2
     };
+
+    public enum LengthUnits
+    {
+        cm, //centimeters 
+        @in //inches
+    };
 }

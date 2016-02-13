@@ -113,6 +113,41 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Save routine - asks for file, if needed
+        /// </summary>
+        /// <returns></returns>
+        private bool SaveRoutine(bool saveAs = false)
+        {
+            if (!ProjectHolder.ValidProject)
+                return false;
+
+            if (saveAs || ProjectHolder.ProjectFileName == null || ProjectHolder.ProjectFileName == "")
+            {
+                Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+                dialog.FileName = "projekt";
+                dialog.DefaultExt = ".lcp";
+                dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE") + " (.lcp)|*.lcp";
+
+                Nullable<bool> res = dialog.ShowDialog();
+                if (res == true)
+                {
+                    // save project to newly selected file target
+                    ProjectSaver.saveProject(dialog.FileName);
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                // use previously stored filename
+                ProjectSaver.saveProject();
+                return true;
+            }
+        }
+
+        #region Canvas methods
+
+        /// <summary>
         /// Refreshes all stored canvases according to actual properties
         /// </summary>
         public void RefreshCanvasList(bool resetSlider = true)
@@ -193,6 +228,106 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Get cavnas by image ID and return with scrollbar
+        /// </summary>
+        /// <param name="imageID">number of image</param>
+        /// <returns>single scrollable canvas</returns>
+        public ScrollViewer GetCanvas(int imageID)
+        {
+            if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
+            {
+                return null;
+            }
+
+            ScrollViewer scViewer = new ScrollViewer();
+            scViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+            WorkCanvas canvas = canvasList[imageID];
+            scViewer.Content = canvas;
+
+            canvas.Paint();
+
+            return scViewer;
+        }
+
+        /// <summary>
+        /// Retrieves canvas currently drawn on canvas panel
+        /// </summary>
+        /// <returns>current canvas element</returns>
+        public ScrollViewer GetCurrentCanvas()
+        {
+            if (CanvasPanel.Children.Count == 0)
+                return null;
+
+            return CanvasPanel.Children[0] as ScrollViewer;
+        }
+
+        /// <summary>
+        /// Repaint canvas when changed
+        /// </summary>
+        public void RepaintCanvas()
+        {
+            for (int i = 0; i < canvasList.Count; i++)
+            {
+                canvasList[i].Paint();
+            }
+        }
+
+        /// <summary>
+        /// Method for loading and putting element on canvas / to timeline to implicit position
+        /// </summary>
+        /// <param name="path">Path to image file</param>
+        /// <param name="extension">Extension (often obtained via file browser)</param>
+        /// <returns>True if everything succeeded</returns>
+        public bool LoadAndPutResource(String path, String extension, bool callback, out int resourceId)
+        {
+            resourceId = 0;
+
+            if (!Utils.IsAcceptedImageExtension(extension))
+                return false;
+
+            // Create new loading window
+            LoadingWindow lw = new LoadingWindow("image");
+            // show it
+            lw.Show();
+            // and disable this window to disallow all operations
+            this.IsEnabled = false;
+            // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
+
+            // load image...
+
+            int psdLayerIndex = -1;
+            if (!callback && extension.ToLower().Equals(".psd"))
+            {
+                List<String> layers = ImageLoader.getLayerInfo(path);
+
+                LayerSelectWindow lsw = new LayerSelectWindow(layers);
+                lsw.ShowDialog();
+
+                psdLayerIndex = lsw.selectedLayer;
+            }
+
+            ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);
+
+            // after image was loaded, enable main window
+            this.IsEnabled = true;
+            // and close loading window
+            lw.Close();
+
+            if (ih == null)
+                return false;
+
+            resourceId = ih.id;
+
+            // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
+            return true;
+        }
+
+        #endregion Canvas methods
+
+        #region Slider methods
+        /// <summary>
         /// Adds range slider under the canvas
         /// </summary>
         /// <param name="firstImageID">number of first (start) image</param>
@@ -261,53 +396,9 @@ namespace lenticulis_gui
             ShowDoubleCanvas((int)slider.LowerValue, (int)slider.UpperValue);
         }
 
-        /// <summary>
-        /// Get cavnas by image ID and return with scrollbar
-        /// </summary>
-        /// <param name="imageID">number of image</param>
-        /// <returns>single scrollable canvas</returns>
-        public ScrollViewer GetCanvas(int imageID)
-        {
-            if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
-            {
-                return null;
-            }
+        #endregion Slider methods
 
-            ScrollViewer scViewer = new ScrollViewer();
-            scViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            scViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-            WorkCanvas canvas = canvasList[imageID];
-            scViewer.Content = canvas;
-
-            canvas.Paint();
-
-            return scViewer;
-        }
-
-        /// <summary>
-        /// Retrieves canvas currently drawn on canvas panel
-        /// </summary>
-        /// <returns>current canvas element</returns>
-        public ScrollViewer GetCurrentCanvas()
-        {
-            if (CanvasPanel.Children.Count == 0)
-                return null;
-
-            return CanvasPanel.Children[0] as ScrollViewer;
-        }
-
-        /// <summary>
-        /// Repaint canvas when changed
-        /// </summary>
-        public void RepaintCanvas()
-        {
-            for (int i = 0; i < canvasList.Count; i++)
-            {
-                canvasList[i].Paint();
-            }
-        }
-
+        #region Browser methods
         /// <summary>
         /// Write list of drives into file browser.
         /// </summary>
@@ -365,54 +456,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Open folder by selected item in browser
-        /// </summary>
-        /// <param name="browserItem">selected browser item</param>
-        private void Browser_DoubleClick(BrowserItem browserItem)
-        {
-            if (browserItem.Dir && browserItem.Path != "root")
-            {
-                try
-                {
-                    ActualFolder(browserItem.Path);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, LangProvider.getString("COULD_NOT_OPEN"), MessageBoxButton.OK, MessageBoxImage.Warning);
-                    GetDrives();
-                }
-            }
-            else if (browserItem.Dir && browserItem.Path == "root")
-            {
-                GetDrives();
-            }
-            // disable this action for now - we will allow putting things to project only by dragging them onto timeline
-            /*else if (!BItem.Dir)
-            {
-                bool result = LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
-
-                // positive result means the image was successfully loaded and put into canvas + timeline
-                if (result)
-                {
-                    // check for presence in last used list
-                    bool found = false;
-                    foreach (BrowserItem bi in LastUsedList.Items)
-                    {
-                        if (bi.Path.Equals(BItem.Path))
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    // if not yet there, add it
-                    if (!found)
-                        LastUsedList.Items.Add(new BrowserItem(BItem.Name, BItem.Path, BItem.Extension, false));
-                }
-            }*/
-        }
-
-        /// <summary>
         /// Select item from last used tab
         /// </summary>
         /// <param name="sender"></param>
@@ -423,54 +466,75 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Method for loading and putting element on canvas / to timeline to implicit position
+        /// Adds specified resource to last used items list, if it's not already there
         /// </summary>
-        /// <param name="path">Path to image file</param>
-        /// <param name="extension">Extension (often obtained via file browser)</param>
-        /// <returns>True if everything succeeded</returns>
-        public bool LoadAndPutResource(String path, String extension, bool callback, out int resourceId)
+        /// <param name="path">path to file</param>
+        /// <param name="name">filename</param>
+        /// <param name="extension">file extension</param>
+        public void AddLastUsedItem(String path, String name, String extension)
         {
-            resourceId = 0;
+            String fullpath = path + ((path[path.Length - 1] == '\\') ? "" : "\\") + name;
 
-            if (!Utils.IsAcceptedImageExtension(extension))
-                return false;
-
-            // Create new loading window
-            LoadingWindow lw = new LoadingWindow("image");
-            // show it
-            lw.Show();
-            // and disable this window to disallow all operations
-            this.IsEnabled = false;
-            // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
-
-            // load image...
-
-            int psdLayerIndex = -1;
-            if (!callback && extension.ToLower().Equals(".psd"))
+            // check for presence in last used list
+            bool found = false;
+            foreach (BrowserItem bi in LastUsedList.Items)
             {
-                List<String> layers = ImageLoader.getLayerInfo(path);
-
-                LayerSelectWindow lsw = new LayerSelectWindow(layers);
-                lsw.ShowDialog();
-
-                psdLayerIndex = lsw.selectedLayer;
+                if (fullpath.Equals(bi.Path + ((bi.Path[bi.Path.Length - 1] == '\\') ? "" : "\\") + bi.Name))
+                {
+                    found = true;
+                    break;
+                }
             }
 
-            ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);
-
-            // after image was loaded, enable main window
-            this.IsEnabled = true;
-            // and close loading window
-            lw.Close();
-
-            if (ih == null)
-                return false;
-
-            resourceId = ih.id;
-
-            // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
-            return true;
+            // if not yet there, add it
+            if (!found)
+                LastUsedList.Items.Add(new BrowserItem(name, path, extension, false));
         }
+
+        /// <summary>
+        /// Gets the object for the element selected in the listbox
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="point"></param>
+        /// <returns>object data of selected element in listbox</returns>
+        private static object GetObjectDataFromPoint(ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                //get the object from the element
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    // try to get the object value for the corresponding element
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+
+                    //get the parent and we will iterate again
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+
+                    //if we reach the actual listbox then we must break to avoid an infinite loop
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+
+                //return the data that we fetched only if it is not Unset value
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion Browser methods
+
+        #region Timeline methods
 
         /// <summary>
         /// Add timeline header
@@ -729,50 +793,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Add layer action
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddLayer_Click(object sender, RoutedEventArgs e)
-        {
-            AddTimelineLayer(1);
-        }
-
-        /// <summary>
-        /// Remove last layer action listener - if there's images shows yes/no dialog first
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RemoveLayer_Click(object sender, RoutedEventArgs e)
-        {
-            //it has to be at least one layer
-            if (ProjectHolder.LayerCount == 1 || ProjectHolder.ImageCount == 0)
-            {
-                return;
-            }
-
-            int lastLayer = ProjectHolder.LayerCount - 1;
-            MessageBoxResult messageBoxResult = MessageBoxResult.Yes;
-
-            foreach (TimelineItem item in timelineList)
-            {
-                //if some item is in last layer
-                if (item.getLayerObject().Layer == lastLayer)
-                {
-                    messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
-
-                    break;
-                }
-            }
-
-            //remove last layer
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                RemoveLastLayer();
-            }
-        }
-
-        /// <summary>
         /// Remove last layer in timeline and project holder and its images
         /// </summary>
         private void RemoveLastLayer()
@@ -805,6 +825,20 @@ namespace lenticulis_gui
             //set ProjectHolder
             ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
             ProjectHolder.LayerCount--;
+        }
+
+        /// <summary>
+        /// Removes item from timeline, and properly disposes its references
+        /// </summary>
+        /// <param name="item"></param>
+        private void RemoveTimelineItem(TimelineItem item)
+        {
+            timelineList.Remove(item);
+            Timeline.Children.Remove(item);
+
+            item.getLayerObject().dispose();
+
+            RepaintCanvas();
         }
 
         /// <summary>
@@ -856,6 +890,208 @@ namespace lenticulis_gui
 
             ProjectHolder.layers.Clear();
             ProjectHolder.LayerCount = 0;
+        }
+
+        /// <summary>
+        /// Time line item shift
+        /// </summary>
+        /// <param name="columnWidth">column width</param>
+        private void TimelineItemShift(double columnWidth)
+        {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            //Position in grid calculated from mouse position and grid dimensions
+            int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
+            int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
+
+            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
+        }
+
+        /// <summary>
+        /// Timeline item resize
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="columnWidth"></param>
+        private void TimelineItemResize(object sender, double columnWidth)
+        {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            int length;
+            int column;
+            int currentColumn = (int)(mouse.X / columnWidth);
+
+            //if left panel is dragged else right panel is dragged
+            if (capturedResizePanel.HorizontalAlignment.ToString() == "Left")
+            {
+                column = currentColumn;
+                length = capturedTimelineItemLength - column + capturedTimelineItemColumn;
+            }
+            else
+            {
+                column = capturedTimelineItemColumn;
+                length = currentColumn - column + 1; //index start at 0 - length + 1
+            }
+
+            SetTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
+        }
+
+        /// <summary>
+        /// Set timeline item position in grid
+        /// </summary>
+        /// <param name="row">row number</param>
+        /// <param name="column">column number</param>
+        /// <param name="length">image length (column span)</param>
+        private void SetTimelineItemPosition(int row, int column, int length)
+        {
+            bool overlap = TimelineItemOverlap(column, row, length);
+            int endColumn = column + length - 1;
+
+            //if the whole element is in grid and doesn't overlaps another item
+            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.getLayerObject().Layer >= 0 && capturedTimelineItem.getLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
+            {
+                capturedTimelineItem.SetPosition(row, column, length);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if timeline item overlaps another
+        /// </summary>
+        /// <param name="timelineColumn">column number</param>
+        /// <param name="timelineRow">row (layer) number</param>
+        /// <param name="timelineLength">length (column span)</param>
+        /// <returns></returns>
+        private bool TimelineItemOverlap(int timelineColumn, int timelineRow, int timelineLength)
+        {
+            foreach (TimelineItem item in timelineList)
+            {
+                //if its the same item
+                if (item == capturedTimelineItem)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < timelineLength; i++)
+                {
+                    //overlaps antoher item
+                    if (item.IsInPosition(timelineRow, timelineColumn + i))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Adds new item to timeline
+        /// </summary>
+        /// <param name="newItem">item to be added</param>
+        public void AddTimelineItem(TimelineItem newItem)
+        {
+            timelineList.Add(newItem);
+            newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
+            newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
+            newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+            newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+            newItem.deleteMenuItem.Click += TimelineDelete_Click;
+            newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
+            newItem.transformMenuItem.Click += TimelineTransformItem_Click;
+            newItem.layerUp.Click += LayerUp_Click;
+            newItem.layerDown.Click += LayerDown_Click;
+
+            // add into timeline
+            Timeline.Children.Add(newItem);
+
+            //repaint canvas
+            canvasList[newItem.getLayerObject().Column].Paint();
+        }
+
+        #endregion Timeline methods
+
+        #region 3D methods
+        /// <summary>
+        /// Gets layer dpeths from timeline and return them as array
+        /// </summary>
+        /// <param name="foreground">foreground</param>
+        /// <param name="background">background</param>
+        /// <returns>depths array</returns>
+        private double[] GetDepthArray(double foreground, double background)
+        {
+            double[] depthArray = new double[ProjectHolder.LayerCount];
+            double tmpDepth = Double.NegativeInfinity;
+
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
+            {
+                TextBox tb = LayerDepth.Children[i] as TextBox;
+
+                if (Double.TryParse(tb.Text, out tmpDepth))
+                {
+                    //must be between foreground and background
+                    if (tmpDepth <= foreground && tmpDepth >= background)
+                    {
+                        depthArray[i] = tmpDepth;
+
+                        Debug.WriteLine(tmpDepth);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("depth out of bounds"); //TODO
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("depth parse err"); //TODO
+                }
+            }
+
+            return depthArray;
+        }
+        #endregion 3D methods
+
+        #region Timeline listeners
+        /// <summary>
+        /// Add layer action
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddLayer_Click(object sender, RoutedEventArgs e)
+        {
+            AddTimelineLayer(1);
+        }
+
+        /// <summary>
+        /// Remove last layer action listener - if there's images shows yes/no dialog first
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemoveLayer_Click(object sender, RoutedEventArgs e)
+        {
+            //it has to be at least one layer
+            if (ProjectHolder.LayerCount == 1 || ProjectHolder.ImageCount == 0)
+            {
+                return;
+            }
+
+            int lastLayer = ProjectHolder.LayerCount - 1;
+            MessageBoxResult messageBoxResult = MessageBoxResult.Yes;
+
+            foreach (TimelineItem item in timelineList)
+            {
+                //if some item is in last layer
+                if (item.getLayerObject().Layer == lastLayer)
+                {
+                    messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
+
+                    break;
+                }
+            }
+
+            //remove last layer
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                RemoveLastLayer();
+            }
         }
 
         /// <summary>
@@ -960,138 +1196,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Time line item shift
-        /// </summary>
-        /// <param name="columnWidth">column width</param>
-        private void TimelineItemShift(double columnWidth)
-        {
-            Point mouse = Mouse.GetPosition(Timeline);
-
-            //Position in grid calculated from mouse position and grid dimensions
-            int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
-            int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
-
-            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
-        }
-
-        /// <summary>
-        /// Timeline item resize
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="columnWidth"></param>
-        private void TimelineItemResize(object sender, double columnWidth)
-        {
-            Point mouse = Mouse.GetPosition(Timeline);
-
-            int length;
-            int column;
-            int currentColumn = (int)(mouse.X / columnWidth);
-
-            //if left panel is dragged else right panel is dragged
-            if (capturedResizePanel.HorizontalAlignment.ToString() == "Left")
-            {
-                column = currentColumn;
-                length = capturedTimelineItemLength - column + capturedTimelineItemColumn;
-            }
-            else
-            {
-                column = capturedTimelineItemColumn;
-                length = currentColumn - column + 1; //index start at 0 - length + 1
-            }
-
-            SetTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
-        }
-
-        /// <summary>
-        /// Set timeline item position in grid
-        /// </summary>
-        /// <param name="row">row number</param>
-        /// <param name="column">column number</param>
-        /// <param name="length">image length (column span)</param>
-        private void SetTimelineItemPosition(int row, int column, int length)
-        {
-            bool overlap = TimelineItemOverlap(column, row, length);
-            int endColumn = column + length - 1;
-
-            //if the whole element is in grid and doesn't overlaps another item
-            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.getLayerObject().Layer >= 0 && capturedTimelineItem.getLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
-            {
-                capturedTimelineItem.SetPosition(row, column, length);
-            }
-        }
-
-        /// <summary>
-        /// Returns true if timeline item overlaps another
-        /// </summary>
-        /// <param name="timelineColumn">column number</param>
-        /// <param name="timelineRow">row (layer) number</param>
-        /// <param name="timelineLength">length (column span)</param>
-        /// <returns></returns>
-        private bool TimelineItemOverlap(int timelineColumn, int timelineRow, int timelineLength)
-        {
-            foreach (TimelineItem item in timelineList)
-            {
-                //if its the same item
-                if (item == capturedTimelineItem)
-                {
-                    continue;
-                }
-
-                for (int i = 0; i < timelineLength; i++)
-                {
-                    //overlaps antoher item
-                    if (item.IsInPosition(timelineRow, timelineColumn + i))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Browser listener - Double click opens folder, click starts drag n drop action
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Browser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ListBox parent = (ListBox)sender;
-            //dragged data as browser item
-            BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
-
-            if (browserItem == null)
-                return;
-
-            if (e.ClickCount == 2)
-            {
-                //Open folder
-                Browser_DoubleClick(browserItem);
-            }
-            else
-            {
-                //drag browser item
-                Browser_Click(browserItem, parent);
-            }
-        }
-
-        /// <summary>
-        /// Browser drag handler
-        /// </summary>
-        /// <param name="browserItem">dragged browser item</param>
-        /// <param name="parent">parent component</param>
-        private void Browser_Click(BrowserItem browserItem, ListBox parent)
-        {
-            // dragged item has to be instance of browserItem
-            if (browserItem == null)
-                return;
-
-            //drag drop event
-            DragDrop.DoDragDrop(parent, browserItem, System.Windows.DragDropEffects.Move);
-        }
-
-        /// <summary>
         /// Browser drop handler - Creates new timeline item and adds to timeline
         /// </summary>
         /// <param name="sender"></param>
@@ -1127,7 +1231,7 @@ namespace lenticulis_gui
             {
                 int resourceId = 0;
                 // load resource and put it into internal structures
-                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length-1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, false, out resourceId);
+                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length - 1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, false, out resourceId);
 
                 if (result)
                 {
@@ -1144,30 +1248,6 @@ namespace lenticulis_gui
             {
                 MessageBox.Show(LangProvider.getString("ITEM_OVERLAPS_MSG"), LangProvider.getString("ITEM_OVERLAPS"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-        }
-
-        /// <summary>
-        /// Adds new item to timeline
-        /// </summary>
-        /// <param name="newItem">item to be added</param>
-        public void AddTimelineItem(TimelineItem newItem)
-        {
-            timelineList.Add(newItem);
-            newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
-            newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
-            newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-            newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-            newItem.deleteMenuItem.Click += TimelineDelete_Click;
-            newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
-            newItem.transformMenuItem.Click += TimelineTransformItem_Click;
-            newItem.layerUp.Click += LayerUp_Click;
-            newItem.layerDown.Click += LayerDown_Click;
-
-            // add into timeline
-            Timeline.Children.Add(newItem);
-
-            //repaint canvas
-            canvasList[newItem.getLayerObject().Column].Paint();
         }
 
         /// <summary>
@@ -1190,7 +1270,7 @@ namespace lenticulis_gui
             }
 
             //if it is last layer
-            if(layer == ProjectHolder.LayerCount - 1) 
+            if (layer == ProjectHolder.LayerCount - 1)
             {
                 return;
             }
@@ -1202,7 +1282,7 @@ namespace lenticulis_gui
             Layer tmp = ProjectHolder.layers[layer + 1];
             ProjectHolder.layers.RemoveAt(layer + 1);
             ProjectHolder.layers.Insert(layer, tmp);
-            
+
             RefreshTimelineItemPosition();
             RepaintCanvas();
 
@@ -1241,37 +1321,11 @@ namespace lenticulis_gui
             Layer tmp = ProjectHolder.layers[layer];
             ProjectHolder.layers.RemoveAt(layer);
             ProjectHolder.layers.Insert(layer - 1, tmp);
-            
+
             RefreshTimelineItemPosition();
             RepaintCanvas();
 
             capturedTimelineItemContext = null;
-        }
-
-        /// <summary>
-        /// Adds specified resource to last used items list, if it's not already there
-        /// </summary>
-        /// <param name="path">path to file</param>
-        /// <param name="name">filename</param>
-        /// <param name="extension">file extension</param>
-        public void AddLastUsedItem(String path, String name, String extension)
-        {
-            String fullpath = path + ((path[path.Length-1] == '\\') ? "" : "\\") + name;
-
-            // check for presence in last used list
-            bool found = false;
-            foreach (BrowserItem bi in LastUsedList.Items)
-            {
-                if (fullpath.Equals(bi.Path + ((bi.Path[bi.Path.Length - 1] == '\\') ? "" : "\\") + bi.Name))
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            // if not yet there, add it
-            if (!found)
-                LastUsedList.Items.Add(new BrowserItem(name, path, extension, false));
         }
 
         /// <summary>
@@ -1318,20 +1372,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Removes item from timeline, and properly disposes its references
-        /// </summary>
-        /// <param name="item"></param>
-        private void RemoveTimelineItem(TimelineItem item)
-        {
-            timelineList.Remove(item);
-            Timeline.Children.Remove(item);
-
-            item.getLayerObject().dispose();
-
-            RepaintCanvas();
-        }
-
-        /// <summary>
         /// Timeline mouse button up listener
         /// </summary>
         /// <param name="sender"></param>
@@ -1358,8 +1398,180 @@ namespace lenticulis_gui
             Point mouse = Mouse.GetPosition(Timeline);
 
             //Position in grid calculated from mouse position and grid dimensions
-            layerContext = (int)(mouse.Y /rowHeight);
+            layerContext = (int)(mouse.Y / rowHeight);
         }
+
+        #endregion Timeline listeners
+
+        #region 3D listeners
+
+        /// <summary>
+        /// Action to generate shifts for 3D print
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Generate3D_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ProjectHolder.ValidProject || timelineList.Count == 0)
+                return;
+
+            //Input values
+            double viewDist = Convert.ToDouble(ViewDist3D.Text);
+            double viewAngle = Convert.ToDouble(ViewAngle3D.Text);
+            double foreground = Convert.ToDouble(Foreground3D.Text);
+            double background = Convert.ToDouble(Background3D.Text);
+
+            //get depths of layers
+            double[] depthArray = GetDepthArray(foreground, background);
+
+            //set new positions
+            Generator3D.Generate3D(viewDist, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
+
+            //repaint result
+            RepaintCanvas();
+        }
+
+        /// <summary>
+        /// Calculates frame spacing and enable 3D generate button if higher than 0.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ViewDist3D_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (!ProjectHolder.ValidProject)
+                return;
+
+            if (ViewAngle3D.Text.Trim().Equals("") || ViewDist3D.Text.Trim().Equals(""))
+            {
+                FrameSpacing3D.Text = "";
+                Generate3D.IsEnabled = false;
+
+                return;
+            }
+
+            //initial
+            int frameSpacing = 0;
+            double distance = Double.NegativeInfinity;
+            double angle = Double.NegativeInfinity;
+
+            if (Double.TryParse(ViewAngle3D.Text, out angle) && Double.TryParse(ViewDist3D.Text, out distance))
+            {
+                //must be higher than 0
+                if (distance > 0.0 && angle > 0.0)
+                {
+                    //show frame spacing
+                    frameSpacing = Generator3D.CalculateZoneDistance(distance, angle, ProjectHolder.ImageCount);
+                    FrameSpacing3D.Text = frameSpacing.ToString();
+                }
+
+                //enable / disable generate button
+                if (frameSpacing >= 1)
+                {
+                    Generate3D.IsEnabled = true;
+                }
+                else
+                {
+                    Generate3D.IsEnabled = false;
+                }
+            }
+        }
+
+        #endregion 3D listeners
+
+        #region Browser listeners
+
+        /// <summary>
+        /// Browser listener - Double click opens folder, click starts drag n drop action
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Browser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            //dragged data as browser item
+            BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
+
+            if (browserItem == null)
+                return;
+
+            if (e.ClickCount == 2)
+            {
+                //Open folder
+                Browser_DoubleClick(browserItem);
+            }
+            else
+            {
+                //drag browser item
+                Browser_Click(browserItem, parent);
+            }
+        }
+
+        /// <summary>
+        /// Browser drag handler
+        /// </summary>
+        /// <param name="browserItem">dragged browser item</param>
+        /// <param name="parent">parent component</param>
+        private void Browser_Click(BrowserItem browserItem, ListBox parent)
+        {
+            // dragged item has to be instance of browserItem
+            if (browserItem == null)
+                return;
+
+            //drag drop event
+            DragDrop.DoDragDrop(parent, browserItem, System.Windows.DragDropEffects.Move);
+        }
+
+        /// <summary>
+        /// Open folder by selected item in browser
+        /// </summary>
+        /// <param name="browserItem">selected browser item</param>
+        private void Browser_DoubleClick(BrowserItem browserItem)
+        {
+            if (browserItem.Dir && browserItem.Path != "root")
+            {
+                try
+                {
+                    ActualFolder(browserItem.Path);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, LangProvider.getString("COULD_NOT_OPEN"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                    GetDrives();
+                }
+            }
+            else if (browserItem.Dir && browserItem.Path == "root")
+            {
+                GetDrives();
+            }
+            // disable this action for now - we will allow putting things to project only by dragging them onto timeline
+            /*else if (!BItem.Dir)
+            {
+                bool result = LoadAndPutResource(BItem.Path + "\\" + BItem.Name, BItem.Extension);
+
+                // positive result means the image was successfully loaded and put into canvas + timeline
+                if (result)
+                {
+                    // check for presence in last used list
+                    bool found = false;
+                    foreach (BrowserItem bi in LastUsedList.Items)
+                    {
+                        if (bi.Path.Equals(BItem.Path))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    // if not yet there, add it
+                    if (!found)
+                        LastUsedList.Items.Add(new BrowserItem(BItem.Name, BItem.Path, BItem.Extension, false));
+                }
+            }*/
+        }
+
+        #endregion Browser listeners
+
+        #region Tools & buttons listeners
 
         /// <summary>
         /// Saving button click event hook - invoke save dialog and proceed saving if confirmed and filled correctly
@@ -1369,39 +1581,6 @@ namespace lenticulis_gui
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
             SaveRoutine();
-        }
-
-        /// <summary>
-        /// Save routine - asks for file, if needed
-        /// </summary>
-        /// <returns></returns>
-        private bool SaveRoutine(bool saveAs = false)
-        {
-            if (!ProjectHolder.ValidProject)
-                return false;
-
-            if (saveAs || ProjectHolder.ProjectFileName == null || ProjectHolder.ProjectFileName == "")
-            {
-                Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
-                dialog.FileName = "projekt";
-                dialog.DefaultExt = ".lcp";
-                dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE")+" (.lcp)|*.lcp";
-
-                Nullable<bool> res = dialog.ShowDialog();
-                if (res == true)
-                {
-                    // save project to newly selected file target
-                    ProjectSaver.saveProject(dialog.FileName);
-                    return true;
-                }
-                return false;
-            }
-            else
-            {
-                // use previously stored filename
-                ProjectSaver.saveProject();
-                return true;
-            }
         }
 
         /// <summary>
@@ -1431,7 +1610,7 @@ namespace lenticulis_gui
             }
 
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE")+" (.lcp)|*.lcp";
+            dialog.Filter = LangProvider.getString("LENTICULIS_PROJECT_FILE") + " (.lcp)|*.lcp";
 
             Nullable<bool> dres = dialog.ShowDialog();
             if (dres == true)
@@ -1451,47 +1630,6 @@ namespace lenticulis_gui
                 // and close loading window
                 lw.Close();
             }
-        }
-
-        /// <summary>
-        /// Gets the object for the element selected in the listbox
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="point"></param>
-        /// <returns>object data of selected element in listbox</returns>
-        private static object GetObjectDataFromPoint(ListBox source, Point point)
-        {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                //get the object from the element
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    // try to get the object value for the corresponding element
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-
-                    //get the parent and we will iterate again
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-
-                    //if we reach the actual listbox then we must break to avoid an infinite loop
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-
-                //return the data that we fetched only if it is not Unset value
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -1604,7 +1742,7 @@ namespace lenticulis_gui
                 Panel3D.IsEnabled = false;
                 LayerDepth.IsEnabled = false;
             }
-            else 
+            else
             {
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
@@ -1715,115 +1853,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Action to generate shifts for 3D print
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Generate3D_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ProjectHolder.ValidProject || timelineList.Count == 0)
-                return;
-
-            //Input values
-            double viewDist = Convert.ToDouble(ViewDist3D.Text);
-            double viewAngle = Convert.ToDouble(ViewAngle3D.Text);
-            double foreground = Convert.ToDouble(Foreground3D.Text);
-            double background = Convert.ToDouble(Background3D.Text);
-
-            //get depths of layers
-            double[] depthArray = GetDepthArray(foreground, background);
-
-            //set new positions
-            Generator3D.Generate3D(viewDist, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
-
-            //repaint result
-            RepaintCanvas();
-        }
-
-        /// <summary>
-        /// Gets layer dpeths from timeline and return them as array
-        /// </summary>
-        /// <param name="foreground">foreground</param>
-        /// <param name="background">background</param>
-        /// <returns>depths array</returns>
-        private double[] GetDepthArray(double foreground, double background)
-        {
-            double[] depthArray = new double[ProjectHolder.LayerCount];
-            double tmpDepth = Double.MinValue;
-
-            for (int i = 0; i < ProjectHolder.LayerCount; i++)
-            {
-                TextBox tb = LayerDepth.Children[i] as TextBox;
-
-                if (Double.TryParse(tb.Text, out tmpDepth))
-                {
-                    //must be between foreground and background
-                    if (tmpDepth <= foreground && tmpDepth >= background)
-                    {
-                        depthArray[i] = tmpDepth;
-
-                        Debug.WriteLine(tmpDepth);
-                    }
-                    else
-                    {
-                        Debug.WriteLine("depth out of bounds"); //TODO
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("depth parse err"); //TODO
-                }
-            }
-
-            return depthArray;
-        }
-
-        /// <summary>
-        /// Calculates frame spacing and enable 3D generate button if higher than 0.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ViewDist3D_Changed(object sender, TextChangedEventArgs e)
-        {
-            if (!ProjectHolder.ValidProject)
-                return;
-
-            if(ViewAngle3D.Text.Trim().Equals("") || ViewDist3D.Text.Trim().Equals(""))
-            {
-                FrameSpacing3D.Text = "";
-                Generate3D.IsEnabled = false;
-
-                return;
-            }
-
-            //initial
-            int frameSpacing = 0;
-            double distance = Double.NegativeInfinity;
-            double angle = Double.NegativeInfinity;
-
-            if (Double.TryParse(ViewAngle3D.Text, out angle) && Double.TryParse(ViewDist3D.Text, out distance)) 
-            {
-                //must be higher than 0
-                if(distance > 0.0 && angle > 0.0)
-                {
-                    //show frame spacing
-                    frameSpacing = Generator3D.CalculateZoneDistance(distance, angle, ProjectHolder.ImageCount);
-                    FrameSpacing3D.Text = frameSpacing.ToString();
-                }
-
-                //enable / disable generate button
-                if (frameSpacing >= 1)
-                {
-                    Generate3D.IsEnabled = true;
-                }
-                else
-                {
-                    Generate3D.IsEnabled = false;
-                }
-            }
-        }
-
-        /// <summary>
         /// Clicked "Undo" button (menu item or toolbar)
         /// </summary>
         /// <param name="sender"></param>
@@ -1843,5 +1872,6 @@ namespace lenticulis_gui
             //
         }
 
+        #endregion Tools & buttons listeners
     }
 }

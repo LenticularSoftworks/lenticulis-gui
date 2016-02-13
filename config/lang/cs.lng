@@ -177,7 +177,9 @@ FOREGROUND=Popředí
 BACKGROUND=Pozadí
 VIEW_ANGLE=Zorný úhel
 GENERATE=Generovat
-
+UNITS=Jednotky
+REAL_WIDTH=Šířka
+FRAME_SPACING=L/P rozestup snímků
 
 
 

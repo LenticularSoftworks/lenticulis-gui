@@ -177,6 +177,9 @@ FOREGROUND=Foreground
 BACKGROUND=Background
 VIEW_ANGLE=View angle
 GENERATE=Generate
+UNITS=Units
+REAL_WIDTH=Width
+FRAME_SPACING=L/R frame spacing
 
 
 

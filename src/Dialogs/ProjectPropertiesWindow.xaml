@@ -36,8 +36,8 @@
         <Label Content="{app:LangConverter str=PROP_PSD_AS_INPUT}" HorizontalAlignment="Left" Margin="10,263,0,0" VerticalAlignment="Top"/>
         <Label Content="{app:LangConverter str=PROP_FRAME_COUNT}" HorizontalAlignment="Left" Margin="10,293,0,0" VerticalAlignment="Top"/>
         <Label Content="{app:LangConverter str=PROP_LAYER_COUNT}" HorizontalAlignment="Left" Margin="11,324,0,0" VerticalAlignment="Top"/>
-        <Controls:NumericUpDown Name="PropertiesImages" Value="1" ValueChanged="PropertiesPrint_ValueChanged" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,293,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.484,0.282"/>
-        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,324,0,0" VerticalAlignment="Top" Width="64"/>
+        <Controls:NumericUpDown Name="PropertiesImages" Value="1" ValueChanged="PropertiesPrint_ValueChanged" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,293,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="0.484,0.282"/>
+        <Controls:NumericUpDown Name="PropertiesLayers" Value="1" Minimum="1" Maximum="99" HorizontalAlignment="Left" Margin="128,324,0,0" VerticalAlignment="Top" Width="76"/>
         
         <TextBox Name="SourcePSDPathEdit" HorizontalAlignment="Left" Height="23" Margin="128,262,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="153"/>
         <Button Name="SourcePSDBrowseButton" Content="..." HorizontalAlignment="Left" Margin="286,263,0,0" VerticalAlignment="Top" Width="34" Height="23" Click="SourcePSDBrowseButton_Click" />
