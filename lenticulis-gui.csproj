@@ -363,6 +363,9 @@
     <Resource Include="res\image\fav.png" />
     <Resource Include="res\image\logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\3D.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)config\*" "$(TargetDir)"

@@ -107,6 +107,10 @@
                     <RadioButton GroupName="ToolSelect" Name="RotateButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_ROTATE}" Click="Rotate_Checked">
                         <Image Source="/lenticulis-gui;component/res/icon/Refresh.ico" Margin="0,0,0,10"/>
                     </RadioButton>
+                    <Separator />
+                    <Button Name="TDButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_3D}" Click="TD_Checked">
+                        <Image Source="/lenticulis-gui;component/res/icon/3D.ico" Margin="0,0,0,10"/>
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
 
@@ -173,12 +177,15 @@
                         </Border>
                         <!-- Browser end -->
                         <!-- 3D begin -->
-                        <Grid Grid.Row="1">
+                        <Grid Grid.Row="1" Name="Panel3D" IsEnabled="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -192,12 +199,20 @@
                             <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Content="{app:LangConverter str=VIEW_ANGLE}"  />
                             <Label Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Content="{app:LangConverter str=FOREGROUND}" />
                             <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Content="{app:LangConverter str=BACKGROUND}" />
+                            <Label Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" Content="Units" /> 
 
-                            <TextBox Grid.Column="1" Grid.Row="1" Name="ViewDist3D" Text="36" />
-                            <TextBox Grid.Column="1" Grid.Row="2" Name="ViewAngle3D" Text="49" />
-                            <TextBox Grid.Column="1" Grid.Row="3" Name="Foreground3D" />
-                            <TextBox Grid.Column="1" Grid.Row="4" Name="Background3D" />
-                            <Button Grid.Column="0" Grid.Row="5" Name="Generate3D" Content="{app:LangConverter str=GENERATE}" Click="Generate3D_Click" />
+                            <TextBox Grid.Column="1" Grid.Row="1" Name="ViewDist3D" Width="60" TextChanged="ViewDist3D_Changed"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Name="ViewAngle3D" Width="60" TextChanged="ViewDist3D_Changed"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Name="Foreground3D" Width="60" />
+                            <TextBox Grid.Column="1" Grid.Row="4" Name="Background3D" Width="60" />
+                            <!-- TODO unit select -->
+
+                            <Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Content="Dimensions" />
+                            <Label Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" Content="Frame spacing" />
+                            
+                            <TextBlock Name="FrameSpacing3D" Grid.Column="1" Grid.Row="7"/>
+
+                            <Button Grid.Column="0" Grid.Row="8" Name="Generate3D" Content="{app:LangConverter str=GENERATE}" Click="Generate3D_Click" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         </Grid>
                         <!-- 3D end-->
                     </Grid>
@@ -210,7 +225,7 @@
 
         <!-- Timeline begin -->
         <DockPanel LastChildFill="True" Grid.Row="2" Height="Auto">
-            <StackPanel DockPanel.Dock="Top" Name="SliderPanel" Height="40" Margin="45,0,0,0" />
+            <StackPanel DockPanel.Dock="Top" Name="SliderPanel" Height="40"  Margin="45,0,0,0" />
             <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical" Margin="0,1,0,0">
                 <ToolBar>
                     <Button Name="AddLayer" ToolTip="{app:LangConverter str=ADD_LAYER}" Click="AddLayer_Click">
@@ -224,6 +239,7 @@
 
             <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <DockPanel LastChildFill="True">
+                    <Grid Name="LayerDepth" IsEnabled="False" DockPanel.Dock="Left" Width="50" Margin="0,25,0,0"/>
                     <Grid DockPanel.Dock="Top" Name="TimelineHeader" Background="LightGray" Height="25" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25" />

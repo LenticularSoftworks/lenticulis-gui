@@ -19,6 +19,7 @@ using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.SupportLib;
 using lenticulis_gui.src.Dialogs;
 using System.Windows.Controls.Primitives;
+using System.Diagnostics;
 
 namespace lenticulis_gui
 {
@@ -31,7 +32,7 @@ namespace lenticulis_gui
         /// timeline column dimensions
         /// </summary>
         private const int rowHeight = 30;
-        private const int columnMinWidth = 150;
+        private const int columnMinWidth = 90;
 
         /// <summary>
         /// timeline item list
@@ -603,12 +604,23 @@ namespace lenticulis_gui
 
             for (int i = 0; i < count; i++)
             {
+                //timeline row def.
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
 
-                //Add row definition
+                //layer row def
+                RowDefinition depthRowDef = new RowDefinition();
+                depthRowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
+
+                //Add row definitions
                 Timeline.RowDefinitions.Add(rowDef);
+                LayerDepth.RowDefinitions.Add(depthRowDef);
                 ProjectHolder.LayerCount++;
+
+                //add textbox to layer depth column
+                TextBox depthBox = new TextBox();
+                Grid.SetRow(depthBox, Timeline.RowDefinitions.Count - 1);
+                LayerDepth.Children.Add(depthBox);
 
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
@@ -786,6 +798,9 @@ namespace lenticulis_gui
 
             //remove from Timeline
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
+
+            //remove from depth layer column
+            LayerDepth.RowDefinitions.Remove(LayerDepth.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
 
             //set ProjectHolder
             ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
@@ -1045,6 +1060,9 @@ namespace lenticulis_gui
             ListBox parent = (ListBox)sender;
             //dragged data as browser item
             BrowserItem browserItem = (BrowserItem)GetObjectDataFromPoint(parent, e.GetPosition(parent));
+
+            if (browserItem == null)
+                return;
 
             if (e.ClickCount == 2)
             {
@@ -1575,6 +1593,25 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Disable / enable 3D tool panel.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TD_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Panel3D.IsEnabled)
+            {
+                Panel3D.IsEnabled = false;
+                LayerDepth.IsEnabled = false;
+            }
+            else 
+            {
+                Panel3D.IsEnabled = true;
+                LayerDepth.IsEnabled = true;
+            }
+        }
+
+        /// <summary>
         /// Clicked on zoom in button
         /// </summary>
         /// <param name="sender"></param>
@@ -1693,19 +1730,97 @@ namespace lenticulis_gui
             double foreground = Convert.ToDouble(Foreground3D.Text);
             double background = Convert.ToDouble(Background3D.Text);
 
-            //TODO layers
-            double[] depthArray = new double[ProjectHolder.LayerCount];
-            double step = (foreground - background) / (double) ProjectHolder.LayerCount;
-            for (int i = 0; i < depthArray.Length; i++)
-            {
-                depthArray[i] = foreground - i * step;
-            }
+            //get depths of layers
+            double[] depthArray = GetDepthArray(foreground, background);
 
             //set new positions
             Generator3D.Generate3D(viewDist, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
 
             //repaint result
             RepaintCanvas();
+        }
+
+        /// <summary>
+        /// Gets layer dpeths from timeline and return them as array
+        /// </summary>
+        /// <param name="foreground">foreground</param>
+        /// <param name="background">background</param>
+        /// <returns>depths array</returns>
+        private double[] GetDepthArray(double foreground, double background)
+        {
+            double[] depthArray = new double[ProjectHolder.LayerCount];
+            double tmpDepth = Double.MinValue;
+
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
+            {
+                TextBox tb = LayerDepth.Children[i] as TextBox;
+
+                if (Double.TryParse(tb.Text, out tmpDepth))
+                {
+                    //must be between foreground and background
+                    if (tmpDepth <= foreground && tmpDepth >= background)
+                    {
+                        depthArray[i] = tmpDepth;
+
+                        Debug.WriteLine(tmpDepth);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("depth out of bounds"); //TODO
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("depth parse err"); //TODO
+                }
+            }
+
+            return depthArray;
+        }
+
+        /// <summary>
+        /// Calculates frame spacing and enable 3D generate button if higher than 0.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ViewDist3D_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (!ProjectHolder.ValidProject)
+                return;
+
+            if(ViewAngle3D.Text.Trim().Equals("") || ViewDist3D.Text.Trim().Equals(""))
+            {
+                FrameSpacing3D.Text = "";
+                Generate3D.IsEnabled = false;
+
+                return;
+            }
+
+            //initial
+            int frameSpacing = 0;
+            double distance = Double.NegativeInfinity;
+            double angle = Double.NegativeInfinity;
+
+            if (Double.TryParse(ViewAngle3D.Text, out angle) && Double.TryParse(ViewDist3D.Text, out distance)) 
+            {
+                //must be higher than 0
+                if(distance > 0.0 && angle > 0.0)
+                {
+                    //show frame spacing
+                    frameSpacing = Generator3D.CalculateZoneDistance(distance, angle, ProjectHolder.ImageCount);
+                    FrameSpacing3D.Text = frameSpacing.ToString();
+                }
+
+                //enable / disable generate button
+                if (frameSpacing >= 1)
+                {
+                    Generate3D.IsEnabled = true;
+                }
+                else
+                {
+                    Generate3D.IsEnabled = false;
+                }
+            }
         }
 
         /// <summary>

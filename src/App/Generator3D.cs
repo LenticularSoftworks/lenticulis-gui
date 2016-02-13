@@ -59,12 +59,7 @@ namespace lenticulis_gui.src.App
 
                 //disparity is less than size of visibility zone
                 if (rightEyeImage <= lo.Column)
-                {
-                    //TODO - temp message
-                    MessageBox.Show("rightEyeImage: " + rightEyeImage, "rightEyeImage <= lo.Column", MessageBoxButton.OK, MessageBoxImage.Warning);
-
                     return;
-                }
 
                 //set new position for left eye
                 item.getLayerObject().InitialY = newLeft;
@@ -81,6 +76,24 @@ namespace lenticulis_gui.src.App
                 //Debug.WriteLine("-- Image --\nLayer (depth): " + layer + " (" + depthArray[layer] + ")\nInitX: " + positionX + "\nLeft (image): " +
                     //newLeft + " (0)\nRight (image): " + newRight + " (" + viewZoneDistance + ")");
             }
+        }
+
+        /// <summary>
+        /// Step of image count which are seen by left and right eye
+        /// </summary>
+        /// <param name="viewDistance">View distance</param>
+        /// <param name="viewAngle">View angle</param>
+        /// <param name="imageCount">Image count</param>
+        /// <returns>Image step</returns>
+        public static int CalculateZoneDistance(double viewDistance, double viewAngle, int imageCount)
+        {
+            //length all images view zone in eye level
+            double viewLevelLength = viewDistance * Math.Tan((Math.PI / 180) * (viewAngle / 2.0)) * 2;
+
+            //length of single image view zone
+            double singleViewZone = viewLevelLength / (double)imageCount;
+
+            return (int)Math.Floor(eyeDistance / singleViewZone);
         }
 
         /// <summary>
@@ -112,24 +125,6 @@ namespace lenticulis_gui.src.App
             double resultInch = (eyeToImage * objectDistance) / (viewDistance - objectDistance);
 
             return (int)Math.Round(resultInch * dpi);
-        }
-
-        /// <summary>
-        /// Step of image count which are seen by left and right eye
-        /// </summary>
-        /// <param name="viewDistance">View distance</param>
-        /// <param name="viewAngle">View angle</param>
-        /// <param name="imageCount">Image count</param>
-        /// <returns>Image step</returns>
-        private static int CalculateZoneDistance(double viewDistance, double viewAngle, int imageCount)
-        {
-            //length all images view zone in eye level
-            double viewLevelLength = viewDistance * Math.Tan((Math.PI / 180) * (viewAngle / 2.0)) * 2;
-
-            //length of single image view zone
-            double singleViewZone = viewLevelLength / (double)imageCount;
-
-            return (int)Math.Floor(eyeDistance / singleViewZone);
         }
     }
 }
