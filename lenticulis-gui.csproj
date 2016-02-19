@@ -192,6 +192,10 @@
       <DependentUpon>TransformationsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\MainWindow\BrowserItem.cs" />
+    <Compile Include="src\MainWindow\MainWindow3D.cs" />
+    <Compile Include="src\MainWindow\MainWindowBrowser.cs" />
+    <Compile Include="src\MainWindow\MainWindowCanvas.cs" />
+    <Compile Include="src\MainWindow\MainWindowTimeLine.cs" />
     <Compile Include="src\MainWindow\WorkCanvas.cs" />
     <Compile Include="src\MainWindow\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
