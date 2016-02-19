@@ -8,6 +8,10 @@ using System.Windows;
 
 namespace lenticulis_gui.src.App
 {
+    /// <summary>
+    /// Class contains static methods used for calculates and sets disparity of
+    /// canvas objects to create 3D
+    /// </summary>
     public static class Generator3D
     {
         /// <summary>
@@ -45,36 +49,11 @@ namespace lenticulis_gui.src.App
             {
                 LayerObject lo = item.getLayerObject();
 
-                //swapped coordinates - initialY from left side
-                float positionX = lo.InitialY;
+                int layer = lo.Layer;
+                double depth = depthArray[layer];
 
-                int layer = item.getLayerObject().Layer;
-
-                //new positions
-                float newLeft = CalcSingleEyeImage(positionX, width, dpi, viewDistance, depthArray[layer], true) + positionX;
-                float newRight = CalcSingleEyeImage(positionX, width, dpi, viewDistance, depthArray[layer], false) + positionX;
-
-                //transform in image (start column + viewZoneDistance - 1)
-                int rightEyeImage = lo.Column + viewZoneDistance - 1;
-
-                //disparity is less than size of visibility zone
-                if (rightEyeImage <= lo.Column)
-                    return;
-
-                //set new position for left eye
-                item.getLayerObject().InitialY = newLeft;
-
-                //set new position for frame seen by right and interpolate other images
-                //distance of one object seen by left and right eye should be same in all frames
-                float progress = 1.0f / ((float)(rightEyeImage) / (float)(lo.Length - 1));
-                float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, newRight) - lo.InitialY;
-                
-                Transformation tr = new Transformation(TransformType.Translation, 0.0f, transY, 0);
-                tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
-                lo.setTransformation(tr);
-
-                //Debug.WriteLine("-- Image --\nLayer (depth): " + layer + " (" + depthArray[layer] + ")\nInitX: " + positionX + "\nLeft (image): " +
-                    //newLeft + " (0)\nRight (image): " + newRight + " (" + viewZoneDistance + ")");
+                //calculates and set disparity of object
+                SetDisparity(width, dpi, viewDistance, depth, lo);
             }
         }
 
@@ -97,6 +76,43 @@ namespace lenticulis_gui.src.App
         }
 
         /// <summary>
+        /// Calculates disparity between left and right image of single object and set to frames.
+        /// </summary>
+        /// <param name="width">Width of image</param>
+        /// <param name="dpi">DPI</param>
+        /// <param name="viewDistance">View distance</param>
+        /// <param name="depth">Depth of object</param>
+        /// <param name="lo">Layer object instance</param>
+        private static void SetDisparity(int width, double dpi, double viewDistance, double depth, LayerObject lo)
+        {
+            //transform in image (start column + viewZoneDistance - 1)
+            int rightEyeImage = lo.Column + viewZoneDistance - 1;
+
+            //disparity is less than size of visibility zone
+            if (rightEyeImage <= lo.Column)
+                return;
+
+            //new positions, swapped coordinates - initialY from left side
+            float tempLeft = CalcSingleEyeImage(lo.InitialY, width, dpi, viewDistance, depth, true) + lo.InitialY;
+            float tempRight = CalcSingleEyeImage(lo.InitialY, width, dpi, viewDistance, depth, false) + lo.InitialY;
+
+            //disparity
+            float disparity = tempRight - tempLeft;
+
+            //position for right eye
+            float newRight = lo.InitialY + disparity;
+
+            //set new position for frame seen by right and interpolate other images
+            //distance of one object seen by left and right eye should be same in all frames
+            float progress = 1.0f / ((float)(rightEyeImage) / (float)(lo.Length - 1));
+            float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, newRight) - lo.InitialY;
+
+            Transformation tr = new Transformation(TransformType.Translation, 0.0f, transY, 0);
+            tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
+            lo.setTransformation(tr);
+        }
+
+        /// <summary>
         /// Calculate shift from initial coordinate for single eye image.
         /// </summary>
         /// <param name="initX">initial coordinate X [px]</param>
@@ -105,7 +121,7 @@ namespace lenticulis_gui.src.App
         /// <param name="viewDistance">view distance [in]</param>
         /// <param name="objectDistance">object distance from focal pane [in] (+ is closer to observer)</param>
         /// <param name="left">if true returns shift for left eye, lse for right eye</param>
-        /// <returns>Pixel shift fro minitial position</returns>
+        /// <returns>Pixel shift from initial position</returns>
         private static int CalcSingleEyeImage(double initX, int width, double dpi, double viewDistance, double objectDistance, bool left)
         {
             //convert to inches

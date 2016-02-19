@@ -1746,6 +1746,9 @@ namespace lenticulis_gui
             {
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
+
+                //TODO - temp
+                Width3D.Text = ProjectHolder.Width / (float)ProjectHolder.Dpi + " in";
             }
         }
 
