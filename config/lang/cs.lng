@@ -119,10 +119,12 @@ ALL_LAYERS_MERGED=<všechny sloučené>
 LD_LOADING_PROJECT_TITLE=Načítání projektu
 LD_LOADING_IMAGE_TITLE=Načítání obrázku
 LD_LOADING_EXPORT_TITLE=Exportování návrhu
+LD_LOADING_CREATE_TITLE=Vytváření projektu
 LD_LOADING_GENERAL_TITLE=Operace
 LD_LOADING_PROJECT_TXT=Načítání projektu
 LD_LOADING_IMAGE_TXT=Načítání obrázku
 LD_LOADING_EXPORT_TXT=Exportování návrhu
+LD_LOADING_CREATE_TXT=Projekt se vytváří
 LD_LOADING_GENERAL_TXT=Operace
 
 ## Nový projekt / parametry
@@ -153,7 +155,7 @@ PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Konflikt
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se nachází obrázky. Mají být odstraněny?
 PROP_PSD_AS_INPUT=Vytvořit z PSD:
 PSD_SOURCE_INVALID=Nelze načíst vybraný PSD soubor!
-PROP_FRAME_CNT_TEXT=Zvolený počet snímků je vyšší než doporučený pro parametry DPI a LPI
+PROP_FRAME_CNT_TEXT=Doporučeno
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformace

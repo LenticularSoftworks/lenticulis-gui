@@ -71,6 +71,9 @@ namespace lenticulis_gui.src.Dialogs
         /// <param name="e"></param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            LoadingWindow lw = new LoadingWindow("create");
+            lw.Show();
+
             // project name must be filled
             if (PropertiesProjectName.Text == "")
             {
@@ -216,6 +219,7 @@ namespace lenticulis_gui.src.Dialogs
             // in every case, we have valid project now
             ProjectHolder.ValidProject = true;
 
+            lw.Close();
             this.Close();
         }
 
@@ -254,18 +258,7 @@ namespace lenticulis_gui.src.Dialogs
 
             //recommended frame count = DPI / LPI
             int framesRec = dpi / lpi;
-
-            //Warning message appears
-            if (frames > framesRec)
-            {
-                PropertiesStatus.Text = LangProvider.getString("PROP_FRAME_CNT_TEXT") + ": " + framesRec;
-            }
-            else
-            {
-                PropertiesStatus.Text = "";
-            }
+            PropertiesRecommended.Content = framesRec;
         }
-
-
     }
 }

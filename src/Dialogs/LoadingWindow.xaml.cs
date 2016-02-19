@@ -66,6 +66,11 @@ namespace lenticulis_gui
                     NiceImage.Source = Utils.iconResourceToImageSource("Export");
                     WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_EXPORT_TXT");
                     break;
+                case "create":
+                    this.Title = LangProvider.getString("LD_LOADING_CREATE_TITLE");
+                    NiceImage.Source = Utils.iconResourceToImageSource("Folder");
+                    WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_CREATE_TXT");
+                    break;
                 default:
                     this.Title = LangProvider.getString("LD_LOADING_GENERAL_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Refresh");

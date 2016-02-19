@@ -119,10 +119,12 @@ ALL_LAYERS_MERGED=<all merged>
 LD_LOADING_PROJECT_TITLE=Loading project
 LD_LOADING_IMAGE_TITLE=Loading image
 LD_LOADING_EXPORT_TITLE=Exporting
+LD_LOADING_CREATE_TITLE=Project create
 LD_LOADING_GENERAL_TITLE=Operation
 LD_LOADING_PROJECT_TXT=Project is loading
 LD_LOADING_IMAGE_TXT=Image is loading
 LD_LOADING_EXPORT_TXT=Exporting
+LD_LOADING_CREATE_TXT=Creating project
 LD_LOADING_GENERAL_TXT=Operation
 
 ## Nový projekt / parametry
@@ -153,7 +155,7 @@ PROP_ERR_IMAGES_IN_DELETED_FRAMES_TITLE=Conflict
 PROP_ERR_IMAGES_IN_DELETED_FRAMES=There are images in the area you are about to remove. Should they be removed?
 PROP_PSD_AS_INPUT=Create from PSD:
 PSD_SOURCE_INVALID=Chosen PSD could not be loaded!
-PROP_FRAME_CNT_TEXT=Selected frame count is higher than recommended for LPI and DPI parameters
+PROP_FRAME_CNT_TEXT=Recommended
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformations
