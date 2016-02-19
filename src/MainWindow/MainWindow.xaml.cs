@@ -299,28 +299,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Disable / enable 3D tool panel.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TD_Checked(object sender, RoutedEventArgs e)
-        {
-            if (Panel3D.IsEnabled)
-            {
-                Panel3D.IsEnabled = false;
-                LayerDepth.IsEnabled = false;
-            }
-            else
-            {
-                Panel3D.IsEnabled = true;
-                LayerDepth.IsEnabled = true;
-
-                //TODO - temp
-                Width3D.Text = ProjectHolder.Width / (float)ProjectHolder.Dpi + " in";
-            }
-        }
-
-        /// <summary>
         /// Clicked on zoom in button
         /// </summary>
         /// <param name="sender"></param>

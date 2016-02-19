@@ -68,7 +68,7 @@ namespace lenticulis_gui
                     break;
                 case "create":
                     this.Title = LangProvider.getString("LD_LOADING_CREATE_TITLE");
-                    NiceImage.Source = Utils.iconResourceToImageSource("Folder");
+                    NiceImage.Source = Utils.iconResourceToImageSource("Config");
                     WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_CREATE_TXT");
                     break;
                 default:
