@@ -46,6 +46,17 @@ namespace lenticulis_gui
 
                 if (Double.TryParse(tb.Text, out tmpDepth))
                 {
+                    //if is set in %
+                    if (UnitsDepth.SelectedItem.Equals("%"))
+                    {
+                        if (tmpDepth > 0)
+                            tmpDepth = (tmpDepth / 100.0) * foreground;
+                        else if (tmpDepth < 0)
+                            tmpDepth = (tmpDepth / 100.0) * background * -1;
+                    }
+
+                    Debug.WriteLine(tmpDepth);
+
                     //must be between foreground and background
                     if (tmpDepth <= foreground && tmpDepth >= background)
                         depthArray[i] = tmpDepth / unitConvert;
@@ -117,6 +128,16 @@ namespace lenticulis_gui
                 else
                     Generate3D.IsEnabled = false;
             }
+        }
+
+        /// <summary>
+        /// Reset values in 3D panel
+        /// </summary>
+        public void PropertyChanged()
+        {
+            SetWidthText();
+            SetDepthBounds();
+            SetSpacingText();
         }
 
         #endregion 3D methods
@@ -197,16 +218,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Reset values in 3D panel
-        /// </summary>
-        private void PropertyChanged()
-        {
-            SetWidthText();
-            SetDepthBounds();
-            SetSpacingText();
-        }
-
-        /// <summary>
         /// Change unit conversion
         /// </summary>
         /// <param name="sender"></param>
@@ -219,7 +230,44 @@ namespace lenticulis_gui
             else if (Units3D.SelectedItem.Equals(LengthUnits.@in))
                 unitConvert = 1;
 
+            //update UnitsDepth ComboBox
+            if (UnitsDepth.Items.Count > 0)
+            {
+                string selectedItem = UnitsDepth.SelectedItem.ToString();
+
+                UnitsDepth.Items.RemoveAt(0);
+                UnitsDepth.Items.Insert(0, Units3D.SelectedItem);
+
+                //if selected != % change selected item to new units
+                if (!selectedItem.Equals("%"))
+                    UnitsDepth.SelectedItem = Units3D.SelectedItem;
+            }
+
             PropertyChanged();
+        }
+
+        /// <summary>
+        /// ComboBox Loaded method for UnitsDepth in Timeline
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnitsDepth_Loaded(object sender, RoutedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+
+            cb.Items.Add(Units3D.SelectedItem);
+            cb.Items.Add("%");
+            cb.SelectedItem = Units3D.SelectedItem;
+        }
+
+        /// <summary>
+        /// UnitsDepth combobox selection changed method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnitsDepth_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            //TODO chceck borders
         }
 
         /// <summary>
@@ -233,11 +281,13 @@ namespace lenticulis_gui
             {
                 Panel3D.IsEnabled = false;
                 LayerDepth.IsEnabled = false;
+                UnitsDepth.IsEnabled = false;
             }
             else
             {
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
+                UnitsDepth.IsEnabled = true;
 
                 //if empty inputs generate buttons is disabled
                 if (ViewDist3D.Text.Trim().Equals("") || ViewAngle3D.Text.Trim().Equals("") || Foreground3D.Text.Trim().Equals("") || Background3D.Text.Trim().Equals(""))

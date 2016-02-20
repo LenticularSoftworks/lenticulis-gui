@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Containers;
+using MahApps.Metro.Controls;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using lenticulis_gui.src.App;
-using lenticulis_gui.src.Containers;
-using lenticulis_gui.src.SupportLib;
-using MahApps.Metro.Controls;
 
 namespace lenticulis_gui.src.Dialogs
 {
@@ -146,7 +137,18 @@ namespace lenticulis_gui.src.Dialogs
             }
 
             int dpi = (int)PropertiesDPI.Value;
+            if (dpi <= 0)
+            {
+                MessageBox.Show(LangProvider.getString("PROP_ERR_DPI_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             int lpi = (int)PropertiesLPI.Value;
+            if (lpi <= 0)
+            {
+                MessageBox.Show(LangProvider.getString("PROP_ERR_LPI_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             // if creating project, and using PSD as source..
             if (!ProjectHolder.ValidProject && SourcePSDPathEdit.Text.Length > 0)
@@ -181,6 +183,7 @@ namespace lenticulis_gui.src.Dialogs
                 mw.UpdateImageCount(images);
                 mw.UpdateLayerCount(layers);
                 mw.RefreshCanvasList();
+                mw.PropertyChanged();
             }
             else
             {
