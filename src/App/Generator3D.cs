@@ -1,10 +1,6 @@
-﻿using System;
+﻿using lenticulis_gui.src.Containers;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using lenticulis_gui.src.Containers;
-using System.Diagnostics;
-using System.Windows;
 
 namespace lenticulis_gui.src.App
 {

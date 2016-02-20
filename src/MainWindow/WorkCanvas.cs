@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using lenticulis_gui.src.App;
-using System.Windows;
-using System.Drawing;
-using System.Windows.Media;
+﻿using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
-using System.Windows.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace lenticulis_gui
 {

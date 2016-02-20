@@ -1,19 +1,12 @@
-﻿using System;
+﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Containers;
+using lenticulis_gui.src.Dialogs;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.IO;
-using MahApps.Metro.Controls;
-using lenticulis_gui.src.App;
-using lenticulis_gui.src.Containers;
-using lenticulis_gui.src.SupportLib;
-using lenticulis_gui.src.Dialogs;
-using System.Windows.Controls.Primitives;
-using System.Diagnostics;
 
 namespace lenticulis_gui
 {
@@ -103,8 +96,9 @@ namespace lenticulis_gui
             {
                 bool removeConfirmed = false;
 
-                foreach (TimelineItem item in timelineList)
+                for (int i = timelineList.Count - 1; i >= 0; i--)
                 {
+                    TimelineItem item = timelineList[i];
                     LayerObject lobj = item.getLayerObject();
                     // if some item is in deleted images
                     if (lobj != null)
@@ -130,7 +124,7 @@ namespace lenticulis_gui
                 {
                     Timeline.ColumnDefinitions.Remove(Timeline.ColumnDefinitions[i]);
                     TimelineHeader.ColumnDefinitions.Remove(TimelineHeader.ColumnDefinitions[i]);
-                    TimelineHeader.Children.Remove(Timeline.Children[i]);
+                    TimelineHeader.Children.Remove(TimelineHeader.Children[i]);
                 }
             }
 
@@ -265,7 +259,7 @@ namespace lenticulis_gui
             }
 
             //Create and add vertical border
-            for (int i = 0; i < ProjectHolder.ImageCount; i++)
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
             {
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
                 horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };

@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using lenticulis_gui.src.App;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.IO;
-using MahApps.Metro.Controls;
-using lenticulis_gui.src.App;
-using lenticulis_gui.src.Containers;
-using lenticulis_gui.src.SupportLib;
-using lenticulis_gui.src.Dialogs;
-using System.Windows.Controls.Primitives;
-using System.Diagnostics;
 
 namespace lenticulis_gui
 {
@@ -250,6 +239,7 @@ namespace lenticulis_gui
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
 
+                //if empty inputs generate buttons is disabled
                 if (ViewDist3D.Text.Trim().Equals("") || ViewAngle3D.Text.Trim().Equals("") || Foreground3D.Text.Trim().Equals("") || Background3D.Text.Trim().Equals(""))
                     Generate3D.IsEnabled = false;
 

@@ -71,9 +71,6 @@ namespace lenticulis_gui.src.Dialogs
         /// <param name="e"></param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadingWindow lw = new LoadingWindow("create");
-            lw.Show();
-
             // project name must be filled
             if (PropertiesProjectName.Text == "")
             {
@@ -187,6 +184,9 @@ namespace lenticulis_gui.src.Dialogs
             }
             else
             {
+                LoadingWindow lw = new LoadingWindow("create");
+                lw.Show();
+
                 // just hardly set frame and layer count
                 mw.SetProjectProperties(images, layers);
 
@@ -214,12 +214,12 @@ namespace lenticulis_gui.src.Dialogs
                         mw.AddTimelineItem(newItem);
                     }
                 }
+
+                lw.Close();
             }
 
             // in every case, we have valid project now
             ProjectHolder.ValidProject = true;
-
-            lw.Close();
             this.Close();
         }
 

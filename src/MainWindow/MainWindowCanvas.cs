@@ -1,19 +1,15 @@
-﻿using System;
+﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Containers;
+using lenticulis_gui.src.Dialogs;
+using lenticulis_gui.src.SupportLib;
+using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.IO;
-using MahApps.Metro.Controls;
-using lenticulis_gui.src.App;
-using lenticulis_gui.src.Containers;
-using lenticulis_gui.src.SupportLib;
-using lenticulis_gui.src.Dialogs;
 using System.Windows.Controls.Primitives;
-using System.Diagnostics;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace lenticulis_gui
 {

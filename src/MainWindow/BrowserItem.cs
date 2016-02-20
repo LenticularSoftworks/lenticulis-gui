@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Windows;
 using lenticulis_gui.src.App;
 
 namespace lenticulis_gui
@@ -12,7 +5,7 @@ namespace lenticulis_gui
     /// <summary>
     /// File browser Item
     /// </summary>
-    class BrowserItem
+    public class BrowserItem
     {
         /// <summary>
         /// Item filename (or folder name)
