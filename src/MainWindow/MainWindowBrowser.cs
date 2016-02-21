@@ -41,6 +41,8 @@ namespace lenticulis_gui
             List<BrowserItem> items = new List<BrowserItem>();
 
             DirectoryInfo dir = new DirectoryInfo(path);
+
+            //TODO System.IO.IOException
             DirectoryInfo[] directories = dir.GetDirectories().Where(file => (file.Attributes & FileAttributes.Hidden) == 0).ToArray();
             FileInfo[] files = dir.GetFiles();
 

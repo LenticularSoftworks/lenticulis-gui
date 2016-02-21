@@ -32,8 +32,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Gets layer dpeths from timeline and return them as array
         /// </summary>
-        /// <param name="foreground">foreground</param>
-        /// <param name="background">background</param>
+        /// <param name="foreground">foreground depth</param>
+        /// <param name="background">background depth</param>
         /// <returns>depths array</returns>
         private double[] GetDepthArray(double foreground, double background)
         {
@@ -55,8 +55,6 @@ namespace lenticulis_gui
                             tmpDepth = (tmpDepth / 100.0) * background * -1;
                     }
 
-                    Debug.WriteLine(tmpDepth);
-
                     //must be between foreground and background
                     if (tmpDepth <= foreground && tmpDepth >= background)
                         depthArray[i] = tmpDepth / unitConvert;
@@ -77,14 +75,14 @@ namespace lenticulis_gui
         {
             if (ProjectHolder.Width == 0 || ProjectHolder.Dpi == 0)
             {
-                Width3D.Text = "";
+                Width3D.Content = "";
                 return;
             }
 
             float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitConvert;
             realWidth = (int)(width * 100) / 100.0f;
 
-            Width3D.Text = realWidth + " " + Units3D.SelectedValue;
+            Width3D.Content = realWidth + " " + Units3D.SelectedValue;
         }
 
         /// <summary>
@@ -119,7 +117,7 @@ namespace lenticulis_gui
                 {
                     //show frame spacing
                     frameSpacing = Generator3D.CalculateZoneDistance(distance / unitConvert, angle, ProjectHolder.ImageCount);
-                    FrameSpacing3D.Text = frameSpacing.ToString();
+                    FrameSpacing3D.Content = frameSpacing.ToString();
                 }
 
                 //enable / disable generate button
@@ -192,7 +190,7 @@ namespace lenticulis_gui
 
             if (ViewAngle3D.Text.Trim().Equals("") || ViewDist3D.Text.Trim().Equals(""))
             {
-                FrameSpacing3D.Text = "";
+                FrameSpacing3D.Content = "";
                 Generate3D.IsEnabled = false;
 
                 return;

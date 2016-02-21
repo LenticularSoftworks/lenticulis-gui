@@ -141,9 +141,7 @@ namespace lenticulis_gui
         private void AddTimelineLayer(int count)
         {
             if (ProjectHolder.ImageCount == 0)
-            {
                 return;
-            }
 
             for (int i = 0; i < count; i++)
             {
@@ -162,8 +160,9 @@ namespace lenticulis_gui
 
                 //add textbox to layer depth column
                 TextBox depthBox = new TextBox();
+                depthBox.Text = "0";
                 Grid.SetRow(depthBox, Timeline.RowDefinitions.Count - 1);
-                LayerDepth.Children.Add(depthBox);
+                LayerDepth.Children.Insert(0, depthBox);
 
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
@@ -206,9 +205,7 @@ namespace lenticulis_gui
         {
             // return if timeline list is not set
             if (timelineList == null)
-            {
                 return;
-            }
 
             foreach (TimelineItem item in timelineList)
             {
@@ -364,8 +361,12 @@ namespace lenticulis_gui
         {
             Timeline.RowDefinitions.Clear();
             Timeline.ColumnDefinitions.Clear();
+            Timeline.Children.Clear();
             TimelineHeader.ColumnDefinitions.Clear();
             TimelineHeader.Children.Clear();
+            LayerDepth.RowDefinitions.Clear();
+            LayerDepth.Children.Clear();
+            SliderPanel.Children.Clear();
 
             ProjectHolder.layers.Clear();
             ProjectHolder.LayerCount = 0;

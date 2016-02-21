@@ -128,56 +128,59 @@
                 <!-- Grid splitter -->
                 <GridSplitter Width="3" ShowsPreview="True" VerticalAlignment="Stretch" Background="DodgerBlue" />
 
-                <ScrollViewer Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="320" />
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <!-- Browser begin -->
-                        <Border Grid.Row="0">
-                            <Grid Width="Auto">
-                                <TextBox Name="AddressBlock" Height="45" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True"/>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="315" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Browser begin -->
+                    <Grid Grid.Row="0">
+                        <TextBox Name="AddressBlock" Height="45" VerticalAlignment="Top" IsReadOnly="True"/>
 
-                                <TabControl Style="{x:Null}" Margin="0,45,0,0">
-                                    <TabItem Style="{x:Null}" Header="{app:LangConverter str=TAB_COMPUTER}">
-                                        <ListBox IsSynchronizedWithCurrentItem="true" Name="BrowserList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate DataType="BrowserItem">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Image Source="{Binding Ico}" Margin="0,0,5,0" />
-                                                        <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                            <ListBox.ItemContainerStyle>
-                                                <Style TargetType="{x:Type ListBoxItem}" />
-                                            </ListBox.ItemContainerStyle>
-                                        </ListBox>
-                                    </TabItem>
-                                    <TabItem Style="{x:Null}" Header="{app:LangConverter str=TAB_RECENTLY_USED}">
-                                        <ListBox IsSynchronizedWithCurrentItem="true" Name="LastUsedList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate DataType="BrowserItem">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Image Source="{Binding Ico}" Margin="0,0,5,0" />
-                                                        <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                            <ListBox.ItemContainerStyle>
-                                                <Style TargetType="{x:Type ListBoxItem}">
-                                                    <EventSetter Event="MouseDoubleClick" Handler="LastUsed_DoubleClick"/>
-                                                </Style>
-                                            </ListBox.ItemContainerStyle>
-                                        </ListBox>
-                                    </TabItem>
-                                </TabControl>
-                            </Grid>
-                        </Border>
-                        <!-- Browser end -->
-                        <!-- 3D begin -->
-                        <Grid Grid.Row="1" Name="Panel3D" IsEnabled="False">
+                        <TabControl Style="{x:Null}" Margin="0,45,0,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
+                            <TabItem Style="{x:Null}" Header="{app:LangConverter str=TAB_COMPUTER}">
+                                <ListBox IsSynchronizedWithCurrentItem="true" Name="BrowserList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="BrowserItem">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding Ico}" Margin="0,0,5,0" />
+                                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}" />
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                            </TabItem>
+                            <TabItem Style="{x:Null}" Header="{app:LangConverter str=TAB_RECENTLY_USED}">
+                                <ListBox IsSynchronizedWithCurrentItem="true" Name="LastUsedList" PreviewMouseLeftButtonDown="Browser_MouseLeftButtonDown">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="BrowserItem">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding Ico}" Margin="0,0,5,0" />
+                                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <EventSetter Event="MouseDoubleClick" Handler="LastUsed_DoubleClick"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                    <!-- Browser end -->
+
+                    <!-- Grid splitter -->
+                    <GridSplitter Height="3" Grid.Row="1" ShowsPreview="True" HorizontalAlignment="Stretch" Background="DodgerBlue" />
+
+                    <!-- 3D begin -->
+                    <ScrollViewer Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <Grid Name="Panel3D" IsEnabled="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -211,14 +214,14 @@
                             <Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Content="{app:LangConverter str=REAL_WIDTH}" />
                             <Label Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" Content="{app:LangConverter str=FRAME_SPACING}" />
 
-                            <TextBlock Name="Width3D" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0" />
-                            <TextBlock Name="FrameSpacing3D" Grid.Column="1" Grid.Row="7" Margin="0,5,0,0"/>
+                            <Label Name="Width3D" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0" />
+                            <Label Name="FrameSpacing3D" Grid.Column="1" Grid.Row="7" Margin="0,5,0,0"/>
 
                             <Button Grid.Column="0" Grid.Row="8" Name="Generate3D" Content="{app:LangConverter str=GENERATE}" Click="Generate3D_Click" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         </Grid>
-                        <!-- 3D end-->
-                    </Grid>
-                </ScrollViewer>
+                    </ScrollViewer>
+                    <!-- 3D end-->
+                </Grid>
             </Grid>
         </DockPanel>
 

@@ -27,6 +27,8 @@ namespace lenticulis_gui.src.Dialogs
                 PropertiesWidth.Value = ProjectHolder.Width;
                 PropertiesImages.Value = ProjectHolder.ImageCount;
                 PropertiesLayers.Value = ProjectHolder.LayerCount;
+                PropertiesDPI.Value = ProjectHolder.Dpi;
+                PropertiesLPI.Value = ProjectHolder.Lpi;
 
                 // do not enable PSD source when not creating new project
                 SourcePSDPathEdit.IsEnabled = false;
