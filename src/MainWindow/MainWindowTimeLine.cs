@@ -162,7 +162,9 @@ namespace lenticulis_gui
                 TextBox depthBox = new TextBox();
                 depthBox.Text = "0";
                 Grid.SetRow(depthBox, Timeline.RowDefinitions.Count - 1);
-                LayerDepth.Children.Insert(0, depthBox);
+                LayerDepth.Children.Add(depthBox);
+
+                ShiftDepthBox();
 
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
@@ -185,6 +187,24 @@ namespace lenticulis_gui
 
             //Layer has been set. Refresh existing timeline items with new properties
             RefreshTimelineItemPosition();
+        }
+
+        /// <summary>
+        /// Shifts layer depth text box contents 
+        /// </summary>
+        private void ShiftDepthBox()
+        {
+            for (int i = LayerDepth.Children.Count - 1; i > 0; i--)
+            {
+                string text = (LayerDepth.Children[i - 1] as TextBox).Text;
+                TextBox tb = LayerDepth.Children[i] as TextBox;
+
+                //same value as highest layer
+                if (!text.Trim().Equals(""))
+                    tb.Text = text;
+                else
+                    tb.Text = "0";
+            }
         }
 
         /// <summary>
@@ -296,7 +316,8 @@ namespace lenticulis_gui
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
 
             //remove from depth layer column
-            LayerDepth.RowDefinitions.Remove(LayerDepth.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
+            LayerDepth.Children.RemoveAt(LayerDepth.RowDefinitions.Count - 1);
+            LayerDepth.RowDefinitions.Remove(LayerDepth.RowDefinitions[LayerDepth.RowDefinitions.Count - 1]);
 
             //set ProjectHolder
             ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);

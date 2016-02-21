@@ -185,7 +185,6 @@ namespace lenticulis_gui.src.Dialogs
                 mw.UpdateImageCount(images);
                 mw.UpdateLayerCount(layers);
                 mw.RefreshCanvasList();
-                mw.PropertyChanged();
             }
             else
             {
@@ -225,6 +224,9 @@ namespace lenticulis_gui.src.Dialogs
 
             // in every case, we have valid project now
             ProjectHolder.ValidProject = true;
+
+            mw.PropertyChanged();
+
             this.Close();
         }
 
