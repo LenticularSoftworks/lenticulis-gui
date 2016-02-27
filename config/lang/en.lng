@@ -59,6 +59,7 @@ TR_TRANSLATE=Move
 TR_ROTATE=Rotate
 TR_SCALE=Scale
 BUTTON_3D=Enable/Disable 3D
+BUTTON_ANAGLYPH=Anaglyph
 
 ## Browser
 TAB_COMPUTER=My Computer

@@ -167,6 +167,9 @@
     <Compile Include="src\Dialogs\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\Dialogs\AnaglyphPreview.xaml.cs">
+      <DependentUpon>AnaglyphPreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Dialogs\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,10 @@
     <Compile Include="src\SupportLib\ImageProcessor.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
     <Page Include="src\Dialogs\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Dialogs\AnaglyphPreview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -647,15 +654,18 @@
     <Resource Include="res\image\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\icon\3D.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="src\MainWindow\lenticulis-gui\.git\ms-persist.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\MainWindow\lenticulis-gui\.git\branches\" />
     <Folder Include="src\MainWindow\lenticulis-gui\.git\lfs\objects\logs\" />
     <Folder Include="src\MainWindow\lenticulis-gui\.git\lfs\tmp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\3D.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Anaglyph.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

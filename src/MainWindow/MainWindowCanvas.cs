@@ -141,6 +141,7 @@ namespace lenticulis_gui
             for (int i = 0; i < canvasList.Count; i++)
             {
                 canvasList[i].Paint();
+                canvasList[i].UpdateLayout();
             }
         }
 

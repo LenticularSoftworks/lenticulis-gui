@@ -1,4 +1,5 @@
 ﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Dialogs;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -27,6 +28,11 @@ namespace lenticulis_gui
         /// Real width of image
         /// </summary>
         private float realWidth;
+
+        /// <summary>
+        /// Frame disparity spacing
+        /// </summary>
+        private int frameSpacing = 0;
 
         #region 3D methods
         /// <summary>
@@ -106,7 +112,6 @@ namespace lenticulis_gui
         private void SetSpacingText()
         {
             //initial
-            int frameSpacing = 0;
             double distance = Double.NegativeInfinity;
             double angle = Double.NegativeInfinity;
 
@@ -292,6 +297,22 @@ namespace lenticulis_gui
                     Generate3D.IsEnabled = false;
 
                 PropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Creates and show window with anaglyph preview
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Anaglyph_Click(object sender, RoutedEventArgs e)
+        {
+            if (canvasList.Count >= frameSpacing && frameSpacing > 0)
+                
+                new AnaglyphPreview(canvasList[0], canvasList[frameSpacing - 1]);
+            else
+            {
+                //TODO MessageBox
             }
         }
 

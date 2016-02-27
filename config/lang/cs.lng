@@ -59,6 +59,7 @@ TR_TRANSLATE=Posunout
 TR_ROTATE=Otočit
 TR_SCALE=Škálovat
 BUTTON_3D=Vypnout/zapnout 3D
+BUTTON_ANAGLYPH=Anaglyf
 
 ## Browser
 TAB_COMPUTER=Počítač

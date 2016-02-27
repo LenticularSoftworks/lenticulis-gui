@@ -108,8 +108,11 @@
                         <Image Source="/lenticulis-gui;component/res/icon/Refresh.ico" Margin="0,0,0,10"/>
                     </RadioButton>
                     <Separator />
-                    <Button Name="TDButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_3D}" Click="TD_Checked">
-                        <Image Source="/lenticulis-gui;component/res/icon/3D.ico" Margin="0,0,0,10"/>
+                    <Button Name="TDButton" Style="{x:Null}" ToolTip="{app:LangConverter str=BUTTON_3D}" Click="TD_Checked">
+                        <Image Source="/lenticulis-gui;component/res/icon/3D.ico"/>
+                    </Button>
+                    <Button Name="AnaglyphButton" Style="{x:Null}" ToolTip="{app:LangConverter str=BUTTON_ANAGLYPH}" Click="Anaglyph_Click">
+                        <Image Source="/lenticulis-gui;component/res/icon/Anaglyph.ico"/>
                     </Button>
                 </ToolBar>
             </ToolBarTray>
