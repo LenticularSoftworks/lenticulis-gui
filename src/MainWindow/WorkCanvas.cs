@@ -2,6 +2,7 @@
 using lenticulis_gui.src.Containers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -37,6 +38,8 @@ namespace lenticulis_gui
         /// </summary>
         private UIElement capturedElement = null;
 
+        private BoundingBox bounding;
+
         /// <summary>
         /// Cached canvas scale (for zoom in/out)
         /// </summary>
@@ -67,6 +70,7 @@ namespace lenticulis_gui
             this.Height = ProjectHolder.Height;
             this.Margin = new Thickness(10, 10, 10, 10);
             this.Background = new SolidColorBrush(Colors.White);
+            this.bounding = new BoundingBox(this);
 
             // zoom in/out cached scale transform
             this.LayoutTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
@@ -98,7 +102,10 @@ namespace lenticulis_gui
             y_canvas = (float)e.GetPosition(this).Y;
 
             // retrieves layer object from clicked item
-            LayerObject obj = GetLayerObjectByImage(source as System.Windows.Controls.Image);
+            LayerObject obj = GetLayerObjectByImage((Image)source);
+
+            //create bounding box
+            bounding.PaintBox((Image)sender);
 
             float progress = 0.0f;
             // if the image is longer than 1 frame, and column is not the initial one, set proper progress
@@ -147,6 +154,9 @@ namespace lenticulis_gui
                     case TransformType.Scale: Image_MouseMoveScale(sender, e); break;
                     case TransformType.Rotate: Image_MouseMoveRotate(sender, e); break;
                 }
+
+                //repaint bounding box
+                bounding.PaintBox((Image)sender);
             }
         }
 

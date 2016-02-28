@@ -194,6 +194,7 @@
     <Compile Include="src\Dialogs\TransformationsWindow.xaml.cs">
       <DependentUpon>TransformationsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\MainWindow\BoundingBox.cs" />
     <Compile Include="src\MainWindow\BrowserItem.cs" />
     <Compile Include="src\MainWindow\MainWindow3D.cs" />
     <Compile Include="src\MainWindow\MainWindowBrowser.cs" />
