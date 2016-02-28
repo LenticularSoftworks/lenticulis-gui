@@ -26,7 +26,7 @@ namespace lenticulis_gui
         public BoundingBox(Canvas canvas)
         {
             this.canvas = canvas;
-            this.BorderThickness = new Thickness(1);
+            this.BorderThickness = SetThickness();
             this.BorderBrush = CreateBrush();
 
             canvas.Children.Add(this);
@@ -46,9 +46,26 @@ namespace lenticulis_gui
             Canvas.SetTop(this, bounds.Top);
             Canvas.SetLeft(this, bounds.Left);
 
+            SetThickness();
+
             //set border always on top
             canvas.Children.Remove(this);
             canvas.Children.Add(this);
+        }
+
+        /// <summary>
+        /// Adjust the border thickness to canvas width
+        /// </summary>
+        /// <returns>Thickness</returns>
+        private Thickness SetThickness()
+        {
+            int value = 1;
+            double canvasWidth = canvas.Width * ((WorkCanvas)canvas).CanvasScale;
+
+            //value = 1 for width <= 1000, value = 2 for width <= 2000 ...
+            value = (int)Math.Ceiling(canvasWidth / 1000);
+
+            return new Thickness(value);
         }
 
         /// <summary>
