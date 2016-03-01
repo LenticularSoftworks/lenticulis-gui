@@ -270,7 +270,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void UnitsDepth_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            //TODO chceck borders
+            //TODO check borders
         }
 
         /// <summary>
@@ -307,9 +307,10 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Anaglyph_Click(object sender, RoutedEventArgs e)
         {
-            if (canvasList.Count >= frameSpacing && frameSpacing > 0)
-                
-                new AnaglyphPreview(canvasList[0], canvasList[frameSpacing - 1]);
+            if (canvasList.Count >= frameSpacing && frameSpacing > 0) 
+            {
+                new AnaglyphPreview(canvasList[0].GetCanvas(), canvasList[frameSpacing - 1].GetCanvas());
+            }
             else
             {
                 //TODO MessageBox

@@ -95,38 +95,21 @@ namespace lenticulis_gui.src.Dialogs
         }
 
         /// <summary>
-        /// Render canvas asi bitmap and returns as Image instance
+        /// Render canvas as bitmap and returns as Image instance
         /// </summary>
         /// <param name="canvas">Current canvas</param>
         /// <returns>Rendered bitmap image</returns>
         private System.Drawing.Bitmap RenderBitmapImage(Canvas canvas)
         {
-            WorkCanvas wCanvas = canvas as WorkCanvas;
-
             //create graphics instance from specified handle to a window
             System.Drawing.Graphics g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero);
 
-            //clip canvas and update layout
-            wCanvas.ClipToBounds = true;
-            wCanvas.Paint();
-            wCanvas.UpdateLayout();
-
-            //create visual - preventing canvas margins
-            DrawingVisual visual = new DrawingVisual();
-            using (DrawingContext context = visual.RenderOpen())
-            {
-                VisualBrush brush = new VisualBrush(wCanvas);
-                context.DrawRectangle(brush, null, new Rect(0, 0, (int)imageSize.Width, (int)imageSize.Height));
-            }
+            canvas.Measure(imageSize);
+            canvas.Arrange(new Rect(imageSize));
 
             //render bitmap
             RenderTargetBitmap bmp = new RenderTargetBitmap((int)imageSize.Width, (int)imageSize.Height, g.DpiX, g.DpiY, PixelFormats.Pbgra32);
-            bmp.Render(visual);
-
-            //clip false and repaint
-            wCanvas.ClipToBounds = false;
-            wCanvas.Paint();
-            wCanvas.UpdateLayout();
+            bmp.Render(canvas);
 
             //convert to bitmap
             MemoryStream stream = new MemoryStream();

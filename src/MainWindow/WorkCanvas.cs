@@ -392,7 +392,7 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Paint imagec on canvas
+        /// Paint images on work canvas
         /// </summary>
         public void Paint()
         {
@@ -402,7 +402,39 @@ namespace lenticulis_gui
             // list of images sorted by layer
             List<LayerObject> images = GetImages();
 
-            // now we draw all images belonging here
+            //add layer object
+            AddLayerObjects(this, true);
+
+            // add border around canvas
+            CreateBorder();
+        }
+
+        public Canvas GetCanvas()
+        {
+            //create new canvas
+            Canvas canvas = new Canvas();
+            canvas.Width = ProjectHolder.Width;
+            canvas.Height = ProjectHolder.Height;
+
+            //Add layer objects
+            AddLayerObjects(canvas, false);
+
+            //set clip
+            canvas.ClipToBounds = true;
+
+            return canvas;
+        }
+
+        /// <summary>
+        /// Add layer object to canvas and attach listeners if needed.
+        /// </summary>
+        /// <param name="canvas">Canvas</param>
+        /// <param name="listeners">Attach listeners if true</param>
+        private void AddLayerObjects(Canvas canvas, bool listeners) 
+        {
+            // list of images sorted by layer
+            List<LayerObject> images = GetImages();
+
             foreach (LayerObject lo in images)
             {
                 // get image holder for current image
@@ -419,20 +451,19 @@ namespace lenticulis_gui
                 image.Height = imageHolder.height;
                 image.Stretch = Stretch.Fill;
 
-                // attach listeners
-                image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
-                image.MouseMove += Image_MouseMove;
-                image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
-                image.MouseMove += ImageCursor_MouseMove;
+                if(listeners)
+                {
+                    // attach listeners
+                    image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
+                    image.MouseMove += Image_MouseMove;
+                    image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
+                    image.MouseMove += ImageCursor_MouseMove;
+                }
 
                 // set transformations
                 image = SetTransformations(lo, image, null, true);
-
-                this.Children.Add(image);
+                canvas.Children.Add(image);
             }
-
-            // add border around canvas
-            CreateBorder();
         }
 
         /// <summary>
