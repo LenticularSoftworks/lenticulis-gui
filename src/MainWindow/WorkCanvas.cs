@@ -29,15 +29,19 @@ namespace lenticulis_gui
         /// <summary>
         /// Working attributes, for transformations
         /// </summary>
-        private float x_image, x_canvas, y_image, y_canvas, initialAngle, alpha = 0;
+        private float canvasX, canvasY, imageX, imageY, imageMouseX, imageMouseY, initialAngle, alpha = 0;
         private double scaleX = 1.0, scaleY = 1.0;
         private double scaleStartX, scaleStartY;
+        private double initWidth, initHeight;
 
         /// <summary>
         /// Captured element of transformation in progress
         /// </summary>
         private UIElement capturedElement = null;
 
+        /// <summary>
+        /// Bounding box
+        /// </summary>
         private BoundingBox bounding;
 
         /// <summary>
@@ -54,6 +58,7 @@ namespace lenticulis_gui
             {
                 canvasScaleCached = value;
                 this.LayoutTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
+                bounding.SetThickness();
             }
         }
 
@@ -87,7 +92,7 @@ namespace lenticulis_gui
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // there may not be source we are looking for
-            UIElement source = sender as UIElement;
+            Image source = sender as Image;
             if (source == null)
                 return;
 
@@ -96,16 +101,20 @@ namespace lenticulis_gui
             captured = true;
 
             // cache image position, and position relative to image
-            x_image = (float)Canvas.GetLeft(source);
-            x_canvas = (float)e.GetPosition(this).X;
-            y_image = (float)Canvas.GetTop(source);
-            y_canvas = (float)e.GetPosition(this).Y;
+            imageX = (float)Canvas.GetLeft(source);
+            imageY = (float)Canvas.GetTop(source);
+            canvasX = (float)e.GetPosition(this).X;
+            canvasY = (float)e.GetPosition(this).Y;
+            imageMouseX = (float)e.GetPosition(source).X;
+            imageMouseY = (float)e.GetPosition(source).Y;
 
             // retrieves layer object from clicked item
-            LayerObject obj = GetLayerObjectByImage((Image)source);
+            LayerObject obj = GetLayerObjectByImage(source);
 
-            //create bounding box
-            bounding.PaintBox((Image)sender);
+            //create bounding box and store initial real size
+            bounding.PaintBox(source);
+            initWidth = bounding.ActualWidth;
+            initHeight = bounding.ActualHeight;
 
             float progress = 0.0f;
             // if the image is longer than 1 frame, and column is not the initial one, set proper progress
@@ -115,22 +124,20 @@ namespace lenticulis_gui
             // for scaling, we save scale on start of transformation
             if (MainWindow.SelectedTool == TransformType.Scale)
             {
-                scaleStartX = Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Scale], progress, obj.InitialScaleX, obj.InitialScaleX + obj.getTransformation(TransformType.Scale).TransformX);
-                scaleStartY = Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Scale], progress, obj.InitialScaleY, obj.InitialScaleY + obj.getTransformation(TransformType.Scale).TransformY);
+                scaleStartX = initWidth / source.Width;
+                scaleStartY = initHeight / source.Height;
             }
             // for rotation, we save angle on stat of transformation, and determine absolute angle on start (so we can deal with relative angle later)
             else if (MainWindow.SelectedTool == TransformType.Rotate)
             {
-                System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+                float imageCenterX = (float)source.ActualWidth / 2.0f;
+                float imageCenterY = (float)source.ActualHeight / 2.0f;
 
-                float imageCenterX = (float)img.ActualWidth / 2.0f;
-                float imageCenterY = (float)img.ActualHeight / 2.0f;
-
-                float dx = x_canvas - imageCenterX;
-                float dy = y_canvas - imageCenterY;
+                float dx = canvasX - imageCenterX;
+                float dy = canvasY - imageCenterY;
 
                 // get initial angle, and enhance it with interpolated transformation value
-                initialAngle = (float)Math.Atan2(dy, dx) - (float)(Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Rotate], progress, 0, obj.getTransformation(TransformType.Rotate).TransformAngle)*Math.PI/180.0);
+                initialAngle = (float)Math.Atan2(dy, dx) - (float)(Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Rotate], progress, 0, obj.getTransformation(TransformType.Rotate).TransformAngle) * Math.PI / 180.0);
             }
         }
 
@@ -167,49 +174,23 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Image_MouseMoveTranslation(object sender, MouseEventArgs e)
         {
-            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+            Image img = sender as Image;
 
             // current position of image
             double x = e.GetPosition(this).X;
             double y = e.GetPosition(this).Y;
 
             // calculate position relative to canvas x/y
-            x_image += (float)(x - x_canvas);
-            x_canvas = (float)x;
-            y_image += (float)(y - y_canvas);
-            y_canvas = (float)y;
+            imageX += (float)(x - canvasX);
+            canvasX = (float)x;
+            imageY += (float)(y - canvasY);
+            canvasY = (float)y;
 
             // transform image
             img = SetTransformations(GetLayerObjectByImage(img), img, null, false);
 
-            Canvas.SetLeft(img, x_image);
-            Canvas.SetTop(img, y_image);
-        }
-
-        /// <summary>
-        /// Mouse move handler, when scaling tool is selected
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Image_MouseMoveScale(object sender, MouseEventArgs e)
-        {
-            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
-
-            System.Windows.Point mouse = mouse = Mouse.GetPosition(this);
-
-            // scale using new values
-            // also we multiply the new scale using the scale, which has been there on transform start
-            // it's due to "continuing" in scaling from current scale value, not jumping back to scale 1.0
-            scaleX = scaleStartX * (mouse.X - x_image) / (x_canvas - x_image);
-            scaleY = scaleStartY * (mouse.Y - y_image) / (y_canvas - y_image);
-
-            // there's no such thing as valid negative scale (at least for now)
-            if (scaleX < 0.0 || scaleY < 0.0)
-                return;
-
-            // transform image on canvas
-            ScaleTransform transform = new ScaleTransform(scaleX, scaleY);
-            img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
+            Canvas.SetLeft(img, imageX);
+            Canvas.SetTop(img, imageY);
         }
 
         /// <summary>
@@ -219,7 +200,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Image_MouseMoveRotate(object source, MouseEventArgs e)
         {
-            System.Windows.Controls.Image img = source as System.Windows.Controls.Image;
+            Image img = source as Image;
 
             // current center (so we can calculate the rotation angle using it)
             float imageCenterX = (float)img.RenderSize.Width / 2.0f;
@@ -250,6 +231,113 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Mouse move handler, when scaling tool is selected
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Image_MouseMoveScale(object sender, MouseEventArgs e)
+        {
+            Image img = sender as Image;
+            Point mouse = mouse = Mouse.GetPosition(this);
+
+            double halfWidth = initWidth / 2.0;
+            double halfHeight = initHeight / 2.0;
+
+            //select specific scale method
+            if ((imageMouseX < halfWidth && imageMouseY < halfHeight))
+                Image_BottomRightCornerScale(img, mouse);
+            else if ((imageMouseX > halfWidth && imageMouseY > halfHeight))
+                Image_TopLeftCornerScale(img, mouse);
+            else if((imageMouseX > halfWidth && imageMouseY < halfHeight))
+                Image_BottomLeftCornerScale(img, mouse);
+            else
+                Image_TopRightCornerScale(img, mouse);
+        }
+
+        #region Scale methods
+
+        /// <summary>
+        /// Scale to top left corner
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="mouse">mouse</param>
+        private void Image_TopLeftCornerScale(Image img, Point mouse)
+        {
+            scaleX = scaleStartX * (mouse.X - imageX) / initWidth;
+            scaleY = scaleStartY * (mouse.Y - imageY) / initHeight;
+
+            if (scaleX > 0.0 && scaleY > 0.0)
+            {
+                //Transform
+                ScaleTransform transform = new ScaleTransform(scaleX, scaleY);
+                img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
+            }
+        }
+
+        /// <summary>
+        /// Scale to bottom right corner
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="mouse">mouse</param>
+        private void Image_BottomRightCornerScale(Image img, Point mouse)
+        {
+            scaleX = scaleStartX * (initWidth + imageX - mouse.X) / initWidth;
+            scaleY = scaleStartY * (initHeight + imageY - mouse.Y) / initHeight;
+
+            if (scaleX > 0.0 && scaleY > 0.0)
+            {
+                Canvas.SetTop(img, mouse.Y);
+                Canvas.SetLeft(img, mouse.X);
+
+                // transform image on canvas
+                ScaleTransform transform = new ScaleTransform(scaleX, scaleY);
+                img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
+            }
+        }
+
+        /// <summary>
+        /// Scale to bottom left corner
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="mouse">mouse</param>
+        private void Image_BottomLeftCornerScale(Image img, Point mouse)
+        {
+            scaleX = scaleStartX * (mouse.X - imageX) / initWidth;
+            scaleY = scaleStartY * (initHeight + imageY - mouse.Y) / initHeight;
+
+            if (scaleX > 0.0 && scaleY > 0.0)
+            {
+                Canvas.SetTop(img, mouse.Y);
+
+                // transform image on canvas
+                ScaleTransform transform = new ScaleTransform(scaleX, scaleY);
+                img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
+            }
+        }
+
+        /// <summary>
+        /// Scale to top right corner
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="mouse">mouse</param>
+        private void Image_TopRightCornerScale(Image img, Point mouse)
+        {
+            scaleX = scaleStartX * (initWidth + imageX - mouse.X) / initWidth;
+            scaleY = scaleStartY * (mouse.Y - imageY) / initHeight;
+
+            if (scaleX > 0.0 && scaleY > 0.0)
+            {
+                Canvas.SetLeft(img, mouse.X);
+
+                // transform image on canvas
+                ScaleTransform transform = new ScaleTransform(scaleX, scaleY);
+                img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
+            }
+        }
+
+        #endregion Scale methods
+
+        /// <summary>
         /// Mouse up - finish transformation
         /// </summary>
         /// <param name="sender"></param>
@@ -258,10 +346,14 @@ namespace lenticulis_gui
         {
             Mouse.Capture(null);
 
-            System.Windows.Controls.Image img = capturedElement as System.Windows.Controls.Image;
+            Image img = capturedElement as Image;
 
-            x_image = (float)Canvas.GetLeft(img);
-            y_image = (float)Canvas.GetTop(img);
+            //if captured is not image in canvas return
+            if (img == null)
+                return;
+
+            imageX = (float)Canvas.GetLeft(img);
+            imageY = (float)Canvas.GetTop(img);
 
             // finish transformation by setting transformations properly interpolated/extrapolated to layerobject itself
             SetLayerObjectProperties(capturedElement);
@@ -280,7 +372,7 @@ namespace lenticulis_gui
         /// <param name="source"></param>
         private void SetLayerObjectProperties(UIElement source)
         {
-            System.Windows.Controls.Image droppedImage = source as System.Windows.Controls.Image;
+            Image droppedImage = source as Image;
 
             Transformation tr = null;
             // retrieve layer object from image on canvas
@@ -294,12 +386,12 @@ namespace lenticulis_gui
                     tr = lo.getTransformation(TransformType.Translation);
                     if (tr != null && lo.Length > 1)
                     {
-                        tr.setVector(tr.TransformX - (y_image - lo.InitialX),
-                                     tr.TransformY - (x_image - lo.InitialY));
+                        tr.setVector(tr.TransformX - (imageY - lo.InitialX),
+                                     tr.TransformY - (imageX - lo.InitialY));
                     }
 
-                    lo.InitialX = y_image;
-                    lo.InitialY = x_image;
+                    lo.InitialX = imageY;
+                    lo.InitialY = imageX;
                 }
                 // on rotation, just add angle, it's already relative angle, so it is sufficient to add it
                 // to initial value (or in case of existing transformation, subtract from transform value)
@@ -321,13 +413,16 @@ namespace lenticulis_gui
                     {
                         tr.setVector(tr.TransformX - ((float)scaleX - lo.InitialScaleX),
                                      tr.TransformY - ((float)scaleY - lo.InitialScaleY));
-                    }
+                    } 
 
-                    lo.InitialScaleX = (float)scaleX;
-                    lo.InitialScaleY = (float)scaleY;
+                    if(scaleX > 0.0 && scaleY > 0.0) 
+                    {
+                        lo.InitialScaleX = (float)scaleX;
+                        lo.InitialScaleY = (float)scaleY;
+                    } 
 
-                    lo.InitialX = y_image;
-                    lo.InitialY = x_image;
+                    lo.InitialX = imageY;
+                    lo.InitialY = imageX;
                 }
             }
             else
@@ -339,8 +434,8 @@ namespace lenticulis_gui
                 {
                     case TransformType.Translation:
                         // inter/extrapolate value of both directions, and store newly calculated vector into transformation object
-                        float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, y_image) - lo.InitialX;
-                        float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, x_image) - lo.InitialY;
+                        float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, imageY) - lo.InitialX;
+                        float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, imageX) - lo.InitialY;
                         tr = new Transformation(TransformType.Translation, transX, transY, 0);
                         break;
                     case TransformType.Rotate:
@@ -353,6 +448,14 @@ namespace lenticulis_gui
                         float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX) - lo.InitialScaleX;
                         float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY) - lo.InitialScaleY;
                         tr = new Transformation(TransformType.Scale, scX, scY, 0);
+
+                        //Add transform translation because of image coordinates change
+                        float tranScaleX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, imageY) - lo.InitialX;
+                        float tranScaleY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, imageX) - lo.InitialY;
+                        Transformation transScale = new Transformation(TransformType.Translation, tranScaleX, tranScaleY, 0);
+                        transScale.Interpolation = InterpolationType.Linear;
+                        lo.setTransformation(transScale);
+
                         break;
                 }
 
@@ -370,7 +473,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="droppedImage">Image</param>
         /// <returns>Instance of LayerObject</returns>
-        private LayerObject GetLayerObjectByImage(System.Windows.Controls.Image droppedImage)
+        private LayerObject GetLayerObjectByImage(Image droppedImage)
         {
             List<LayerObject> layerObjects = GetImages();
             int index = 0;
@@ -378,7 +481,7 @@ namespace lenticulis_gui
             // go through all images on canvas
             for (int i = 0; i < this.Children.Count; i++)
             {
-                if (this.Children[i].GetType() == typeof(System.Windows.Controls.Image))
+                if (this.Children[i].GetType() == typeof(Image))
                 {
                     // if we got the image we are looking for, return layer object on that index
                     if (this.Children[i] == droppedImage)
@@ -409,6 +512,11 @@ namespace lenticulis_gui
             CreateBorder();
         }
 
+
+        /// <summary>
+        /// Create and returns new canvas for bitmap rendering.
+        /// </summary>
+        /// <returns>Canvas</returns>
         public Canvas GetCanvas()
         {
             //create new canvas
@@ -443,7 +551,7 @@ namespace lenticulis_gui
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
 
                 // create new image instance
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+                Image image = new Image();
 
                 // set its properties
                 image.Source = source;
@@ -474,7 +582,7 @@ namespace lenticulis_gui
         /// <param name="addedTransform">the transform we are adding right now</param>
         /// <param name="setPosition">when false, does not recalculate position</param>
         /// <returns></returns>
-        private System.Windows.Controls.Image SetTransformations(LayerObject lo, System.Windows.Controls.Image image, Transform addedTransform, bool setPosition)
+        private Image SetTransformations(LayerObject lo, Image image, Transform addedTransform, bool setPosition)
         {
             Transformation trans;
 
@@ -634,10 +742,10 @@ namespace lenticulis_gui
                 Stroke = System.Windows.Media.Brushes.DarkOrange,
             };
 
-            this.Children.Add(top);
-            this.Children.Add(bottom);
-            this.Children.Add(left);
-            this.Children.Add(right);
+            this.Children.Insert(0, top);
+            this.Children.Insert(0, bottom);
+            this.Children.Insert(0, left);
+            this.Children.Insert(0, right);
         }
 
         /// <summary>
@@ -652,9 +760,9 @@ namespace lenticulis_gui
                 return;
 
             // gets image on position
-            System.Windows.Controls.Image img = sender as System.Windows.Controls.Image;
+            Image img = sender as Image;
             // retrieves mouse position
-            System.Windows.Point mouse = Mouse.GetPosition(img);
+            Point mouse = Mouse.GetPosition(img);
 
             // and set cursor according to selected tool
             switch (MainWindow.SelectedTool)
@@ -663,12 +771,29 @@ namespace lenticulis_gui
                     img.Cursor = Cursors.SizeAll;
                     break;
                 case TransformType.Scale:
-                    img.Cursor = Cursors.SizeNWSE;
+                    SetScaleCursor(img, mouse);
                     break;
                 case TransformType.Rotate:
                     img.Cursor = Cursors.Hand;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Sets cusror for scale by cursor position in image
+        /// </summary>
+        /// <param name="image">image</param>
+        /// <param name="mouse">cursor point</param>
+        private void SetScaleCursor(Image image, Point mouse)
+        {
+            double halfWidth = image.ActualWidth / 2.0;
+            double halfHeight = image.ActualHeight / 2.0;
+
+            //left top / right bottom = NWSE
+            if ((mouse.X < halfWidth && mouse.Y < halfHeight) || (mouse.X > halfWidth && mouse.Y > halfHeight))
+                image.Cursor = Cursors.SizeNWSE;
+            else
+                image.Cursor = Cursors.SizeNESW;
         }
     }
 }

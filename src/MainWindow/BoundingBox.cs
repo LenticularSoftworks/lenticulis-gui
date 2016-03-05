@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace lenticulis_gui
 {
@@ -20,14 +21,30 @@ namespace lenticulis_gui
         private Canvas canvas;
 
         /// <summary>
+        /// Squares in border corners
+        /// </summary>
+        private Rectangle topLeft, topRight, bottomLeft, bottomRight;
+
+        /// <summary>
+        /// Square scale
+        /// </summary>
+        private double squareScale = 1.0;
+
+        /// <summary>
+        /// Initial square size
+        /// </summary>
+        private const int initSquareSize = 10;
+
+        /// <summary>
         /// Class constructor creates border (bounding box) and adds to canvas.
         /// </summary>
         /// <param name="canvas">Canvas</param>
         public BoundingBox(Canvas canvas)
         {
             this.canvas = canvas;
-            this.BorderThickness = SetThickness();
             this.BorderBrush = CreateBrush();
+
+            InitializeSquares();
 
             canvas.Children.Add(this);
         }
@@ -51,21 +68,143 @@ namespace lenticulis_gui
             //set border always on top
             canvas.Children.Remove(this);
             canvas.Children.Add(this);
+
+            PaintSquares();
         }
 
         /// <summary>
         /// Adjust the border thickness to canvas width
         /// </summary>
         /// <returns>Thickness</returns>
-        private Thickness SetThickness()
+        public void SetThickness()
         {
-            int value = 1;
-            double canvasWidth = canvas.Width * ((WorkCanvas)canvas).CanvasScale;
+            int thickness = 1;
+            double value = 1 / ((WorkCanvas)canvas).CanvasScale;
 
-            //value = 1 for width <= 1000, value = 2 for width <= 2000 ...
-            value = (int)Math.Ceiling(canvasWidth / 1000);
+            if (value > 1)
+                thickness = (int)Math.Round(value);
 
-            return new Thickness(value);
+            this.BorderThickness = new Thickness(thickness);
+
+            UpdateSquares();
+        }
+
+        /// <summary>
+        /// Set square size by canvas scale
+        /// </summary>
+        private void UpdateSquares()
+        {
+            double size = (1 / ((WorkCanvas)canvas).CanvasScale) * initSquareSize;
+            squareScale = size / initSquareSize;
+
+            ScaleTransform transform = new ScaleTransform(squareScale, squareScale);
+
+            topLeft.LayoutTransform = transform;
+            topRight.LayoutTransform = transform;
+            bottomLeft.LayoutTransform = transform;
+            bottomRight.LayoutTransform = transform;
+            PaintSquares();
+        }
+
+        /// <summary>
+        /// Paint squares
+        /// </summary>
+        private void PaintSquares()
+        {
+            RemoveSquares();
+
+            double borderTop = Canvas.GetTop(this);
+            double borderLeft = Canvas.GetLeft(this);
+
+            Canvas.SetTop(topLeft, borderTop);
+            Canvas.SetLeft(topLeft, borderLeft);
+
+            Canvas.SetTop(topRight, borderTop);
+            Canvas.SetLeft(topRight, borderLeft + this.Width - squareScale * initSquareSize);
+
+            Canvas.SetTop(bottomLeft, borderTop + this.Height - squareScale * initSquareSize);
+            Canvas.SetLeft(bottomLeft, borderLeft);
+
+            Canvas.SetTop(bottomRight, borderTop + this.Height - squareScale * initSquareSize);
+            Canvas.SetLeft(bottomRight, borderLeft + this.Width - squareScale * initSquareSize);
+
+            AddSquares();
+        }
+
+        /// <summary>
+        /// Init squares
+        /// </summary>
+        private void InitializeSquares()
+        {
+            DoubleCollection dash = new DoubleCollection() { 2 };
+
+            topLeft = new Rectangle()
+            {
+                Width = initSquareSize,
+                Height = initSquareSize,
+                Stroke = Brushes.Black,
+                StrokeDashArray = dash,
+                Fill = Brushes.Yellow,
+                Opacity = 0.5,
+                IsHitTestVisible = false
+            };
+
+            topRight = new Rectangle()
+            {
+                Width = initSquareSize,
+                Height = initSquareSize,
+                Stroke = Brushes.Black,
+                StrokeDashArray = dash,
+                Fill = Brushes.Yellow,
+                Opacity = 0.5,
+                IsHitTestVisible = false
+            };
+
+            bottomLeft = new Rectangle()
+            {
+                Width = initSquareSize,
+                Height = initSquareSize,
+                Stroke = Brushes.Black,
+                StrokeDashArray = dash,
+                Fill = Brushes.Yellow,
+                Opacity = 0.5,
+                IsHitTestVisible = false
+            };
+
+            bottomRight = new Rectangle()
+            {
+                Width = initSquareSize,
+                Height = initSquareSize,
+                Stroke = Brushes.Black,
+                StrokeDashArray = dash,
+                Fill = Brushes.Yellow,
+                Opacity = 0.5,
+                IsHitTestVisible = false
+            };
+
+            AddSquares();
+        }
+
+        /// <summary>
+        /// Add squares to canvas
+        /// </summary>
+        private void AddSquares()
+        {
+            canvas.Children.Add(topLeft);
+            canvas.Children.Add(topRight);
+            canvas.Children.Add(bottomLeft);
+            canvas.Children.Add(bottomRight);
+        }
+
+        /// <summary>
+        /// Remove squares from canvas
+        /// </summary>
+        private void RemoveSquares()
+        {
+            canvas.Children.Remove(topLeft);
+            canvas.Children.Remove(topRight);
+            canvas.Children.Remove(bottomLeft);
+            canvas.Children.Remove(bottomRight);
         }
 
         /// <summary>
