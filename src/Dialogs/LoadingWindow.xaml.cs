@@ -71,6 +71,16 @@ namespace lenticulis_gui
                     NiceImage.Source = Utils.iconResourceToImageSource("Config");
                     WhatsGoingOnLabel.Content = LangProvider.getString("LD_LOADING_CREATE_TXT");
                     break;
+                case "3D":
+                    this.Title = LangProvider.getString("3D_GENERATE_TITLE");
+                    NiceImage.Source = Utils.iconResourceToImageSource("_3D");
+                    WhatsGoingOnLabel.Content = LangProvider.getString("3D_GENERATE_TXT");
+                    break;
+                case "anaglyph":
+                    this.Title = LangProvider.getString("ANAGLYPH_TITLE");
+                    NiceImage.Source = Utils.iconResourceToImageSource("Anaglyph");
+                    WhatsGoingOnLabel.Content = LangProvider.getString("ANAGLYPH_TXT");
+                    break;
                 default:
                     this.Title = LangProvider.getString("LD_LOADING_GENERAL_TITLE");
                     NiceImage.Source = Utils.iconResourceToImageSource("Refresh");

@@ -1,4 +1,5 @@
 ﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Dialogs;
 using MahApps.Metro.Controls;
 using System;
 using System.Diagnostics;
@@ -30,11 +31,16 @@ namespace lenticulis_gui.src.Dialogs
         {
             InitializeComponent();
 
+            LoadingWindow lw = new LoadingWindow("anaglyph");
+            lw.Show();
+
             //set size
             imageSize = CalculateImageSize(leftCanvas);
             //add to preview window
             AnaglyphCanvas.Children.Add(GetFilteredImage(leftCanvas, rightCanvas));
 
+
+            lw.Close();
             //show as modal window
             this.ShowDialog();
         }

@@ -164,6 +164,9 @@ namespace lenticulis_gui
 
             if (Double.TryParse(ViewDist3D.Text, out viewDist) && Double.TryParse(ViewAngle3D.Text, out viewAngle) && Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
             {
+                LoadingWindow lw = new LoadingWindow("3D");
+                lw.Show();
+
                 //get depths of layers
                 double[] depthArray = GetDepthArray(foreground, background);
 
@@ -178,11 +181,12 @@ namespace lenticulis_gui
 
                 //repaint result
                 RepaintCanvas();
+
+                System.Threading.Thread.Sleep(1000); //show window and wait to inform user about successfull generate
+                lw.Close();
             }
             else
-            {
                 MessageBox.Show(LangProvider.getString("INVALID_3D_PARAMETERS"), LangProvider.getString("INVALID_3D_PARAMETERS_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
         }
 
         /// <summary>
