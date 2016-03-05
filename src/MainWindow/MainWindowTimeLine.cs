@@ -161,6 +161,7 @@ namespace lenticulis_gui
                 //add textbox to layer depth column
                 TextBox depthBox = new TextBox();
                 depthBox.Text = "0";
+                depthBox.TextChanged += DepthBox_TextChanged;
                 Grid.SetRow(depthBox, Timeline.RowDefinitions.Count - 1);
                 LayerDepth.Children.Add(depthBox);
 

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace lenticulis_gui
 {
@@ -141,6 +142,7 @@ namespace lenticulis_gui
             SetWidthText();
             SetDepthBounds();
             SetSpacingText();
+            DepthBox_PropertyChanged(null, null);
         }
 
         #endregion 3D methods
@@ -167,7 +169,7 @@ namespace lenticulis_gui
 
                 if (depthArray == null)
                 {
-                    Debug.WriteLine("depth parse err"); //TODO depth parse err
+                    MessageBox.Show(LangProvider.getString("INVALID_DEPTH"), LangProvider.getString("INVALID_DEPTH_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -179,7 +181,7 @@ namespace lenticulis_gui
             }
             else
             {
-                Debug.WriteLine("properties 3D aprse err"); //TODO props 3D parse errr
+                MessageBox.Show(LangProvider.getString("INVALID_3D_PARAMETERS"), LangProvider.getString("INVALID_3D_PARAMETERS_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -264,13 +266,52 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// UnitsDepth combobox selection changed method
+        /// Listener that controls layer depths if they're between foreground and background
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void UnitsDepth_SelectionChanged(object sender, RoutedEventArgs e)
+        private void DepthBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //TODO check borders
+            double foreground;
+            double background;
+
+            if (UnitsDepth.SelectedItem == null)
+                return;
+
+            //if units are in % bound are 100, ale parse input
+            string selectedItem = UnitsDepth.SelectedItem.ToString();
+            if(selectedItem == "%") 
+            {
+                foreground = 100.0;
+                background = -100.0;
+            }
+            else if (!(Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background)))
+                return;
+
+            TextBox tb = sender as TextBox;
+
+            //parse textbox and change background if is out of bounds
+            double value;
+            if (Double.TryParse(tb.Text, out value))
+            {
+                if (value <= foreground && value >= background)
+                    tb.Background = Brushes.White;
+                else
+                    tb.Background = Brushes.Red;
+            }
+        }
+
+        /// <summary>
+        /// Check every depth layer text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DepthBox_PropertyChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
+            {
+                DepthBox_TextChanged((object)LayerDepth.Children[i], null);
+            }
         }
 
         /// <summary>
@@ -313,7 +354,7 @@ namespace lenticulis_gui
             }
             else
             {
-                //TODO MessageBox
+                MessageBox.Show(LangProvider.getString("ANAGLYPH_ERROR"), LangProvider.getString("ANAGLYPH_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

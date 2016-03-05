@@ -742,10 +742,10 @@ namespace lenticulis_gui
                 Stroke = System.Windows.Media.Brushes.DarkOrange,
             };
 
-            this.Children.Insert(0, top);
-            this.Children.Insert(0, bottom);
-            this.Children.Insert(0, left);
-            this.Children.Insert(0, right);
+            this.Children.Add(top);
+            this.Children.Add(bottom);
+            this.Children.Add(left);
+            this.Children.Add(right);
         }
 
         /// <summary>

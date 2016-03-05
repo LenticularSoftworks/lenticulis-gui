@@ -185,6 +185,12 @@ GENERATE=Generovat
 UNITS=Jednotky
 REAL_WIDTH=Šířka
 FRAME_SPACING=L/P rozestup snímků
+INVALID_DEPTH=Chybné zadání hloubky vrstvy
+INVALID_DEPTH_TITLE=Chybná hloubka
+INVALID_3D_PARAMETERS=Chybné parametry pro 3D 
+INVALID_3D_PARAMETERS_TITLE=Chybné parametry
+ANAGLYPH_ERROR=Celkový počet snímků v projektu je menší než rozestup snímků pro 3D
+ANAGLYPH_ERROR_TITLE=Chyba generování anaglyfu
 
 
 

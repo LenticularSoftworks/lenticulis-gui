@@ -185,6 +185,12 @@ GENERATE=Generate
 UNITS=Units
 REAL_WIDTH=Width
 FRAME_SPACING=L/R frame spacing
+INVALID_DEPTH=Invalid layer depth input
+INVALID_DEPTH_TITLE=Invalid depth
+INVALID_3D_PARAMETERS=Invalid 3D parameters
+INVALID_3D_PARAMETERS_TITLE=Invalid parameters
+ANAGLYPH_ERROR=Project frame count is less than 3D frame spacing 
+ANAGLYPH_ERROR_TITLE=Chyba generování anaglyfu
 
 
 
