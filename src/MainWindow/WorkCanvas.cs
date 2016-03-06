@@ -396,12 +396,12 @@ namespace lenticulis_gui
                 SetOtherFrameProperties(lo);
 
             //store history item for redo
-            historyItem.NewInitialX = lo.InitialX;
-            historyItem.NewInitialY = lo.InitialY;
-            historyItem.NewInitialScaleX = lo.InitialScaleX;
-            historyItem.NewInitialScaleY = lo.InitialScaleY;
-            historyItem.NewInitialAngle = lo.InitialAngle;
-            historyItem.NewTransformations = lo.GetTransformationsCopy();
+            historyItem.RedoInitialX = lo.InitialX;
+            historyItem.RedoInitialY = lo.InitialY;
+            historyItem.RedoInitialScaleX = lo.InitialScaleX;
+            historyItem.RedoInitialScaleY = lo.InitialScaleY;
+            historyItem.RedoInitialAngle = lo.InitialAngle;
+            historyItem.RedoTransformations = lo.GetTransformationsCopy();
 
             MainWindow.AddHistoryItem(historyItem);
         }

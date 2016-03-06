@@ -220,12 +220,12 @@ namespace lenticulis_gui.src.Containers
         {
             LayerObjectHistory layerObjectAction = new LayerObjectHistory()
             {
-                InitialX = this.InitialX,
-                InitialY = this.InitialY,
-                InitialAngle = this.InitialAngle,
-                InitialScaleX = this.InitialScaleX,
-                InitialScaleY = this.InitialScaleY,
-                Transformations = GetTransformationsCopy(),
+                UndoInitialX = this.InitialX,
+                UndoInitialY = this.InitialY,
+                UndoInitialAngle = this.InitialAngle,
+                UndoInitialScaleX = this.InitialScaleX,
+                UndoInitialScaleY = this.InitialScaleY,
+                UndoTransformations = GetTransformationsCopy(),
                 Instance = this
             };
 
