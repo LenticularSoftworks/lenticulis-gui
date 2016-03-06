@@ -212,7 +212,7 @@ namespace lenticulis_gui.src.Dialogs
 
                         // create timeline item
                         TimelineItem newItem = new TimelineItem(layers - i, 0, images, fileBareName);
-                        newItem.getLayerObject().ResourceId = ih.id;
+                        newItem.GetLayerObject().ResourceId = ih.id;
 
                         // and put it into timeline, etc.
                         mw.AddTimelineItem(newItem);

@@ -411,11 +411,11 @@ namespace lenticulis_gui.src.App
 
                 // create timeline object
                 TimelineItem newItem = new TimelineItem(layerId, frameStart, frameEnd - frameStart, fileBareName);
-                newItem.getLayerObject().ResourceId = resourceId;
+                newItem.GetLayerObject().ResourceId = resourceId;
                 mw.AddTimelineItem(newItem);
 
                 // assign initial state to layerobject
-                LayerObject lobj = newItem.getLayerObject();
+                LayerObject lobj = newItem.GetLayerObject();
                 lobj.InitialX = objX;
                 lobj.InitialY = objY;
                 lobj.InitialAngle = objAngle;
@@ -481,9 +481,6 @@ namespace lenticulis_gui.src.App
                     Transformation trans = new Transformation(ttype, vectorX, vectorY, angle);
                     trans.Interpolation = itype;
                     lobj.setTransformation(trans);
-
-                    // store interpolation type for specified type of transformation
-                    lobj.TransformInterpolationTypes[ttype] = itype;
                 }
             }
 

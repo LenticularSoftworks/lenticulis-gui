@@ -63,13 +63,19 @@ namespace lenticulis_gui
         /// </summary>
         public static TransformType SelectedTool = TransformType.Translation;
 
+        /// <summary>
+        /// Stored actions in linked list for undo redo
+        /// </summary>
+        private static LinkedList<HistoryItem> historyList;
+
+        /// <summary>
+        /// Index to historyList
+        /// </summary>
+        private static int historyListPointer = 0;
+
         public MainWindow()
         {
             InitializeComponent();
-
-            this.KeyDown += MainWindow_KeyDown;
-            this.KeyUp += MainWindow_KeyUp;
-            this.PreviewMouseWheel += MainWindow_PreviewMouseWheel;
 
             GetDrives();
 
@@ -105,9 +111,27 @@ namespace lenticulis_gui
             SetImageCount(imageCount);
             AddTimelineHeader();
             AddTimelineLayer(layerCount);
+            
             timelineList = new List<TimelineItem>();
+            historyList = new LinkedList<HistoryItem>();
 
             RefreshCanvasList();
+        }
+
+        /// <summary>
+        /// Adds new item to history list
+        /// </summary>
+        /// <param name="item">history item</param>
+        public static void AddHistoryItem(HistoryItem item)
+        {
+            if (historyList.Count > 0)
+            {
+                while (historyList.Count - 1 != historyListPointer)
+                    historyList.RemoveLast();
+            }
+
+            historyList.AddLast(item);
+            historyListPointer = historyList.Count - 1;
         }
 
         /// <summary>
@@ -426,7 +450,12 @@ namespace lenticulis_gui
         /// </summary>
         private void Undo()
         {
-            MessageBox.Show("undo");
+            MainWindow.historyList.ElementAt(historyListPointer).ApplyUndo();
+            
+            if(historyListPointer > 0)
+                historyListPointer--;
+            
+            RepaintCanvas();
         }
 
         /// <summary>
@@ -434,7 +463,12 @@ namespace lenticulis_gui
         /// </summary>
         private void Redo()
         {
-            MessageBox.Show("redo");
+            if (historyListPointer < MainWindow.historyList.Count - 1)
+                historyListPointer++;
+
+            MainWindow.historyList.ElementAt(historyListPointer).ApplyRedo();
+
+            RepaintCanvas();
         }
 
         /// <summary>

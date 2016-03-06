@@ -35,7 +35,7 @@ namespace lenticulis_gui.src.Dialogs
 
             sourceItem = titem;
 
-            LayerObject lobj = titem.getLayerObject();
+            LayerObject lobj = titem.GetLayerObject();
 
             // prepare interpolation type dictionaries (dynamically)
             Dictionary<InterpolationType, int> interpPos = new Dictionary<InterpolationType, int>()
@@ -126,7 +126,7 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
-            LayerObject lobj = sourceItem.getLayerObject();
+            LayerObject lobj = sourceItem.GetLayerObject();
 
             // update transformations
             lobj.getTransformation(TransformType.Translation).setVector(transX, transY);

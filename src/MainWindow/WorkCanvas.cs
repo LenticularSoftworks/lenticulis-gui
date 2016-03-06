@@ -137,7 +137,7 @@ namespace lenticulis_gui
                 float dy = canvasY - imageCenterY;
 
                 // get initial angle, and enhance it with interpolated transformation value
-                initialAngle = (float)Math.Atan2(dy, dx) - (float)(Interpolator.interpolateLinearValue(obj.TransformInterpolationTypes[TransformType.Rotate], progress, 0, obj.getTransformation(TransformType.Rotate).TransformAngle) * Math.PI / 180.0);
+                initialAngle = (float)Math.Atan2(dy, dx) - (float)(Interpolator.interpolateLinearValue(obj.getTransformation(TransformType.Rotate).Interpolation, progress, 0, obj.getTransformation(TransformType.Rotate).TransformAngle) * Math.PI / 180.0);
             }
         }
 
@@ -250,12 +250,12 @@ namespace lenticulis_gui
                 transform = Image_TopLeftCornerScale(img, mouse);
             else if ((imageMouseX < halfWidth && imageMouseY < halfHeight))
                 transform = Image_BottomRightCornerScale(img, mouse);
-            else if((imageMouseX > halfWidth && imageMouseY < halfHeight))
+            else if ((imageMouseX > halfWidth && imageMouseY < halfHeight))
                 transform = Image_BottomLeftCornerScale(img, mouse);
             else
                 transform = Image_TopRightCornerScale(img, mouse);
 
-            if(transform != null)
+            if (transform != null)
                 img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
         }
 
@@ -280,7 +280,7 @@ namespace lenticulis_gui
 
             if (scaleX > 0.0 && scaleY > 0.0)
                 return new ScaleTransform(scaleX, scaleY);
-            else 
+            else
                 return null;
         }
 
@@ -341,7 +341,7 @@ namespace lenticulis_gui
 
                 return new ScaleTransform(scaleX, scaleY);
             }
-            else 
+            else
                 return null;
         }
 
@@ -382,99 +382,135 @@ namespace lenticulis_gui
         /// <param name="source"></param>
         private void SetLayerObjectProperties(UIElement source)
         {
-            Image droppedImage = source as Image;
-
-            Transformation tr = null;
             // retrieve layer object from image on canvas
+            Image droppedImage = source as Image;
             LayerObject lo = GetLayerObjectByImage(droppedImage);
 
+            //store history item for undo
+            LayerObjectHistory historyItem = lo.GetLayerObjectAction();
+
+            //layer object started at canvas
             if (imageID == lo.Column)
-            {
-                // if there's some transformation present, preserve destination location by moving its vector
-                if (MainWindow.SelectedTool == TransformType.Translation)
-                {
-                    tr = lo.getTransformation(TransformType.Translation);
-                    if (tr != null && lo.Length > 1)
-                    {
-                        tr.setVector(tr.TransformX - (imageY - lo.InitialX),
-                                     tr.TransformY - (imageX - lo.InitialY));
-                    }
-
-                    lo.InitialX = imageY;
-                    lo.InitialY = imageX;
-                }
-                // on rotation, just add angle, it's already relative angle, so it is sufficient to add it
-                // to initial value (or in case of existing transformation, subtract from transform value)
-                else if (MainWindow.SelectedTool == TransformType.Rotate)
-                {
-                    tr = lo.getTransformation(TransformType.Rotate);
-                    // if there's a transformation present, update relative angle
-                    if (tr != null && lo.Length > 1)
-                        tr.setAngle(tr.TransformAngle - (alpha));
-
-                    lo.InitialAngle += alpha;
-                }
-                // on scaling, preserve final scale when modifying first frame
-                else if (MainWindow.SelectedTool == TransformType.Scale)
-                {
-                    tr = lo.getTransformation(TransformType.Scale);
-                    // apply back logic only when any scale transformation was set
-                    if (tr != null && lo.Length > 1 && (Math.Abs(tr.TransformX) > 0.001 || Math.Abs(tr.TransformY) > 0.001))
-                    {
-                        tr.setVector(tr.TransformX - ((float)scaleX - lo.InitialScaleX),
-                                     tr.TransformY - ((float)scaleY - lo.InitialScaleY));
-                    } 
-
-                    if(scaleX > 0.0 && scaleY > 0.0) 
-                    {
-                        lo.InitialScaleX = (float)scaleX;
-                        lo.InitialScaleY = (float)scaleY;
-                    } 
-
-                    lo.InitialX = imageY;
-                    lo.InitialY = imageX;
-                }
-            }
+                SetStartFrameProperties(lo);
             else
+                SetOtherFrameProperties(lo);
+
+            //store history item for redo
+            historyItem.NewInitialX = lo.InitialX;
+            historyItem.NewInitialY = lo.InitialY;
+            historyItem.NewInitialScaleX = lo.InitialScaleX;
+            historyItem.NewInitialScaleY = lo.InitialScaleY;
+            historyItem.NewInitialAngle = lo.InitialAngle;
+            historyItem.NewTransformations = lo.GetTransformationsCopy();
+
+            MainWindow.AddHistoryItem(historyItem);
+        }
+
+        /// <summary>
+        /// Set layer ovject properties if current canvas is object's starting
+        /// </summary>
+        /// <param name="layerObject">layer object</param>
+        private void SetStartFrameProperties(LayerObject layerObject)
+        {
+            Transformation transformation;
+
+            // if there's some transformation present, preserve destination location by moving its vector
+            if (MainWindow.SelectedTool == TransformType.Translation)
             {
-                // use reciproc value to be able to eighter interpolate and extrapolate
-                float progress = 1.0f / ((float)(imageID - lo.Column) / (float)(lo.Length - 1));
-
-                switch (MainWindow.SelectedTool)
+                transformation = layerObject.getTransformation(TransformType.Translation);
+                if (transformation != null && layerObject.Length > 1)
                 {
-                    case TransformType.Translation:
-                        // inter/extrapolate value of both directions, and store newly calculated vector into transformation object
-                        float transX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, imageY) - lo.InitialX;
-                        float transY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, imageX) - lo.InitialY;
-                        tr = new Transformation(TransformType.Translation, transX, transY, 0);
-                        break;
-                    case TransformType.Rotate:
-                        // inter/extrapolate value of new relative angle
-                        float angle = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Rotate], progress, lo.InitialAngle, lo.InitialAngle + alpha) - lo.InitialAngle;
-                        tr = new Transformation(TransformType.Rotate, 0, 0, angle);
-                        break;
-                    case TransformType.Scale:
-                        // inter/extrapolate value of both directions; it's also relative scale, so 0 means "no change"
-                        float scX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleX, (float)scaleX) - lo.InitialScaleX;
-                        float scY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Scale], progress, lo.InitialScaleY, (float)scaleY) - lo.InitialScaleY;
-                        tr = new Transformation(TransformType.Scale, scX, scY, 0);
-
-                        //Add transform translation because of image coordinates change
-                        float tranScaleX = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialX, imageY) - lo.InitialX;
-                        float tranScaleY = Interpolator.interpolateLinearValue(lo.TransformInterpolationTypes[TransformType.Translation], progress, lo.InitialY, imageX) - lo.InitialY;
-                        Transformation transScale = new Transformation(TransformType.Translation, tranScaleX, tranScaleY, 0);
-                        transScale.Interpolation = InterpolationType.Linear;
-                        lo.setTransformation(transScale);
-
-                        break;
+                    transformation.setVector(transformation.TransformX - (imageY - layerObject.InitialX),
+                                 transformation.TransformY - (imageX - layerObject.InitialY));
                 }
 
-                // if there's a transformation created, propagate it to layerobject
-                if (tr != null)
+                layerObject.InitialX = imageY;
+                layerObject.InitialY = imageX;
+            }
+            // on rotation, just add angle, it's already relative angle, so it is sufficient to add it
+            // to initial value (or in case of existing transformation, subtract from transform value)
+            else if (MainWindow.SelectedTool == TransformType.Rotate)
+            {
+                transformation = layerObject.getTransformation(TransformType.Rotate);
+                // if there's a transformation present, update relative angle
+                if (transformation != null && layerObject.Length > 1)
+                    transformation.setAngle(transformation.TransformAngle - (alpha));
+
+                layerObject.InitialAngle += alpha;
+            }
+            // on scaling, preserve final scale when modifying first frame
+            else if (MainWindow.SelectedTool == TransformType.Scale)
+            {
+                transformation = layerObject.getTransformation(TransformType.Scale);
+                // apply back logic only when any scale transformation was set
+                if (transformation != null && layerObject.Length > 1 && (Math.Abs(transformation.TransformX) > 0.001 || Math.Abs(transformation.TransformY) > 0.001))
                 {
-                    tr.Interpolation = lo.TransformInterpolationTypes[MainWindow.SelectedTool];
-                    lo.setTransformation(tr);
+                    transformation.setVector(transformation.TransformX - ((float)scaleX - layerObject.InitialScaleX),
+                                 transformation.TransformY - ((float)scaleY - layerObject.InitialScaleY));
                 }
+
+                if (scaleX > 0.0 && scaleY > 0.0)
+                {
+                    layerObject.InitialScaleX = (float)scaleX;
+                    layerObject.InitialScaleY = (float)scaleY;
+                }
+
+                layerObject.InitialX = imageY;
+                layerObject.InitialY = imageX;
+            }
+        }
+
+        /// <summary>
+        /// Set layer ovject properties if current canvas isn't object's starting
+        /// </summary>
+        /// <param name="layerObject">layer object</param>
+        private void SetOtherFrameProperties(LayerObject layerObject)
+        {
+            Transformation transformation = null;
+            Transformation trAdded = null;
+
+            // use reciproc value to be able to eighter interpolate and extrapolate
+            float progress = 1.0f / ((float)(imageID - layerObject.Column) / (float)(layerObject.Length - 1));
+            InterpolationType interpolation;
+
+            switch (MainWindow.SelectedTool)
+            {
+                case TransformType.Translation:
+                    // inter/extrapolate value of both directions, and store newly calculated vector into transformation object
+                    interpolation = layerObject.getTransformation(TransformType.Translation).Interpolation;
+                    float transX = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialX, imageY) - layerObject.InitialX;
+                    float transY = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialY, imageX) - layerObject.InitialY;
+                    transformation = new Transformation(TransformType.Translation, transX, transY, 0);
+                    break;
+                case TransformType.Rotate:
+                    // inter/extrapolate value of new relative angle
+                    interpolation = layerObject.getTransformation(TransformType.Rotate).Interpolation;
+                    float angle = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialAngle, layerObject.InitialAngle + alpha) - layerObject.InitialAngle;
+                    transformation = new Transformation(TransformType.Rotate, 0, 0, angle);
+                    break;
+                case TransformType.Scale:
+                    // inter/extrapolate value of both directions; it's also relative scale, so 0 means "no change"
+                    interpolation = layerObject.getTransformation(TransformType.Scale).Interpolation;
+                    float scX = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialScaleX, (float)scaleX) - layerObject.InitialScaleX;
+                    float scY = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialScaleY, (float)scaleY) - layerObject.InitialScaleY;
+                    transformation = new Transformation(TransformType.Scale, scX, scY, 0);
+
+                    //Add transform translation because of image coordinates change
+                    float tranScaleX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialX, imageY) - layerObject.InitialX;
+                    float tranScaleY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialY, imageX) - layerObject.InitialY;
+                    trAdded = new Transformation(TransformType.Translation, tranScaleX, tranScaleY, 0);
+                    trAdded.Interpolation = InterpolationType.Linear;
+                    break;
+            }
+
+            // if there's a transformation created, propagate it to layerobject
+            if (trAdded != null)
+                layerObject.setTransformation(trAdded);
+
+            if (transformation != null)
+            {
+                transformation.Interpolation = layerObject.getTransformation(MainWindow.SelectedTool).Interpolation;
+                layerObject.setTransformation(transformation);
             }
         }
 
@@ -548,7 +584,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="canvas">Canvas</param>
         /// <param name="listeners">Attach listeners if true</param>
-        private void AddLayerObjects(Canvas canvas, bool listeners) 
+        private void AddLayerObjects(Canvas canvas, bool listeners)
         {
             // list of images sorted by layer
             List<LayerObject> images = GetImages();
@@ -569,7 +605,7 @@ namespace lenticulis_gui
                 image.Height = imageHolder.height;
                 image.Stretch = Stretch.Fill;
 
-                if(listeners)
+                if (listeners)
                 {
                     // attach listeners
                     image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
@@ -686,8 +722,8 @@ namespace lenticulis_gui
             // fill layer objects in current canvas
             foreach (TimelineItem item in mw.timelineList)
             {
-                if (item.IsInColumn(this.imageID) && item.getLayerObject().Visible)
-                    layerObjects.Add(item.getLayerObject());
+                if (item.IsInColumn(this.imageID) && item.GetLayerObject().Visible)
+                    layerObjects.Add(item.GetLayerObject());
             }
 
             // sort layer objects by order of visibility - lower layers goes first, top layers comes last

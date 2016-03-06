@@ -164,6 +164,8 @@
     <Compile Include="src\App\LangConverter.cs" />
     <Compile Include="src\App\LangProvider.cs" />
     <Compile Include="src\App\ProjectLoader.cs" />
+    <Compile Include="src\Containers\LayerObjectHistory.cs" />
+    <Compile Include="src\Containers\HistoryItem.cs" />
     <Compile Include="src\Dialogs\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>

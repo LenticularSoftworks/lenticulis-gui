@@ -120,7 +120,7 @@ namespace lenticulis_gui
             {
                 ToggleButton source = (ToggleButton)o;
                 Image content = (Image)source.Content;
-                LayerObject lobj = ((TimelineItem)source.Parent).getLayerObject();
+                LayerObject lobj = ((TimelineItem)source.Parent).GetLayerObject();
 
                 // if visible, make it invisible
                 if (lobj.Visible)
@@ -278,7 +278,7 @@ namespace lenticulis_gui
         /// Retrieves data holder object
         /// </summary>
         /// <returns>data holder object</returns>
-        public LayerObject getLayerObject()
+        public LayerObject GetLayerObject()
         {
             return dataObject;
         }

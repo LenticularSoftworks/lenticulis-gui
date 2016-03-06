@@ -1,6 +1,8 @@
 ﻿using lenticulis_gui.src.App;
 using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.Dialogs;
+using lenticulis_gui.src.SupportLib;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -99,7 +101,7 @@ namespace lenticulis_gui
                 for (int i = timelineList.Count - 1; i >= 0; i--)
                 {
                     TimelineItem item = timelineList[i];
-                    LayerObject lobj = item.getLayerObject();
+                    LayerObject lobj = item.GetLayerObject();
                     // if some item is in deleted images
                     if (lobj != null)
                     {
@@ -230,7 +232,7 @@ namespace lenticulis_gui
 
             foreach (TimelineItem item in timelineList)
             {
-                LayerObject lo = item.getLayerObject();
+                LayerObject lo = item.GetLayerObject();
 
                 //refresh position with new layer object properties
                 item.SetPosition(lo.Layer, lo.Column, lo.Length);
@@ -301,7 +303,7 @@ namespace lenticulis_gui
             //fill deleteItems list
             foreach (TimelineItem item in timelineList)
             {
-                if (item.getLayerObject().Layer == lastLayer)
+                if (item.GetLayerObject().Layer == lastLayer)
                 {
                     deleteItems.Add(item);
                 }
@@ -334,7 +336,7 @@ namespace lenticulis_gui
             timelineList.Remove(item);
             Timeline.Children.Remove(item);
 
-            item.getLayerObject().dispose();
+            item.GetLayerObject().dispose();
 
             RepaintCanvas();
         }
@@ -359,7 +361,7 @@ namespace lenticulis_gui
                 foreach (TimelineItem item in timelineList)
                 {
                     //if some item is in last layer
-                    if (item.getLayerObject().Layer + 1 > newcount)
+                    if (item.GetLayerObject().Layer + 1 > newcount)
                     {
                         messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
 
@@ -406,7 +408,7 @@ namespace lenticulis_gui
             int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
             int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
 
-            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.getLayerObject().Length);
+            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.GetLayerObject().Length);
         }
 
         /// <summary>
@@ -434,7 +436,7 @@ namespace lenticulis_gui
                 length = currentColumn - column + 1; //index start at 0 - length + 1
             }
 
-            SetTimelineItemPosition(capturedTimelineItem.getLayerObject().Layer, column, length);
+            SetTimelineItemPosition(capturedTimelineItem.GetLayerObject().Layer, column, length);
         }
 
         /// <summary>
@@ -449,7 +451,7 @@ namespace lenticulis_gui
             int endColumn = column + length - 1;
 
             //if the whole element is in grid and doesn't overlaps another item
-            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.getLayerObject().Layer >= 0 && capturedTimelineItem.getLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
+            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.GetLayerObject().Layer >= 0 && capturedTimelineItem.GetLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
             {
                 capturedTimelineItem.SetPosition(row, column, length);
             }
@@ -506,12 +508,61 @@ namespace lenticulis_gui
             Timeline.Children.Add(newItem);
 
             //repaint canvas
-            canvasList[newItem.getLayerObject().Column].Paint();
+            canvasList[newItem.GetLayerObject().Column].Paint();
+        }
+
+        /// <summary>
+        /// Method for loading and putting element on canvas / to timeline to implicit position
+        /// </summary>
+        /// <param name="path">Path to image file</param>
+        /// <param name="extension">Extension (often obtained via file browser)</param>
+        /// <returns>True if everything succeeded</returns>
+        public bool LoadAndPutResource(String path, String extension, bool callback, out int resourceId)
+        {
+            resourceId = 0;
+
+            if (!Utils.IsAcceptedImageExtension(extension))
+                return false;
+
+            // Create new loading window
+            LoadingWindow lw = new LoadingWindow("image");
+            // show it
+            lw.Show();
+            // and disable this window to disallow all operations
+            this.IsEnabled = false;
+            // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
+
+            // load image...
+            int psdLayerIndex = -1;
+            if (!callback && extension.ToLower().Equals(".psd"))
+            {
+                List<String> layers = ImageLoader.getLayerInfo(path);
+
+                LayerSelectWindow lsw = new LayerSelectWindow(layers);
+                lsw.ShowDialog();
+
+                psdLayerIndex = lsw.selectedLayer;
+            }
+
+            ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);
+
+            // after image was loaded, enable main window
+            this.IsEnabled = true;
+            // and close loading window
+            lw.Close();
+
+            if (ih == null)
+                return false;
+
+            resourceId = ih.id;
+
+            // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
+            return true;
         }
 
         #endregion Timeline methods
 
-         #region Timeline listeners
+        #region Timeline listeners
         /// <summary>
         /// Add layer action
         /// </summary>
@@ -541,7 +592,7 @@ namespace lenticulis_gui
             foreach (TimelineItem item in timelineList)
             {
                 //if some item is in last layer
-                if (item.getLayerObject().Layer == lastLayer)
+                if (item.GetLayerObject().Layer == lastLayer)
                 {
                     messageBoxResult = MessageBox.Show(LangProvider.getString("DEL_LAYER_CONFIRM_TEXT"), LangProvider.getString("DEL_LAYER_CONFIRM_TITLE"), MessageBoxButton.YesNo);
 
@@ -597,8 +648,8 @@ namespace lenticulis_gui
         {
             TimelineItem item = (TimelineItem)sender;
 
-            int lower = item.getLayerObject().Column;
-            int upper = lower + item.getLayerObject().Length - 1;
+            int lower = item.GetLayerObject().Column;
+            int upper = lower + item.GetLayerObject().Length - 1;
 
             if (lower != upper)
             {
@@ -624,8 +675,8 @@ namespace lenticulis_gui
             capturedTimelineItem = (TimelineItem)((WrapPanel)sender).Parent;
             capturedResizePanel = (WrapPanel)sender;
 
-            capturedTimelineItemColumn = capturedTimelineItem.getLayerObject().Column;
-            capturedTimelineItemLength = capturedTimelineItem.getLayerObject().Length;
+            capturedTimelineItemColumn = capturedTimelineItem.GetLayerObject().Column;
+            capturedTimelineItemLength = capturedTimelineItem.GetLayerObject().Length;
         }
 
         /// <summary>
@@ -701,7 +752,7 @@ namespace lenticulis_gui
 
                     //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
-                    newItem.getLayerObject().ResourceId = resourceId;
+                    newItem.GetLayerObject().ResourceId = resourceId;
 
                     AddTimelineItem(newItem);
                 }
@@ -728,7 +779,7 @@ namespace lenticulis_gui
             }
             else
             {
-                layer = capturedTimelineItemContext.getLayerObject().Layer;
+                layer = capturedTimelineItemContext.GetLayerObject().Layer;
             }
 
             //if it is last layer
@@ -767,7 +818,7 @@ namespace lenticulis_gui
             }
             else
             {
-                layer = capturedTimelineItemContext.getLayerObject().Layer;
+                layer = capturedTimelineItemContext.GetLayerObject().Layer;
             }
 
             //if it is first layer
@@ -798,13 +849,13 @@ namespace lenticulis_gui
         private void TimelineSpreadItem_Click(object sender, RoutedEventArgs e)
         {
             // if there's more than one object in layer, do not allow this
-            if (ProjectHolder.layers[capturedTimelineItemContext.getLayerObject().Layer].getLayerObjects().Count > 1)
+            if (ProjectHolder.layers[capturedTimelineItemContext.GetLayerObject().Layer].getLayerObjects().Count > 1)
             {
                 capturedTimelineItemContext = null;
                 MessageBox.Show(LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT"), LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.getLayerObject().Layer, 0, ProjectHolder.ImageCount);
+            capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.GetLayerObject().Layer, 0, ProjectHolder.ImageCount);
             capturedTimelineItemContext = null;
         }
 
@@ -842,8 +893,8 @@ namespace lenticulis_gui
         {
             if (capturedTimelineItem != null && capturedResizePanel != null)
             {
-                if (capturedTimelineItem.getLayerObject().Length == 1)
-                    capturedTimelineItem.getLayerObject().resetTransformations();
+                if (capturedTimelineItem.GetLayerObject().Length == 1)
+                    capturedTimelineItem.GetLayerObject().resetTransformations();
             }
 
             capturedTimelineItem = null;

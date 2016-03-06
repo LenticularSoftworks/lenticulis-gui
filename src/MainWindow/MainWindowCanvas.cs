@@ -144,56 +144,6 @@ namespace lenticulis_gui
             }
         }
 
-        /// <summary>
-        /// Method for loading and putting element on canvas / to timeline to implicit position
-        /// </summary>
-        /// <param name="path">Path to image file</param>
-        /// <param name="extension">Extension (often obtained via file browser)</param>
-        /// <returns>True if everything succeeded</returns>
-        public bool LoadAndPutResource(String path, String extension, bool callback, out int resourceId)
-        {
-            resourceId = 0;
-
-            if (!Utils.IsAcceptedImageExtension(extension))
-                return false;
-
-            // Create new loading window
-            LoadingWindow lw = new LoadingWindow("image");
-            // show it
-            lw.Show();
-            // and disable this window to disallow all operations
-            this.IsEnabled = false;
-            // TODO for far future: use asynchronnous loading thread, to be able to cancel loading
-
-            // load image...
-
-            int psdLayerIndex = -1;
-            if (!callback && extension.ToLower().Equals(".psd"))
-            {
-                List<String> layers = ImageLoader.getLayerInfo(path);
-
-                LayerSelectWindow lsw = new LayerSelectWindow(layers);
-                lsw.ShowDialog();
-
-                psdLayerIndex = lsw.selectedLayer;
-            }
-
-            ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);
-
-            // after image was loaded, enable main window
-            this.IsEnabled = true;
-            // and close loading window
-            lw.Close();
-
-            if (ih == null)
-                return false;
-
-            resourceId = ih.id;
-
-            // return true if succeeded - may be used to put currently loaded resource to "Last used" tab
-            return true;
-        }
-
         #endregion Canvas methods
 
         #region Slider methods

@@ -106,8 +106,6 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         private bool transformationChanged = false;
 
-        public Dictionary<TransformType, InterpolationType> TransformInterpolationTypes;
-
         /// <summary>
         /// Constructor - only sets ID of this object by generating a new one from static member,
         /// inits initial state of position, rotation and scale, and creates transformation dictionary
@@ -139,7 +137,6 @@ namespace lenticulis_gui.src.Containers
         private void initTransformationDict()
         {
             Transformations = new Dictionary<TransformType, Transformation>();
-            TransformInterpolationTypes = new Dictionary<TransformType, InterpolationType>();
 
             resetTransformations();
         }
@@ -167,7 +164,6 @@ namespace lenticulis_gui.src.Containers
             foreach (TransformType tr in values)
             {
                 Transformations.Add(tr, new Transformation(tr, 0, 0, 0));
-                TransformInterpolationTypes[tr] = InterpolationType.Linear;
             }
         }
 
@@ -198,6 +194,42 @@ namespace lenticulis_gui.src.Containers
         {
             Transformations[transformation.Type] = transformation;
             transformationChanged = true;
+        }
+
+        /// <summary>
+        /// Returns copy of Transformation dictionary
+        /// </summary>
+        /// <returns>Copy of transform dictionary</returns>
+        public Dictionary<TransformType, Transformation> GetTransformationsCopy()
+        {
+            Dictionary<TransformType, Transformation> copy = new Dictionary<TransformType, Transformation>();
+
+            foreach (var item in Transformations)
+            {
+                copy[item.Key] = item.Value.GetCopy();
+            }
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Creates and returns LayerObjectAction insance for history save
+        /// </summary>
+        /// <returns>LayerObjectAction copy of LayerObject</returns>
+        public LayerObjectHistory GetLayerObjectAction()
+        {
+            LayerObjectHistory layerObjectAction = new LayerObjectHistory()
+            {
+                InitialX = this.InitialX,
+                InitialY = this.InitialY,
+                InitialAngle = this.InitialAngle,
+                InitialScaleX = this.InitialScaleX,
+                InitialScaleY = this.InitialScaleY,
+                Transformations = GetTransformationsCopy(),
+                Instance = this
+            };
+
+            return layerObjectAction;
         }
     }
 }

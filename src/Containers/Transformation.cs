@@ -50,6 +50,15 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
+        /// Returns copy of currnet Transformation
+        /// </summary>
+        /// <returns>Returns copy of transformation</returns>
+        public Transformation GetCopy()
+        {
+            return new Transformation(this.Type, this.TransformX, this.TransformY, this.TransformAngle); 
+        }
+
+        /// <summary>
         /// Constructor specifying transform vector
         /// </summary>
         /// <param name="type">Transformation type</param>

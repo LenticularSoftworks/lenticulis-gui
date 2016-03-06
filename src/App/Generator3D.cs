@@ -43,7 +43,7 @@ namespace lenticulis_gui.src.App
             //shift each object in project
             foreach (TimelineItem item in timelineList) 
             {
-                LayerObject lo = item.getLayerObject();
+                LayerObject lo = item.GetLayerObject();
 
                 int layer = lo.Layer;
                 double depth = depthArray[layer];
@@ -104,7 +104,7 @@ namespace lenticulis_gui.src.App
             float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, newRight) - lo.InitialY;
 
             Transformation tr = new Transformation(TransformType.Translation, 0.0f, transY, 0);
-            tr.Interpolation = lo.TransformInterpolationTypes[TransformType.Translation];
+            tr.Interpolation = InterpolationType.Linear;
             lo.setTransformation(tr);
         }
 
