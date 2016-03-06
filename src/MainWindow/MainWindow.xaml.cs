@@ -67,6 +67,10 @@ namespace lenticulis_gui
         {
             InitializeComponent();
 
+            this.KeyDown += MainWindow_KeyDown;
+            this.KeyUp += MainWindow_KeyUp;
+            this.PreviewMouseWheel += MainWindow_PreviewMouseWheel;
+
             GetDrives();
 
             // Get available languages
@@ -299,11 +303,9 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Clicked on zoom in button
+        /// Zoom in action
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
+        private void ZoomIn()
         {
             // no project loaded / created
             if (!ProjectHolder.ValidProject)
@@ -317,11 +319,9 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Clicked on zoom out button
+        /// Zoom out action
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
+        private void ZoomOut()
         {
             // no project loaded / created
             if (!ProjectHolder.ValidProject)
@@ -332,6 +332,26 @@ namespace lenticulis_gui
                 if (wc.CanvasScale > 0.1)
                     wc.CanvasScale /= 1.2;
             }
+        }
+
+        /// <summary>
+        /// Clicked on zoom in button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            ZoomIn();
+        }
+
+        /// <summary>
+        /// Clicked on zoom out button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            ZoomOut();
         }
 
         /// <summary>
@@ -402,13 +422,29 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Undo action
+        /// </summary>
+        private void Undo()
+        {
+            MessageBox.Show("undo");
+        }
+
+        /// <summary>
+        /// Redo action
+        /// </summary>
+        private void Redo()
+        {
+            MessageBox.Show("redo");
+        }
+
+        /// <summary>
         /// Clicked "Undo" button (menu item or toolbar)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void UndoButton_Click(object sender, RoutedEventArgs e)
         {
-            //
+            Undo();
         }
 
         /// <summary>
@@ -418,7 +454,64 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void RedoButton_Click(object sender, RoutedEventArgs e)
         {
-            //
+            Redo();
+        }
+
+        /// <summary>
+        /// Window keyDown listener
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            //Change resize icon when holding shift
+            if (e.Key == Key.LeftShift && SelectedTool == TransformType.Scale)
+            {
+                ScaleButton.Content = new Image
+                {
+                    Source = Utils.iconResourceToImageSource("Resize_lock")
+                };
+            }
+
+            if (e.Key == Key.Z && Keyboard.IsKeyDown(Key.LeftCtrl))
+                Undo();
+
+            if (e.Key == Key.Y && Keyboard.IsKeyDown(Key.LeftCtrl))
+                Redo();
+        }
+
+        /// <summary>
+        /// Window key up listener
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            //Change back resize icon when holding shift
+            if (e.Key == Key.LeftShift && SelectedTool == TransformType.Scale)
+            {
+                ScaleButton.Content = new Image
+                {
+                    Source = Utils.iconResourceToImageSource("Resize")
+                };
+            }
+        }
+
+        /// <summary>
+        /// Mouse wheel listener for zomm
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            //only with ctrl key down
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                return;
+
+            if (e.Delta > 0)
+                ZoomIn();
+            else if (e.Delta < 0)
+                ZoomOut();
         }
 
         #endregion Tools & buttons listeners

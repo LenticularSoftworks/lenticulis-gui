@@ -196,4 +196,7 @@
   <data name="_3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\res\icon\3d.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Resize_lock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\res\icon\resize_lock.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

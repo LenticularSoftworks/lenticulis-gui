@@ -98,14 +98,14 @@
 
             <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical">
                 <ToolBar>
-                    <RadioButton GroupName="ToolSelect" Name="TranslationButton" IsChecked="True"  Style="{x:Null}" ToolTip="{app:LangConverter str=TR_TRANSLATE}" Click="Translation_Checked">
-                        <Image Source="/lenticulis-gui;component/res/icon/Move.ico" Margin="0,0,0,10"/>
+                    <RadioButton GroupName="ToolSelect" Name="TranslationButton" IsChecked="True"  Style="{x:Null}" ToolTip="{app:LangConverter str=TR_TRANSLATE}" Click="Translation_Checked" Margin="0,0,0,10">
+                        <Image Source="/lenticulis-gui;component/res/icon/Move.ico"/>
                     </RadioButton>
-                    <RadioButton GroupName="ToolSelect" Name="ScaleButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_SCALE}" Click="Scale_Checked">
-                        <Image Source="/lenticulis-gui;component/res/icon/Resize.ico" Margin="0,0,0,10"/>
+                    <RadioButton GroupName="ToolSelect" Name="ScaleButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_SCALE}" Click="Scale_Checked" Margin="0,0,0,10">
+                        <Image Source="/lenticulis-gui;component/res/icon/Resize.ico"/>
                     </RadioButton>
-                    <RadioButton GroupName="ToolSelect" Name="RotateButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_ROTATE}" Click="Rotate_Checked">
-                        <Image Source="/lenticulis-gui;component/res/icon/Refresh.ico" Margin="0,0,0,10"/>
+                    <RadioButton GroupName="ToolSelect" Name="RotateButton" Style="{x:Null}" ToolTip="{app:LangConverter str=TR_ROTATE}" Click="Rotate_Checked" Margin="0,0,0,10">
+                        <Image Source="/lenticulis-gui;component/res/icon/Refresh.ico"/>
                     </RadioButton>
                     <Separator />
                     <Button Name="TDButton" Style="{x:Null}" ToolTip="{app:LangConverter str=BUTTON_3D}" Click="TD_Checked">

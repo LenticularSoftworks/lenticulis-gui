@@ -44,9 +44,9 @@ namespace lenticulis_gui
             this.canvas = canvas;
             this.BorderBrush = CreateBrush();
 
-            InitializeSquares();
+            this.canvas.Children.Add(this);
 
-            canvas.Children.Add(this);
+            InitializeSquares();
         }
 
         /// <summary>
@@ -86,7 +86,9 @@ namespace lenticulis_gui
 
             this.BorderThickness = new Thickness(thickness);
 
-            UpdateSquares();
+            //do not paint squares if they weren't painted yet
+            if(canvas.Children.Contains(topLeft))
+                UpdateSquares();
         }
 
         /// <summary>
