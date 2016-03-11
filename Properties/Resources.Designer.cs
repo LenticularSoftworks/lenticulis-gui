@@ -93,6 +93,16 @@ namespace lenticulis_gui.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        public static System.Drawing.Icon Anaglyph_GS {
+            get {
+                object obj = ResourceManager.GetObject("Anaglyph_GS", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         public static System.Drawing.Icon Config {
             get {
                 object obj = ResourceManager.GetObject("Config", resourceCulture);

@@ -284,7 +284,7 @@ namespace lenticulis_gui
 
             //if units are in % bound are 100, ale parse input
             string selectedItem = UnitsDepth.SelectedItem.ToString();
-            if(selectedItem == "%") 
+            if (selectedItem == "%")
             {
                 foreground = 100.0;
                 background = -100.0;
@@ -346,20 +346,38 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Creates and show window with anaglyph preview
+        /// Anaglyph button listener
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Anaglyph_Click(object sender, RoutedEventArgs e)
         {
-            if (canvasList.Count >= frameSpacing && frameSpacing > 0) 
-            {
-                new AnaglyphPreview(canvasList[0].GetCanvas(), canvasList[frameSpacing - 1].GetCanvas());
-            }
+            showAnaglyph(false);
+        }
+
+        /// <summary>
+        /// Anaglyph grayscale listener
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AnaglyphGS_Click(object sender, RoutedEventArgs e)
+        {
+            showAnaglyph(true);
+        }
+
+        /// <summary>
+        /// Creates and show window with grayscale or color anaglyph preview
+        /// </summary>
+        /// <param name="grayScale">grayscale if true else color</param>
+        private void showAnaglyph(bool grayScale)
+        {
+            if (!ProjectHolder.ValidProject)
+                return;
+
+            if (canvasList.Count >= frameSpacing && frameSpacing > 0)
+                new AnaglyphPreview(canvasList[0].GetCanvas(), canvasList[frameSpacing - 1].GetCanvas(), grayScale);
             else
-            {
                 MessageBox.Show(LangProvider.getString("ANAGLYPH_ERROR"), LangProvider.getString("ANAGLYPH_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
         }
 
         #endregion 3D listeners

@@ -60,6 +60,7 @@ TR_ROTATE=Rotate
 TR_SCALE=Scale
 BUTTON_3D=Enable/Disable 3D
 BUTTON_ANAGLYPH=Anaglyph
+BUTTON_ANAGLYPH_GS=Anaglyph grayscale
 
 ## Browser
 TAB_COMPUTER=My Computer
@@ -195,6 +196,7 @@ INVALID_3D_PARAMETERS=Invalid 3D parameters
 INVALID_3D_PARAMETERS_TITLE=Invalid parameters
 ANAGLYPH_ERROR=Project frame count is less than 3D frame spacing 
 ANAGLYPH_ERROR_TITLE=Chyba generování anaglyfu
+ANAGLYPH_CLOSE=Close ESC
 
 
 

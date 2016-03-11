@@ -117,6 +117,9 @@
                     <Button Name="AnaglyphButton" Style="{x:Null}" ToolTip="{app:LangConverter str=BUTTON_ANAGLYPH}" Click="Anaglyph_Click">
                         <Image Source="/lenticulis-gui;component/res/icon/Anaglyph.ico"/>
                     </Button>
+                    <Button Name="AnaglyphButton_GS" Style="{x:Null}" ToolTip="{app:LangConverter str=BUTTON_ANAGLYPH_GS}" Click="AnaglyphGS_Click">
+                        <Image Source="/lenticulis-gui;component/res/icon/Anaglyph_GS.ico"/>
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
 

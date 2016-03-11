@@ -673,6 +673,9 @@
   <ItemGroup>
     <Resource Include="res\icon\Resize_lock.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Anaglyph_GS.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)config\*" "$(TargetDir)"
