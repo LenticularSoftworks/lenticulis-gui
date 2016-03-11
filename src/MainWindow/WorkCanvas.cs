@@ -418,14 +418,14 @@ namespace lenticulis_gui
             if (MainWindow.SelectedTool == TransformType.Translation)
             {
                 transformation = layerObject.getTransformation(TransformType.Translation);
-                if (transformation != null && layerObject.Length > 1)
+                if (transformation != null && layerObject.Length > 1 && transformation.TransformX != 0 && transformation.TransformY != 0)
                 {
                     transformation.setVector(transformation.TransformX - (imageY - layerObject.InitialX),
                                  transformation.TransformY - (imageX - layerObject.InitialY));
                 }
 
-                layerObject.InitialX = imageY;
-                layerObject.InitialY = imageX;
+                layerObject.InitialX = imageX;
+                layerObject.InitialY = imageY;
             }
             // on rotation, just add angle, it's already relative angle, so it is sufficient to add it
             // to initial value (or in case of existing transformation, subtract from transform value)
@@ -433,7 +433,7 @@ namespace lenticulis_gui
             {
                 transformation = layerObject.getTransformation(TransformType.Rotate);
                 // if there's a transformation present, update relative angle
-                if (transformation != null && layerObject.Length > 1)
+                if (transformation != null && layerObject.Length > 1 && transformation.TransformAngle != 0.0)
                     transformation.setAngle(transformation.TransformAngle - (alpha));
 
                 layerObject.InitialAngle += alpha;
@@ -441,13 +441,13 @@ namespace lenticulis_gui
             // on scaling, preserve final scale when modifying first frame
             else if (MainWindow.SelectedTool == TransformType.Scale)
             {
-                transformation = layerObject.getTransformation(TransformType.Scale);
-                // apply back logic only when any scale transformation was set
-                if (transformation != null && layerObject.Length > 1 && (Math.Abs(transformation.TransformX) > 0.001 || Math.Abs(transformation.TransformY) > 0.001))
-                {
-                    transformation.setVector(transformation.TransformX - ((float)scaleX - layerObject.InitialScaleX),
-                                 transformation.TransformY - ((float)scaleY - layerObject.InitialScaleY));
-                }
+                 transformation = layerObject.getTransformation(TransformType.Scale);
+                 // apply back logic only when any scale transformation was set
+                 if (transformation != null && layerObject.Length > 1 && (Math.Abs(transformation.TransformX) > 0.001 || Math.Abs(transformation.TransformY) > 0.001))
+                 {
+                     transformation.setVector(transformation.TransformX - ((float)scaleX - layerObject.InitialScaleX),
+                                  transformation.TransformY - ((float)scaleY - layerObject.InitialScaleY));
+                 }
 
                 if (scaleX > 0.0 && scaleY > 0.0)
                 {
@@ -478,9 +478,10 @@ namespace lenticulis_gui
                 case TransformType.Translation:
                     // inter/extrapolate value of both directions, and store newly calculated vector into transformation object
                     interpolation = layerObject.getTransformation(TransformType.Translation).Interpolation;
-                    float transX = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialX, imageY) - layerObject.InitialX;
-                    float transY = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialY, imageX) - layerObject.InitialY;
-                    transformation = new Transformation(TransformType.Translation, transX, transY, 0);
+                    Transformation trans3D = layerObject.getTransformation(TransformType.Translation3D); // subtract 3d translation vector
+                    float transX = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialX, imageX) - layerObject.InitialX;
+                    float transY = Interpolator.interpolateLinearValue(interpolation, progress, layerObject.InitialY, imageY) - layerObject.InitialY;
+                    transformation = new Transformation(TransformType.Translation, transX - trans3D.TransformX, transY, 0);
                     break;
                 case TransformType.Rotate:
                     // inter/extrapolate value of new relative angle
@@ -496,8 +497,8 @@ namespace lenticulis_gui
                     transformation = new Transformation(TransformType.Scale, scX, scY, 0);
 
                     //Add transform translation because of image coordinates change
-                    float tranScaleX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialX, imageY) - layerObject.InitialX;
-                    float tranScaleY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialY, imageX) - layerObject.InitialY;
+                    float tranScaleX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialX, imageX) - layerObject.InitialX;
+                    float tranScaleY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, layerObject.InitialY, imageY) - layerObject.InitialY;
                     trAdded = new Transformation(TransformType.Translation, tranScaleX, tranScaleY, 0);
                     trAdded.Interpolation = InterpolationType.Linear;
                     break;
@@ -644,7 +645,13 @@ namespace lenticulis_gui
 
             // retrieve translation value
             trans = lo.getTransformation(TransformType.Translation);
-            float positionX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
+            float transX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
+            
+            // 3D translation value
+            trans = lo.getTransformation(TransformType.Translation3D);
+            float trans3DX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
+
+            float positionX = transX + trans3DX - lo.InitialX; // merge transformation set by canvas operation and set by 3D generator 
             float positionY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialY, lo.InitialY + trans.TransformY);
 
             // retrieve scaled value
@@ -700,8 +707,8 @@ namespace lenticulis_gui
             // and set position if needed
             if (setPosition)
             {
-                Canvas.SetTop(image, positionX);
-                Canvas.SetLeft(image, positionY);
+                Canvas.SetTop(image, positionY);
+                Canvas.SetLeft(image, positionX);
             }
 
             return image;

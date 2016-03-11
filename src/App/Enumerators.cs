@@ -8,7 +8,8 @@ namespace lenticulis_gui.src.App
     {
         Translation,    // movement
         Rotate,         // rotation
-        Scale           // resizing
+        Scale,          // resizing
+        Translation3D   // 3D translation
     };
 
     /// <summary>

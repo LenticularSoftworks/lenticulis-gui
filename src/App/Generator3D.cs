@@ -88,22 +88,22 @@ namespace lenticulis_gui.src.App
             if (rightEyeImage <= lo.Column)
                 return;
 
-            //new positions, swapped coordinates - initialY from left side
-            float tempLeft = CalcSingleEyeImage(lo.InitialY, width, dpi, viewDistance, depth, true) + lo.InitialY;
-            float tempRight = CalcSingleEyeImage(lo.InitialY, width, dpi, viewDistance, depth, false) + lo.InitialY;
+            //new positions
+            float tempLeft = CalcSingleEyeImage(lo.InitialX, width, dpi, viewDistance, depth, true) + lo.InitialX;
+            float tempRight = CalcSingleEyeImage(lo.InitialX, width, dpi, viewDistance, depth, false) + lo.InitialX;
 
             //disparity
             float disparity = tempRight - tempLeft;
 
             //position for right eye
-            float newRight = lo.InitialY + disparity;
+            float newRight = lo.InitialX + disparity;
 
             //set new position for frame seen by right and interpolate other images
             //distance of one object seen by left and right eye should be same in all frames
             float progress = 1.0f / ((float)(rightEyeImage) / (float)(lo.Length - 1));
-            float transY = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialY, newRight) - lo.InitialY;
+            float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, newRight) - lo.InitialX;
 
-            Transformation tr = new Transformation(TransformType.Translation, 0.0f, transY, 0);
+            Transformation tr = new Transformation(TransformType.Translation3D, transX, 0.0f, 0);
             tr.Interpolation = InterpolationType.Linear;
             lo.setTransformation(tr);
         }
