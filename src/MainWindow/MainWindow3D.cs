@@ -189,9 +189,22 @@ namespace lenticulis_gui
         public void PropertyChanged()
         {
             SetWidthText();
+
             ResetTextInput(ViewDist3D);
             ResetTextInput(Background3D);
             ResetTextInput(Foreground3D);
+
+            if (UnitsDepth.SelectedItem != null)
+            {
+                if (UnitsDepth.SelectedItem.ToString() != "%")
+                {
+                    foreach (TextBox tb in LayerDepth.Children)
+                    {
+                        ResetTextInput(tb);
+                    }
+                }
+            }
+
             SetSpacingText();
             DepthBox_PropertyChanged(null, null);
 
@@ -284,9 +297,9 @@ namespace lenticulis_gui
         private void Units3D_SelectionChanged(object sender, RoutedEventArgs e)
         {
             //convert
-            if (Units3D.SelectedItem.Equals(LengthUnits.cm)) 
+            if (Units3D.SelectedItem.Equals(LengthUnits.cm))
             {
-                if(units == LengthUnits.mm)
+                if (units == LengthUnits.mm)
                     unitConvert /= 100.0f;
                 else
                     unitConvert = cmToInch;
@@ -296,7 +309,7 @@ namespace lenticulis_gui
             }
             else if (Units3D.SelectedItem.Equals(LengthUnits.@in))
             {
-                if(units == LengthUnits.cm)
+                if (units == LengthUnits.cm)
                     unitConvert = 1 / cmToInch;
                 else
                     unitConvert = 1 / (cmToInch * 100);
@@ -314,7 +327,7 @@ namespace lenticulis_gui
                 unitToInches = cmToInch * 100.0f;
                 units = LengthUnits.mm;
             }
-                
+
             //update UnitsDepth ComboBox
             if (UnitsDepth.Items.Count > 0)
             {
