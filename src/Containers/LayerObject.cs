@@ -168,6 +168,14 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
+        /// Reset 3D translation
+        /// </summary>
+        public void reset3DTranslation()
+        {
+            Transformations[TransformType.Translation3D] = new Transformation(TransformType.Translation3D, 0, 0, 0);
+        }
+
+        /// <summary>
         /// Returns true, if there is any transformation present
         /// </summary>
         /// <returns>Is there any transformation?</returns>

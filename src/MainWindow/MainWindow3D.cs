@@ -35,6 +35,11 @@ namespace lenticulis_gui
         /// </summary>
         private int frameSpacing = 0;
 
+        /// <summary>
+        /// Generate flag
+        /// </summary>
+        private bool generate = false;
+
         #region 3D methods
         /// <summary>
         /// Gets layer dpeths from timeline and return them as array
@@ -97,7 +102,7 @@ namespace lenticulis_gui
         /// </summary>
         private void SetDepthBounds()
         {
-            if (realWidth != 0.0f)
+            if (realWidth != 0.0f && Foreground3D.Text == "" && Background3D.Text == "")
             {
                 float depthBound = realWidth * depthPercent;
                 depthBound = (int)(depthBound * 100) / 100.0f;
@@ -128,21 +133,54 @@ namespace lenticulis_gui
 
                 //enable / disable generate button
                 if (frameSpacing >= 1)
-                    Generate3D.IsEnabled = true;
+                {
+                    ViewAngle3D.Background = Brushes.White;
+                    ViewDist3D.Background = Brushes.White;
+                }
                 else
-                    Generate3D.IsEnabled = false;
+                {
+                    ViewAngle3D.Background = Brushes.Firebrick;
+                    ViewDist3D.Background = Brushes.Firebrick;
+                }
             }
         }
 
         /// <summary>
-        /// Reset values in 3D panel
+        /// Converts text inputs when units are changed
+        /// </summary>
+        /// <param name="input"></param>
+        private void ResetTextInput(TextBox input)
+        {
+            double value;
+
+            if (input.Text == "")
+                return;
+
+            if (Double.TryParse(input.Text, out value))
+            {
+                input.Text = (value * unitConvert) + "";
+                input.Background = Brushes.White;
+            }
+            else
+            {
+                Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
+                input.Background = Brushes.Firebrick;
+            }
+        }
+
+        /// <summary>
+        /// Set values in 3D panel and generate
         /// </summary>
         public void PropertyChanged()
         {
             SetWidthText();
-            SetDepthBounds();
+            ResetTextInput(ViewDist3D);
+            ResetTextInput(Background3D);
+            ResetTextInput(Foreground3D);
             SetSpacingText();
             DepthBox_PropertyChanged(null, null);
+
+            Generate3D();
         }
 
         #endregion 3D methods
@@ -152,11 +190,9 @@ namespace lenticulis_gui
         /// <summary>
         /// Action to generate shifts for 3D print
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Generate3D_Click(object sender, RoutedEventArgs e)
+        private void Generate3D()
         {
-            if (!ProjectHolder.ValidProject || timelineList.Count == 0)
+            if (!ProjectHolder.ValidProject || timelineList.Count == 0 || !Panel3D.IsEnabled || !generate)
                 return;
 
             //Input values
@@ -164,15 +200,12 @@ namespace lenticulis_gui
 
             if (Double.TryParse(ViewDist3D.Text, out viewDist) && Double.TryParse(ViewAngle3D.Text, out viewAngle) && Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
             {
-                LoadingWindow lw = new LoadingWindow("3D");
-                lw.Show();
-
                 //get depths of layers
                 double[] depthArray = GetDepthArray(foreground, background);
 
                 if (depthArray == null)
                 {
-                    MessageBox.Show(LangProvider.getString("INVALID_DEPTH"), LangProvider.getString("INVALID_DEPTH_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Warning3D.Content = LangProvider.getString("INVALID_DEPTH");
                     return;
                 }
 
@@ -182,11 +215,10 @@ namespace lenticulis_gui
                 //repaint result
                 RepaintCanvas();
 
-                System.Threading.Thread.Sleep(1000); //show window and wait to inform user about successfull generate
-                lw.Close();
+                Warning3D.Content = "";
             }
             else
-                MessageBox.Show(LangProvider.getString("INVALID_3D_PARAMETERS"), LangProvider.getString("INVALID_3D_PARAMETERS_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
         }
 
         /// <summary>
@@ -202,12 +234,12 @@ namespace lenticulis_gui
             if (ViewAngle3D.Text.Trim().Equals("") || ViewDist3D.Text.Trim().Equals(""))
             {
                 FrameSpacing3D.Content = "";
-                Generate3D.IsEnabled = false;
 
                 return;
             }
 
             SetSpacingText();
+            Generate3D();
         }
 
         /// <summary>
@@ -279,7 +311,7 @@ namespace lenticulis_gui
             double foreground;
             double background;
 
-            if (UnitsDepth.SelectedItem == null)
+            if (UnitsDepth.SelectedItem == null || !Panel3D.IsEnabled)
                 return;
 
             //if units are in % bound are 100, ale parse input
@@ -301,8 +333,10 @@ namespace lenticulis_gui
                 if (value <= foreground && value >= background)
                     tb.Background = Brushes.White;
                 else
-                    tb.Background = Brushes.Red;
+                    tb.Background = Brushes.Firebrick;
             }
+
+            Generate3D();
         }
 
         /// <summary>
@@ -312,6 +346,9 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void DepthBox_PropertyChanged(object sender, EventArgs e)
         {
+            if (!Panel3D.IsEnabled)
+                return;
+
             for (int i = 0; i < ProjectHolder.LayerCount; i++)
             {
                 DepthBox_TextChanged((object)LayerDepth.Children[i], null);
@@ -330,6 +367,8 @@ namespace lenticulis_gui
                 Panel3D.IsEnabled = false;
                 LayerDepth.IsEnabled = false;
                 UnitsDepth.IsEnabled = false;
+
+                Reset3DTranslation();
             }
             else
             {
@@ -337,12 +376,25 @@ namespace lenticulis_gui
                 LayerDepth.IsEnabled = true;
                 UnitsDepth.IsEnabled = true;
 
-                //if empty inputs generate buttons is disabled
-                if (ViewDist3D.Text.Trim().Equals("") || ViewAngle3D.Text.Trim().Equals("") || Foreground3D.Text.Trim().Equals("") || Background3D.Text.Trim().Equals(""))
-                    Generate3D.IsEnabled = false;
-
+                SetWidthText();
+                SetDepthBounds();
                 PropertyChanged();
+
+                generate = true;
             }
+        }
+
+        /// <summary>
+        /// Reset 3D translation of each object
+        /// </summary>
+        private void Reset3DTranslation()
+        {
+            foreach (var item in timelineList)
+            {
+                item.GetLayerObject().reset3DTranslation();
+            }
+
+            RepaintCanvas();
         }
 
         /// <summary>
@@ -352,7 +404,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Anaglyph_Click(object sender, RoutedEventArgs e)
         {
-            showAnaglyph(false);
+            ShowAnaglyph(false);
         }
 
         /// <summary>
@@ -362,14 +414,14 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void AnaglyphGS_Click(object sender, RoutedEventArgs e)
         {
-            showAnaglyph(true);
+            ShowAnaglyph(true);
         }
 
         /// <summary>
         /// Creates and show window with grayscale or color anaglyph preview
         /// </summary>
         /// <param name="grayScale">grayscale if true else color</param>
-        private void showAnaglyph(bool grayScale)
+        private void ShowAnaglyph(bool grayScale)
         {
             if (!ProjectHolder.ValidProject)
                 return;

@@ -455,8 +455,8 @@ namespace lenticulis_gui
                     layerObject.InitialScaleY = (float)scaleY;
                 }
 
-                layerObject.InitialX = imageY;
-                layerObject.InitialY = imageX;
+                layerObject.InitialX = imageX;
+                layerObject.InitialY = imageY;
             }
         }
 
