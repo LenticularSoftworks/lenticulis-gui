@@ -26,6 +26,7 @@ namespace lenticulis_gui.src.App
 
     public enum LengthUnits
     {
+        mm, //milimetres
         cm, //centimeters 
         @in //inches
     };

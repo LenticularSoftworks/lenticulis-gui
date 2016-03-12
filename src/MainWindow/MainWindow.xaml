@@ -192,7 +192,7 @@
                         <Grid Name="Panel3D" IsEnabled="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -214,12 +214,12 @@
                             <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Content="{app:LangConverter str=BACKGROUND}" />
                             <Label Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" Content="{app:LangConverter str=UNITS}" />
 
-                            <TextBox Grid.Column="1" Grid.Row="1" Name="ViewDist3D" Width="60" TextChanged="ViewDist3D_Changed"/>
-                            <TextBox Grid.Column="1" Grid.Row="2" Name="ViewAngle3D" Width="60" TextChanged="ViewDist3D_Changed"/>
-                            <TextBox Grid.Column="1" Grid.Row="3" Name="Foreground3D" TextChanged="DepthBox_PropertyChanged" Width="60" />
-                            <TextBox Grid.Column="1" Grid.Row="4" Name="Background3D" TextChanged="DepthBox_PropertyChanged" Width="60" />
+                            <TextBox Grid.Column="1" Grid.Row="1" Name="ViewDist3D" HorizontalAlignment="Left" Width="60" TextChanged="ViewDist3D_Changed"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Name="ViewAngle3D" HorizontalAlignment="Left" Width="60" TextChanged="ViewDist3D_Changed"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Name="Foreground3D" HorizontalAlignment="Left" TextChanged="DepthBox_PropertyChanged" Width="60" />
+                            <TextBox Grid.Column="1" Grid.Row="4" Name="Background3D" HorizontalAlignment="Left" TextChanged="DepthBox_PropertyChanged" Width="60" />
 
-                            <ComboBox Name="Units3D" Loaded="Units3D_Loaded" SelectionChanged="Units3D_SelectionChanged" Grid.Column="1" Grid.Row="5" />
+                            <ComboBox Name="Units3D" HorizontalAlignment="Left" Width="60" Loaded="Units3D_Loaded" SelectionChanged="Units3D_SelectionChanged" Grid.Column="1" Grid.Row="5" />
 
                             <Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Content="{app:LangConverter str=REAL_WIDTH}" />
                             <Label Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" Content="{app:LangConverter str=FRAME_SPACING}" />

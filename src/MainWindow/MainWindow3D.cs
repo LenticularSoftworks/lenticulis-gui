@@ -40,6 +40,16 @@ namespace lenticulis_gui
         /// </summary>
         private bool generate = false;
 
+        /// <summary>
+        /// Selected units
+        /// </summary>
+        private LengthUnits units;
+
+        /// <summary>
+        /// Conversion value
+        /// </summary>
+        private float unitToInches = 1;
+
         #region 3D methods
         /// <summary>
         /// Gets layer dpeths from timeline and return them as array
@@ -69,7 +79,7 @@ namespace lenticulis_gui
 
                     //must be between foreground and background
                     if (tmpDepth <= foreground && tmpDepth >= background)
-                        depthArray[i] = tmpDepth / unitConvert;
+                        depthArray[i] = tmpDepth / unitToInches;
                     else
                         return null;
                 }
@@ -91,7 +101,7 @@ namespace lenticulis_gui
                 return;
             }
 
-            float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitConvert;
+            float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitToInches;
             realWidth = (int)(width * 100) / 100.0f;
 
             Width3D.Content = realWidth + " " + Units3D.SelectedValue;
@@ -127,7 +137,7 @@ namespace lenticulis_gui
                 if (distance > 0.0 && angle > 0.0)
                 {
                     //show frame spacing
-                    frameSpacing = Generator3D.CalculateZoneDistance(distance / unitConvert, angle, ProjectHolder.ImageCount);
+                    frameSpacing = Generator3D.CalculateZoneDistance(distance / unitToInches, angle, ProjectHolder.ImageCount);
                     FrameSpacing3D.Content = frameSpacing.ToString();
                 }
 
@@ -158,7 +168,12 @@ namespace lenticulis_gui
 
             if (Double.TryParse(input.Text, out value))
             {
-                input.Text = (value * unitConvert) + "";
+                value *= unitConvert;
+                value *= 100;
+                value = Math.Round(value);
+                value /= 100;
+
+                input.Text = value + "";
                 input.Background = Brushes.White;
             }
             else
@@ -179,6 +194,8 @@ namespace lenticulis_gui
             ResetTextInput(Foreground3D);
             SetSpacingText();
             DepthBox_PropertyChanged(null, null);
+
+            unitConvert = 1;
 
             Generate3D();
         }
@@ -210,7 +227,7 @@ namespace lenticulis_gui
                 }
 
                 //set new positions
-                Generator3D.Generate3D(viewDist / unitConvert, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
+                Generator3D.Generate3D(viewDist / unitToInches, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
 
                 //repaint result
                 RepaintCanvas();
@@ -256,6 +273,7 @@ namespace lenticulis_gui
 
             cb.ItemsSource = values;
             cb.SelectedItem = LengthUnits.@in;
+            units = LengthUnits.@in;
         }
 
         /// <summary>
@@ -266,11 +284,37 @@ namespace lenticulis_gui
         private void Units3D_SelectionChanged(object sender, RoutedEventArgs e)
         {
             //convert
-            if (Units3D.SelectedItem.Equals(LengthUnits.cm))
-                unitConvert = cmToInch;
-            else if (Units3D.SelectedItem.Equals(LengthUnits.@in))
-                unitConvert = 1;
+            if (Units3D.SelectedItem.Equals(LengthUnits.cm)) 
+            {
+                if(units == LengthUnits.mm)
+                    unitConvert /= 100.0f;
+                else
+                    unitConvert = cmToInch;
 
+                unitToInches = cmToInch;
+                units = LengthUnits.cm;
+            }
+            else if (Units3D.SelectedItem.Equals(LengthUnits.@in))
+            {
+                if(units == LengthUnits.cm)
+                    unitConvert = 1 / cmToInch;
+                else
+                    unitConvert = 1 / (cmToInch * 100);
+
+                unitToInches = 1;
+                units = LengthUnits.@in;
+            }
+            else
+            {
+                if (units == LengthUnits.cm)
+                    unitConvert *= 100.0f;
+                else
+                    unitConvert = cmToInch * 100;
+
+                unitToInches = cmToInch * 100.0f;
+                units = LengthUnits.mm;
+            }
+                
             //update UnitsDepth ComboBox
             if (UnitsDepth.Items.Count > 0)
             {
@@ -362,6 +406,9 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void TD_Checked(object sender, RoutedEventArgs e)
         {
+            if (!ProjectHolder.ValidProject)
+                return;
+
             if (Panel3D.IsEnabled)
             {
                 Panel3D.IsEnabled = false;
