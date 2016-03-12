@@ -646,11 +646,11 @@ namespace lenticulis_gui
             // retrieve translation value
             trans = lo.getTransformation(TransformType.Translation);
             float transX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
-            
-            // 3D translation value
-            trans = lo.getTransformation(TransformType.Translation3D);
-            float trans3DX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialX, lo.InitialX + trans.TransformX);
 
+            // 3D translation value
+            Transformation trans3D = lo.getTransformation(TransformType.Translation3D);
+            float trans3DX = Interpolator.interpolateLinearValue(trans3D.Interpolation, progress, lo.InitialX, lo.InitialX + trans3D.TransformX);
+            
             float positionX = transX + trans3DX - lo.InitialX; // merge transformation set by canvas operation and set by 3D generator 
             float positionY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialY, lo.InitialY + trans.TransformY);
 

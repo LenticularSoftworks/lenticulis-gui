@@ -114,21 +114,28 @@ namespace lenticulis_gui.src.SupportLib
 
                         // and finally to translation, because image composition is done with coordinates to use
                         trans = current.getTransformation(TransformType.Translation);
+                        Transformation trans3D = current.getTransformation(TransformType.Translation3D);
                         if (trans != null)
                         {
                             // we just store coordinates, then we will work a bit with this value, so save it for later use
                             final_x = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
                             final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
+
+                            if (trans3D != null)
+                            {
+                                int final3D_x = (int)Interpolator.interpolateLinearValue(trans3D.Interpolation, progress, current.InitialX, current.InitialX + trans3D.TransformX);
+                                final_x = (int)(final_x + final3D_x - current.InitialX);
+                            }
                         }
                     }
 
                     // we place image using its center, so final_x should be increased by half the width, and final_y by half the height
                     // also we subtract w_delta and h_delta - these are values got as moved coordinates of bounding box during rotation (around center)
-                    final_x += final_height / 2 - h_delta;
-                    final_y += final_width / 2 - w_delta;
+                    final_x += final_width / 2 - w_delta;
+                    final_y += final_height / 2 - h_delta;
 
                     // place image onto canvas
-                    SupportLib.compositeImage(final_y, final_x);
+                    SupportLib.compositeImage(final_x, final_y);
 
                     // this properly frees original image
                     SupportLib.finalizeImage();
