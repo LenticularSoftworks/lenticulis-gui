@@ -273,10 +273,14 @@ namespace lenticulis_gui
 
             //if left shift down - scale with keep aspect ratio
             if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                double ratio = initWidth / initHeight;
+
                 if (scaleX > scaleY)
-                    scaleY = scaleX;
+                    scaleY = scaleX / ratio;
                 else
-                    scaleX = scaleY;
+                    scaleX = scaleY * ratio;
+            }
 
             if (scaleX > 0.0 && scaleY > 0.0)
                 return new ScaleTransform(scaleX, scaleY);
@@ -441,13 +445,13 @@ namespace lenticulis_gui
             // on scaling, preserve final scale when modifying first frame
             else if (MainWindow.SelectedTool == TransformType.Scale)
             {
-                 transformation = layerObject.getTransformation(TransformType.Scale);
-                 // apply back logic only when any scale transformation was set
-                 if (transformation != null && layerObject.Length > 1 && (Math.Abs(transformation.TransformX) > 0.001 || Math.Abs(transformation.TransformY) > 0.001))
-                 {
-                     transformation.setVector(transformation.TransformX - ((float)scaleX - layerObject.InitialScaleX),
-                                  transformation.TransformY - ((float)scaleY - layerObject.InitialScaleY));
-                 }
+                transformation = layerObject.getTransformation(TransformType.Scale);
+                // apply back logic only when any scale transformation was set
+                if (transformation != null && layerObject.Length > 1 && (Math.Abs(transformation.TransformX) > 0.001 || Math.Abs(transformation.TransformY) > 0.001))
+                {
+                    transformation.setVector(transformation.TransformX - ((float)scaleX - layerObject.InitialScaleX),
+                                 transformation.TransformY - ((float)scaleY - layerObject.InitialScaleY));
+                }
 
                 if (scaleX > 0.0 && scaleY > 0.0)
                 {
@@ -650,7 +654,7 @@ namespace lenticulis_gui
             // 3D translation value
             Transformation trans3D = lo.getTransformation(TransformType.Translation3D);
             float trans3DX = Interpolator.interpolateLinearValue(trans3D.Interpolation, progress, lo.InitialX, lo.InitialX + trans3D.TransformX);
-            
+
             float positionX = transX + trans3DX - lo.InitialX; // merge transformation set by canvas operation and set by 3D generator 
             float positionY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialY, lo.InitialY + trans.TransformY);
 
@@ -658,6 +662,12 @@ namespace lenticulis_gui
             trans = lo.getTransformation(TransformType.Scale);
             float scaleX = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleX, lo.InitialScaleX + trans.TransformX);
             float scaleY = Interpolator.interpolateLinearValue(trans.Interpolation, progress, lo.InitialScaleY, lo.InitialScaleY + trans.TransformY);
+
+            //if scale values is negative, set them to 0
+            if (scaleX <= 0.0f)
+                scaleX = 0.0f;
+            if (scaleY <= 0.0f)
+                scaleY = 0.0f;
 
             TransformGroup transform = new TransformGroup();
             ImageHolder holder = Storage.Instance.getImageHolder(lo.ResourceId);

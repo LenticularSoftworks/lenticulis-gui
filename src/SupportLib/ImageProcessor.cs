@@ -83,8 +83,14 @@ namespace lenticulis_gui.src.SupportLib
                         if (trans != null)
                         {
                             // resize image, if needed, according to progress and transform vector setting
-                            tmp_x = (uint)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
-                            tmp_y = (uint)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
+                            int int_x = (int)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
+                            int int_y = (int)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
+
+                            if (int_x <= 0 || int_y <= 0)
+                                continue;
+
+                            tmp_x = (uint)int_x;
+                            tmp_y = (uint)int_y;
                             SupportLib.resizeImage(tmp_x, tmp_y);
 
                             // store final_width/_height so we can then compute the center of bounding box
