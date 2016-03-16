@@ -39,24 +39,9 @@ namespace lenticulis_gui
         private List<WorkCanvas> canvasList;
 
         /// <summary>
-        /// drag n drop captured items
-        /// </summary>
-        private TimelineItem capturedTimelineItem = null;
-        private TimelineItem capturedTimelineItemContext = null;
-        private WrapPanel capturedResizePanel = null;
-
-        /// <summary>
         /// layer number for layer move up/down
         /// </summary>
         private int layerContext;
-
-        /// <summary>
-        /// drag n drop captured coords and dimensions
-        /// </summary>
-        private double capturedX;
-        private double capturedY;
-        private int capturedTimelineItemColumn;
-        private int capturedTimelineItemLength;
 
         /// <summary>
         /// Selected tranfromation tool
@@ -64,14 +49,9 @@ namespace lenticulis_gui
         public static TransformType SelectedTool = TransformType.Translation;
 
         /// <summary>
-        /// Stored actions in linked list for undo redo
+        /// List of undo / redo actions
         /// </summary>
-        private static LinkedList<HistoryItem> historyList;
-
-        /// <summary>
-        /// Index to historyList
-        /// </summary>
-        private static int historyListPointer = 0;
+        public HistoryList historyList;
 
         public MainWindow()
         {
@@ -113,25 +93,9 @@ namespace lenticulis_gui
             AddTimelineLayer(layerCount);
             
             timelineList = new List<TimelineItem>();
-            historyList = new LinkedList<HistoryItem>();
+            historyList = new HistoryList();
 
             RefreshCanvasList();
-        }
-
-        /// <summary>
-        /// Adds new item to history list
-        /// </summary>
-        /// <param name="item">history item</param>
-        public static void AddHistoryItem(HistoryItem item)
-        {
-            if (historyList.Count > 0)
-            {
-                while (historyList.Count - 1 != historyListPointer)
-                    historyList.RemoveLast();
-            }
-
-            historyList.AddLast(item);
-            historyListPointer = historyList.Count - 1;
         }
 
         /// <summary>
@@ -450,11 +414,7 @@ namespace lenticulis_gui
         /// </summary>
         private void Undo()
         {
-            MainWindow.historyList.ElementAt(historyListPointer).ApplyUndo();
-            
-            if(historyListPointer > 0)
-                historyListPointer--;
-            
+            historyList.Undo();
             RepaintCanvas();
         }
 
@@ -463,11 +423,7 @@ namespace lenticulis_gui
         /// </summary>
         private void Redo()
         {
-            if (historyListPointer < MainWindow.historyList.Count - 1)
-                historyListPointer++;
-
-            MainWindow.historyList.ElementAt(historyListPointer).ApplyRedo();
-
+            historyList.Redo();
             RepaintCanvas();
         }
 

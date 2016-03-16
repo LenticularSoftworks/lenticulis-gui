@@ -284,6 +284,21 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Returns new history object
+        /// </summary>
+        /// <returns></returns>
+        public TimelineItemHistory GetTimeLineItemAction()
+        {
+            return new TimelineItemHistory()
+            {
+                UndoColumn = dataObject.Column,
+                UndoRow = dataObject.Layer,
+                UndoLength = dataObject.Length,
+                Instance = this
+            };
+        }
+
+        /// <summary>
         /// Overrides default method; returns just text from control label
         /// </summary>
         /// <returns>text identifier</returns>

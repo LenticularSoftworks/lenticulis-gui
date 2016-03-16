@@ -62,11 +62,14 @@ namespace lenticulis_gui
             }
         }
 
+        private HistoryList historyList = null;
+
         /// <summary>
         /// The only one constructor
         /// </summary>
         /// <param name="imageID">Id of image on this canvas</param>
-        public WorkCanvas(int imageID)
+        /// <param name="historyList">List of undor / redo actions</param>
+        public WorkCanvas(int imageID, HistoryList historyList)
             : base()
         {
             this.imageID = imageID;
@@ -76,6 +79,7 @@ namespace lenticulis_gui
             this.Margin = new Thickness(10, 10, 10, 10);
             this.Background = new SolidColorBrush(Colors.White);
             this.bounding = new BoundingBox(this);
+            this.historyList = historyList;
 
             // zoom in/out cached scale transform
             this.LayoutTransform = new ScaleTransform(canvasScaleCached, canvasScaleCached);
@@ -400,14 +404,8 @@ namespace lenticulis_gui
                 SetOtherFrameProperties(lo);
 
             //store history item for redo
-            historyItem.RedoInitialX = lo.InitialX;
-            historyItem.RedoInitialY = lo.InitialY;
-            historyItem.RedoInitialScaleX = lo.InitialScaleX;
-            historyItem.RedoInitialScaleY = lo.InitialScaleY;
-            historyItem.RedoInitialAngle = lo.InitialAngle;
-            historyItem.RedoTransformations = lo.GetTransformationsCopy();
-
-            MainWindow.AddHistoryItem(historyItem);
+            historyItem.StoreAction();
+            historyList.AddHistoryItem(historyItem);
         }
 
         /// <summary>

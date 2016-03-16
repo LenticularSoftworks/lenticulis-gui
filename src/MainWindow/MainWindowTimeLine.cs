@@ -14,6 +14,22 @@ namespace lenticulis_gui
 {
     public partial class MainWindow
     {
+        /// <summary>
+        /// drag n drop captured items
+        /// </summary>
+        private TimelineItem capturedTimelineItem = null;
+        private TimelineItem capturedTimelineItemContext = null;
+        private WrapPanel capturedResizePanel = null;
+        private TimelineItemHistory timelineHistory = null;
+
+        /// <summary>
+        /// drag n drop captured coords and dimensions
+        /// </summary>
+        private double capturedX;
+        private double capturedY;
+        private int capturedTimelineItemColumn;
+        private int capturedTimelineItemLength;
+
         #region Timeline methods
 
         /// <summary>
@@ -622,6 +638,9 @@ namespace lenticulis_gui
             {
                 capturedTimelineItem = (TimelineItem)sender;
 
+                //create history action
+                timelineHistory = capturedTimelineItem.GetTimeLineItemAction();
+
                 Point mouse = Mouse.GetPosition((UIElement)sender);
 
                 capturedX = mouse.X;
@@ -897,6 +916,11 @@ namespace lenticulis_gui
                     capturedTimelineItem.GetLayerObject().resetTransformations();
             }
 
+            //store for udno action
+            timelineHistory.StoreAction();
+            historyList.AddHistoryItem(timelineHistory);
+
+            timelineHistory = null;
             capturedTimelineItem = null;
             capturedResizePanel = null;
         }

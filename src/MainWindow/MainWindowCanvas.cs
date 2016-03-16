@@ -40,7 +40,7 @@ namespace lenticulis_gui
 
             for (int i = 0; i < ProjectHolder.ImageCount; i++)
             {
-                canvasList.Add(new WorkCanvas(i));
+                canvasList.Add(new WorkCanvas(i, historyList));
             }
         }
 

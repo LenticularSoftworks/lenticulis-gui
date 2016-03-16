@@ -65,5 +65,21 @@ namespace lenticulis_gui.src.Containers
                 Instance.setTransformation(item.Value);
             }
         }
+
+        /// <summary>
+        /// Store new action to history list
+        /// </summary>
+        public override void StoreAction()
+        {
+            if (Instance != null)
+            {
+                this.RedoInitialX = Instance.InitialX;
+                this.RedoInitialY = Instance.InitialY;
+                this.RedoInitialScaleX = Instance.InitialScaleX;
+                this.RedoInitialScaleY = Instance.InitialScaleY;
+                this.RedoInitialAngle = Instance.InitialAngle;
+                this.RedoTransformations = Instance.GetTransformationsCopy();
+            }
+        }
     }
 }

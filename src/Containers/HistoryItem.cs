@@ -19,5 +19,10 @@ namespace lenticulis_gui.src.Containers
         /// Action for redo
         /// </summary>
         public abstract void ApplyRedo();
+
+        /// <summary>
+        /// Store new action to history list
+        /// </summary>
+        public abstract void StoreAction();
     }
 }
