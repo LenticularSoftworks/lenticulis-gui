@@ -352,7 +352,7 @@ namespace lenticulis_gui
             timelineList.Remove(item);
             Timeline.Children.Remove(item);
 
-            item.GetLayerObject().dispose();
+            item.GetLayerObject().dispose(); //TODO replace dispose when removing from history list
 
             RepaintCanvas();
         }
@@ -693,6 +693,9 @@ namespace lenticulis_gui
         {
             capturedTimelineItem = (TimelineItem)((WrapPanel)sender).Parent;
             capturedResizePanel = (WrapPanel)sender;
+
+            //create history action
+            timelineHistory = capturedTimelineItem.GetTimeLineItemAction();
 
             capturedTimelineItemColumn = capturedTimelineItem.GetLayerObject().Column;
             capturedTimelineItemLength = capturedTimelineItem.GetLayerObject().Length;
