@@ -412,7 +412,7 @@ namespace lenticulis_gui.src.App
                 // create timeline object
                 TimelineItem newItem = new TimelineItem(layerId, frameStart, frameEnd - frameStart, fileBareName);
                 newItem.GetLayerObject().ResourceId = resourceId;
-                mw.AddTimelineItem(newItem);
+                mw.AddTimelineItem(newItem, true, true);
 
                 // assign initial state to layerobject
                 LayerObject lobj = newItem.GetLayerObject();

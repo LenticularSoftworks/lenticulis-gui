@@ -215,7 +215,7 @@ namespace lenticulis_gui.src.Dialogs
                         newItem.GetLayerObject().ResourceId = ih.id;
 
                         // and put it into timeline, etc.
-                        mw.AddTimelineItem(newItem);
+                        mw.AddTimelineItem(newItem, true, true);
                     }
                 }
 

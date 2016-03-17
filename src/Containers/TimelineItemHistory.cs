@@ -12,9 +12,12 @@ namespace lenticulis_gui.src.Containers
         public int UndoColumn { get; set; }
         public int UndoLength { get; set; }
 
-        public int RedoRow { get; set; }
+        public int RedoRow { get; set; } //TODO private
         public int RedoColumn { get; set; }
         public int RedoLength { get; set; }
+
+        public bool AddAction { get; set; }
+        public bool RemoveAction { get; set; }
 
         public TimelineItem Instance { get; set; }
 
@@ -23,7 +26,13 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public override void ApplyUndo()
         {
-            Instance.SetPosition(UndoRow, UndoColumn, UndoLength);
+            MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            if (AddAction)
+                mw.RemoveTimelineItem(Instance, false);
+            else if (RemoveAction)
+                mw.AddTimelineItem(Instance, false, false);
+            else
+                Instance.SetPosition(UndoRow, UndoColumn, UndoLength);
         }
 
         /// <summary>
@@ -31,7 +40,13 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public override void ApplyRedo()
         {
-            Instance.SetPosition(RedoRow, RedoColumn, RedoLength);
+            MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            if (AddAction)
+                mw.AddTimelineItem(Instance, false, false);
+            else if (RemoveAction)
+                mw.RemoveTimelineItem(Instance, false);
+            else
+                Instance.SetPosition(RedoRow, RedoColumn, RedoLength);
         }
 
         /// <summary>
@@ -41,7 +56,7 @@ namespace lenticulis_gui.src.Containers
         {
             if (Instance != null)
             {
-                this.RedoRow= Instance.GetLayerObject().Layer;
+                this.RedoRow = Instance.GetLayerObject().Layer;
                 this.RedoColumn = Instance.GetLayerObject().Column;
                 this.RedoLength = Instance.GetLayerObject().Length;
             }

@@ -294,6 +294,8 @@ namespace lenticulis_gui
                 UndoColumn = dataObject.Column,
                 UndoRow = dataObject.Layer,
                 UndoLength = dataObject.Length,
+                AddAction = false,
+                RemoveAction = false,
                 Instance = this
             };
         }

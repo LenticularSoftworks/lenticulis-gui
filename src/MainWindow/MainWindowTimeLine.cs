@@ -132,7 +132,7 @@ namespace lenticulis_gui
                                     return;
                             }
 
-                            RemoveTimelineItem(item);
+                            RemoveTimelineItem(item, true);
                         }
                     }
                 }
@@ -328,7 +328,7 @@ namespace lenticulis_gui
             //remove items in timelineList
             foreach (TimelineItem item in deleteItems)
             {
-                RemoveTimelineItem(item);
+                RemoveTimelineItem(item, true);
             }
 
             //remove from Timeline
@@ -347,12 +347,21 @@ namespace lenticulis_gui
         /// Removes item from timeline, and properly disposes its references
         /// </summary>
         /// <param name="item"></param>
-        private void RemoveTimelineItem(TimelineItem item)
+        public void RemoveTimelineItem(TimelineItem item, bool setHistory)
         {
             timelineList.Remove(item);
             Timeline.Children.Remove(item);
 
-            item.GetLayerObject().dispose(); //TODO replace dispose when removing from history list
+            //item.GetLayerObject().dispose(); //TODO replace dispose when removing from history list
+
+            if (setHistory)
+            {
+                timelineHistory = item.GetTimeLineItemAction();
+                timelineHistory.RemoveAction = true;
+                timelineHistory.StoreAction();
+                historyList.AddHistoryItem(timelineHistory);
+                timelineHistory = null;
+            }
 
             RepaintCanvas();
         }
@@ -507,21 +516,35 @@ namespace lenticulis_gui
         /// Adds new item to timeline
         /// </summary>
         /// <param name="newItem">item to be added</param>
-        public void AddTimelineItem(TimelineItem newItem)
+        /// <param name="setListeners">if true set listeners to new item</param>
+        public void AddTimelineItem(TimelineItem newItem, bool setListeners, bool setHistory)
         {
             timelineList.Add(newItem);
-            newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
-            newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
-            newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-            newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-            newItem.deleteMenuItem.Click += TimelineDelete_Click;
-            newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
-            newItem.transformMenuItem.Click += TimelineTransformItem_Click;
-            newItem.layerUp.Click += LayerUp_Click;
-            newItem.layerDown.Click += LayerDown_Click;
+
+            if (setListeners)
+            {
+                newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
+                newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
+                newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.deleteMenuItem.Click += TimelineDelete_Click;
+                newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
+                newItem.transformMenuItem.Click += TimelineTransformItem_Click;
+                newItem.layerUp.Click += LayerUp_Click;
+                newItem.layerDown.Click += LayerDown_Click;
+            }
 
             // add into timeline
             Timeline.Children.Add(newItem);
+
+            if (setHistory)
+            {
+                timelineHistory = newItem.GetTimeLineItemAction();
+                timelineHistory.AddAction = true;
+                timelineHistory.StoreAction();
+                historyList.AddHistoryItem(timelineHistory);
+                timelineHistory = null;
+            }
 
             //repaint canvas
             canvasList[newItem.GetLayerObject().Column].Paint();
@@ -776,7 +799,7 @@ namespace lenticulis_gui
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
                     newItem.GetLayerObject().ResourceId = resourceId;
 
-                    AddTimelineItem(newItem);
+                    AddTimelineItem(newItem, true, true);
                 }
             }
             else
@@ -901,7 +924,7 @@ namespace lenticulis_gui
         private void TimelineDelete_Click(object sender, RoutedEventArgs e)
         {
             //remove from list and from timeline
-            RemoveTimelineItem(capturedTimelineItemContext);
+            RemoveTimelineItem(capturedTimelineItemContext, true);
 
             capturedTimelineItemContext = null;
         }
