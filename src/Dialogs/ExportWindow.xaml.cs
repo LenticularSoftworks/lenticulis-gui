@@ -153,7 +153,7 @@ namespace lenticulis_gui.src.Dialogs
             this.IsEnabled = false;
 
             // prepare layer object matrix
-            LayerObject[][] objMatrix = ImageProcessor.prepareObjectMatrix(ProjectHolder.layers.ToArray());
+            LayerObject[][] objMatrix = ImageProcessor.prepareObjectMatrix(ProjectHolder.Layers.ToArray());
 
             // and export it to file sequence
             ImageProcessor.exportObjectMatrix(objMatrix, ExportPathEdit.Text, ExportPatternEdit.Text, quality);

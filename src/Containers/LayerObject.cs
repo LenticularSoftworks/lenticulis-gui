@@ -40,24 +40,24 @@ namespace lenticulis_gui.src.Containers
             get
             {
                 if (parentLayer != null)
-                    return parentLayer.getId();
+                    return parentLayer.Id;
                 return 0;
             }
             set
             {
                 // this would mean invalid layer - do not set anything
-                if (value >= ProjectHolder.layers.Count)
+                if (value >= ProjectHolder.Layers.Count)
                     return;
 
                 // if this object belongs to some layer, remove it from here
                 if (parentLayer != null)
-                    parentLayer.removeLayerObject(this);
+                    parentLayer.RemoveLayerObject(this);
 
                 // set new layer to this object
-                parentLayer = ProjectHolder.layers[value];
+                parentLayer = ProjectHolder.Layers[value];
 
                 // and add self to its list
-                parentLayer.addLayerObject(this);
+                parentLayer.AddLayerObject(this);
             }
         }
         /// <summary>
@@ -126,7 +126,7 @@ namespace lenticulis_gui.src.Containers
         {
             if (parentLayer != null)
             {
-                parentLayer.removeLayerObject(this);
+                parentLayer.RemoveLayerObject(this);
                 parentLayer = null;
             }
         }

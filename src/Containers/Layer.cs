@@ -8,12 +8,12 @@ namespace lenticulis_gui.src.Containers
     /// <summary>
     /// Container class for Layer - contains elements and wraps several atributes
     /// </summary>
-    public class Layer
+    public class Layer : IHistoryStorable<LayerHistory>
     {
         /// <summary>
         /// Layer ID - typically the position (0, 1, ..)
         /// </summary>
-        private int id;
+        public int Id { get; private set; }
 
         /// <summary>
         /// List of objects placed within this layer
@@ -26,23 +26,14 @@ namespace lenticulis_gui.src.Containers
         /// <param name="id"></param>
         public Layer(int id)
         {
-            this.id = id;
-        }
-
-        /// <summary>
-        /// Retrieves layer ID (position)
-        /// </summary>
-        /// <returns>ID of this layer</returns>
-        public int getId()
-        {
-            return id;
+            this.Id = id;
         }
 
         /// <summary>
         /// Adds layer object to this layer
         /// </summary>
         /// <param name="obj">Object to be inserted into this layer</param>
-        public void addLayerObject(LayerObject obj)
+        public void AddLayerObject(LayerObject obj)
         {
             objects.Add(obj);
         }
@@ -50,24 +41,24 @@ namespace lenticulis_gui.src.Containers
         /// <summary>
         /// Increment layer id (position) when adding new layer at first position
         /// </summary>
-        public void incrementLayerId()
+        public void IncrementLayerId()
         {
-            this.id++;
+            this.Id++;
         }
 
         /// <summary>
         /// Decrement layer id (position) when layer move
         /// </summary>
-        public void decrementLayerId()
+        public void DecrementLayerId()
         {
-            this.id--;
+            this.Id--;
         }
 
         /// <summary>
         /// Removes layer object from layer, regardless of its presence
         /// </summary>
         /// <param name="obj">Object to be removed from this layer</param>
-        public void removeLayerObject(LayerObject obj)
+        public void RemoveLayerObject(LayerObject obj)
         {
             objects.Remove(obj);
         }
@@ -76,9 +67,22 @@ namespace lenticulis_gui.src.Containers
         /// Retrieves layer objects placet within this layer - typically needed for saving project to file
         /// </summary>
         /// <returns>List of layer objects within this layer</returns>
-        public List<LayerObject> getLayerObjects()
+        public List<LayerObject> GetLayerObjects()
         {
             return objects;
+        }
+
+        /// <summary>
+        /// Return history item
+        /// </summary>
+        /// <returns>Layer history item</returns>
+        public LayerHistory GetHistoryItem()
+        {
+            return new LayerHistory()
+            {
+                LayerId = this.Id,
+                AddLayer = false
+            };
         }
     }
 }

@@ -124,9 +124,9 @@ namespace lenticulis_gui.src.App
             xw.WriteStartElement("resources");
             {
                 // we need to retrieve links to used resources from layer objects
-                for (int i = 0; i < ProjectHolder.layers.Count; i++)
+                for (int i = 0; i < ProjectHolder.Layers.Count; i++)
                 {
-                    List<LayerObject> objects = ProjectHolder.layers[i].getLayerObjects();
+                    List<LayerObject> objects = ProjectHolder.Layers[i].GetLayerObjects();
                     for (int j = 0; j < objects.Count; j++)
                     {
                         LayerObject obj = objects[j];
@@ -181,9 +181,9 @@ namespace lenticulis_gui.src.App
         {
             xw.WriteStartElement("objects");
             {
-                for (int i = 0; i < ProjectHolder.layers.Count; i++)
+                for (int i = 0; i < ProjectHolder.Layers.Count; i++)
                 {
-                    List<LayerObject> objects = ProjectHolder.layers[i].getLayerObjects();
+                    List<LayerObject> objects = ProjectHolder.Layers[i].GetLayerObjects();
                     for (int j = 0; j < objects.Count; j++)
                         writeObject(xw, objects[j].Id.ToString(), objects[j].ResourceId.ToString());
                 }
@@ -215,8 +215,8 @@ namespace lenticulis_gui.src.App
         {
             xw.WriteStartElement("layers");
             {
-                for (int i = 0; i < ProjectHolder.layers.Count; i++)
-                    writeLayer(xw, ProjectHolder.layers[i]);
+                for (int i = 0; i < ProjectHolder.Layers.Count; i++)
+                    writeLayer(xw, ProjectHolder.Layers[i]);
             }
             xw.WriteEndElement();
         }
@@ -230,10 +230,10 @@ namespace lenticulis_gui.src.App
         {
             // store layer element, and write Id attribute (mandatory)
             xw.WriteStartElement("layer");
-            xw.WriteAttributeString("id", layer.getId().ToString());
+            xw.WriteAttributeString("id", layer.Id.ToString());
             {
                 // then write all layer objects
-                List<LayerObject> objects = layer.getLayerObjects();
+                List<LayerObject> objects = layer.GetLayerObjects();
                 for (int i = 0; i < objects.Count; i++)
                     writeLayerObject(xw, objects[i]);
             }

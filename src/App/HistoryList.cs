@@ -48,11 +48,10 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void Undo()
         {
-            Debug.WriteLine("undo " + historyListPointer);
-
             if (historyListPointer >= 0)
             {
-                historyList.ElementAt(historyListPointer).ApplyUndo();
+                if(historyList.Count != 0)
+                    historyList.ElementAt(historyListPointer).ApplyUndo();
                 
                 if(historyListPointer > 0)
                     historyListPointer--;
@@ -64,8 +63,6 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void Redo()
         {
-            Debug.WriteLine("redo " + historyListPointer);
-
             if (historyListPointer <= historyList.Count - 1)
             {
                 historyList.ElementAt(historyListPointer).ApplyRedo();

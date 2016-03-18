@@ -85,7 +85,7 @@ namespace lenticulis_gui
             Timeline.Children.Clear();
             SetImageCount(imageCount);
             AddTimelineHeader();
-            AddTimelineLayer(layerCount);
+            AddTimelineLayer(layerCount, false);
             
             timelineList = new List<TimelineItem>();
             ProjectHolder.HistoryList = new HistoryList();
@@ -205,7 +205,7 @@ namespace lenticulis_gui
                 }
             }
 
-            ProjectHolder.cleanUp();
+            ProjectHolder.CleanUp();
             ProjectHolder.ValidProject = false;
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();

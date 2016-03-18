@@ -63,7 +63,7 @@ namespace lenticulis_gui.src.App
             }
 
             // clean up all previously done stuff
-            ProjectHolder.cleanUp();
+            ProjectHolder.CleanUp();
             Storage.Instance.cleanUp();
 
             // and load project from file

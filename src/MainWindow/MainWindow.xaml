@@ -256,7 +256,7 @@
                 <DockPanel LastChildFill="True">
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" Width="50">
                         <ComboBox Name="UnitsDepth" DockPanel.Dock="Top" SelectionChanged="DepthBox_PropertyChanged" Loaded="UnitsDepth_Loaded" IsEnabled="False" Height="30" />
-                        <Grid Name="LayerDepth" IsEnabled="False" DockPanel.Dock="Left"/>
+                        <StackPanel Name="LayerDepth" IsEnabled="False" DockPanel.Dock="Left"/>
                     </DockPanel>
                     <Grid DockPanel.Dock="Top" Name="TimelineHeader" Background="LightGray" Height="30" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.RowDefinitions>

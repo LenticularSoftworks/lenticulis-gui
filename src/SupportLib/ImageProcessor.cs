@@ -173,7 +173,7 @@ namespace lenticulis_gui.src.SupportLib
             foreach (Layer layer in layers)
             {
                 // and for every object within
-                foreach (LayerObject lobj in layer.getLayerObjects())
+                foreach (LayerObject lobj in layer.GetLayerObjects())
                 {
                     // and for every column in layer it occupies, put it into matrix to that position
                     for (int i = lobj.Column; i < lobj.Column + lobj.Length; i++)

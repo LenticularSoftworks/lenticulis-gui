@@ -4,6 +4,7 @@ using lenticulis_gui.src.Dialogs;
 using lenticulis_gui.src.SupportLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -156,7 +157,8 @@ namespace lenticulis_gui
         /// Add timeline layer
         /// </summary>
         /// <param name="count">layer count</param>
-        private void AddTimelineLayer(int count)
+        /// <param name="setHistory">Set history item if true</param>
+        public void AddTimelineLayer(int count, bool setHistory)
         {
             if (ProjectHolder.ImageCount == 0)
                 return;
@@ -173,25 +175,16 @@ namespace lenticulis_gui
 
                 //Add row definitions
                 Timeline.RowDefinitions.Add(rowDef);
-                LayerDepth.RowDefinitions.Add(depthRowDef);
                 ProjectHolder.LayerCount++;
 
                 //add textbox to layer depth column
-                TextBox depthBox = new TextBox();
-                depthBox.Text = "0";
-                depthBox.TextChanged += DepthBox_TextChanged;
-                Grid.SetRow(depthBox, Timeline.RowDefinitions.Count - 1);
-                LayerDepth.Children.Add(depthBox);
-
-                ShiftDepthBox();
+                AddDepthBox("0");
 
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
                 horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
-
                 Grid.SetRow(horizontalBorder, Timeline.RowDefinitions.Count - 1);
                 Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
-
                 Timeline.Children.Add(horizontalBorder);
 
                 //increment id of existing layers
@@ -199,7 +192,15 @@ namespace lenticulis_gui
 
                 // create layer object and put it into layer list in project holder class
                 Layer layer = new Layer(0);
-                ProjectHolder.layers.Insert(0, layer);
+                ProjectHolder.Layers.Insert(0, layer);
+
+                //store to history list
+                if (setHistory)
+                {
+                    LayerHistory history = layer.GetHistoryItem();
+                    history.AddLayer = true;
+                    ProjectHolder.HistoryList.AddHistoryItem(history);
+                }
             }
 
             SetTimelineVerticalLines();
@@ -209,21 +210,22 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Shifts layer depth text box contents 
+        /// Add textbox for depth value
         /// </summary>
-        private void ShiftDepthBox()
+        /// <param name="depthValue">default value</param>
+        private void AddDepthBox(string depthValue) 
         {
-            for (int i = LayerDepth.Children.Count - 1; i > 0; i--)
+            //if default value get last highest
+            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0)
             {
-                string text = (LayerDepth.Children[i - 1] as TextBox).Text;
-                TextBox tb = LayerDepth.Children[i] as TextBox;
-
-                //same value as highest layer
-                if (!text.Trim().Equals(""))
-                    tb.Text = text;
-                else
-                    tb.Text = "0";
+                depthValue = ((TextBox)LayerDepth.Children[0]).Text;
             }
+
+            TextBox depthBox = new TextBox();
+            depthBox.Text = depthValue;
+            depthBox.TextChanged += DepthBox_TextChanged;
+            depthBox.Height = rowHeight;
+            LayerDepth.Children.Insert(0, depthBox);
         }
 
         /// <summary>
@@ -231,9 +233,20 @@ namespace lenticulis_gui
         /// </summary>
         private void IncrementLayerId()
         {
-            foreach (Layer l in ProjectHolder.layers)
+            foreach (Layer l in ProjectHolder.Layers)
             {
-                l.incrementLayerId();
+                l.IncrementLayerId();
+            }
+        }
+
+        /// <summary>
+        /// Decrements id in all existing layers.
+        /// </summary>
+        private void DecrementLayerId()
+        {
+            foreach (Layer layer in ProjectHolder.Layers)
+            {
+                layer.DecrementLayerId();
             }
         }
 
@@ -308,6 +321,28 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Removes first (top) layer from timeline. Used for undo action when layer should be empty.
+        /// </summary>
+        public void RemoveFirstLayer()
+        {
+            //layer is not empty or no layer
+            if ((ProjectHolder.Layers[0]).GetLayerObjects().Count != 0 || ProjectHolder.Layers.Count == 0) 
+                return;
+
+            //remove from Timeline
+            Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[0]);
+
+            //remove from depth layer column
+            LayerDepth.Children.RemoveAt(0);
+
+            ProjectHolder.Layers.RemoveAt(0);
+            ProjectHolder.LayerCount--;
+
+            DecrementLayerId();
+            RefreshTimelineItemPosition();
+        }
+
+        /// <summary>
         /// Remove last layer in timeline and project holder and its images
         /// </summary>
         private void RemoveLastLayer()
@@ -335,11 +370,10 @@ namespace lenticulis_gui
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
 
             //remove from depth layer column
-            LayerDepth.Children.RemoveAt(LayerDepth.RowDefinitions.Count - 1);
-            LayerDepth.RowDefinitions.Remove(LayerDepth.RowDefinitions[LayerDepth.RowDefinitions.Count - 1]);
+            LayerDepth.Children.RemoveAt(LayerDepth.Children.Count - 1);
 
             //set ProjectHolder
-            ProjectHolder.layers.RemoveAt(ProjectHolder.LayerCount - 1);
+            ProjectHolder.Layers.RemoveAt(ProjectHolder.LayerCount - 1);
             ProjectHolder.LayerCount--;
         }
 
@@ -352,7 +386,8 @@ namespace lenticulis_gui
             timelineList.Remove(item);
             Timeline.Children.Remove(item);
 
-            //item.GetLayerObject().dispose(); //TODO replace dispose when removing from history list
+            //item.GetLayerObject().dispose(); 
+            //TODO replace dispose when removing from history list
 
             if (setHistory)
             {
@@ -376,7 +411,7 @@ namespace lenticulis_gui
 
             if (newcount > ProjectHolder.LayerCount)
             {
-                AddTimelineLayer(newcount - ProjectHolder.LayerCount);
+                AddTimelineLayer(newcount - ProjectHolder.LayerCount, false);
             }
             else
             {
@@ -412,11 +447,10 @@ namespace lenticulis_gui
             Timeline.Children.Clear();
             TimelineHeader.ColumnDefinitions.Clear();
             TimelineHeader.Children.Clear();
-            LayerDepth.RowDefinitions.Clear();
             LayerDepth.Children.Clear();
             SliderPanel.Children.Clear();
 
-            ProjectHolder.layers.Clear();
+            ProjectHolder.Layers.Clear();
             ProjectHolder.LayerCount = 0;
         }
 
@@ -607,7 +641,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void AddLayer_Click(object sender, RoutedEventArgs e)
         {
-            AddTimelineLayer(1);
+            AddTimelineLayer(1, true);
         }
 
         /// <summary>
@@ -832,12 +866,12 @@ namespace lenticulis_gui
             }
 
             //change layer id (position)
-            ProjectHolder.layers[layer].incrementLayerId();
-            ProjectHolder.layers[layer + 1].decrementLayerId();
+            ProjectHolder.Layers[layer].IncrementLayerId();
+            ProjectHolder.Layers[layer + 1].DecrementLayerId();
 
-            Layer tmp = ProjectHolder.layers[layer + 1];
-            ProjectHolder.layers.RemoveAt(layer + 1);
-            ProjectHolder.layers.Insert(layer, tmp);
+            Layer tmp = ProjectHolder.Layers[layer + 1];
+            ProjectHolder.Layers.RemoveAt(layer + 1);
+            ProjectHolder.Layers.Insert(layer, tmp);
 
             RefreshTimelineItemPosition();
             RepaintCanvas();
@@ -871,12 +905,12 @@ namespace lenticulis_gui
             }
 
             //change layer id (position)
-            ProjectHolder.layers[layer].decrementLayerId();
-            ProjectHolder.layers[layer - 1].incrementLayerId();
+            ProjectHolder.Layers[layer].DecrementLayerId();
+            ProjectHolder.Layers[layer - 1].IncrementLayerId();
 
-            Layer tmp = ProjectHolder.layers[layer];
-            ProjectHolder.layers.RemoveAt(layer);
-            ProjectHolder.layers.Insert(layer - 1, tmp);
+            Layer tmp = ProjectHolder.Layers[layer];
+            ProjectHolder.Layers.RemoveAt(layer);
+            ProjectHolder.Layers.Insert(layer - 1, tmp);
 
             RefreshTimelineItemPosition();
             RepaintCanvas();
@@ -892,7 +926,7 @@ namespace lenticulis_gui
         private void TimelineSpreadItem_Click(object sender, RoutedEventArgs e)
         {
             // if there's more than one object in layer, do not allow this
-            if (ProjectHolder.layers[capturedTimelineItemContext.GetLayerObject().Layer].getLayerObjects().Count > 1)
+            if (ProjectHolder.Layers[capturedTimelineItemContext.GetLayerObject().Layer].GetLayerObjects().Count > 1)
             {
                 capturedTimelineItemContext = null;
                 MessageBox.Show(LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT"), LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -934,19 +968,19 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Timeline_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
-            if (capturedTimelineItem != null && capturedResizePanel != null)
+            if (capturedTimelineItem != null && capturedResizePanel != null && timelineHistory != null)
             {
                 if (capturedTimelineItem.GetLayerObject().Length == 1)
                     capturedTimelineItem.GetLayerObject().resetTransformations();
+
+                //store to history list
+                timelineHistory.StoreAction();
+                ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
+
+                timelineHistory = null;
+                capturedTimelineItem = null;
+                capturedResizePanel = null;
             }
-
-            //store to history list
-            timelineHistory.StoreAction();
-            ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
-            timelineHistory = null;
-
-            capturedTimelineItem = null;
-            capturedResizePanel = null;
         }
 
         /// <summary>
