@@ -85,7 +85,7 @@ namespace lenticulis_gui
             Timeline.Children.Clear();
             SetImageCount(imageCount);
             AddTimelineHeader();
-            AddTimelineLayer(layerCount, false);
+            AddTimelineLayer(layerCount, false, true);
             
             timelineList = new List<TimelineItem>();
             ProjectHolder.HistoryList = new HistoryList();

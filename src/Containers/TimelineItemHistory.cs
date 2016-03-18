@@ -70,7 +70,7 @@ namespace lenticulis_gui.src.Containers
         /// <summary>
         /// Store new action to history list
         /// </summary>
-        public override void StoreAction()
+        public void StoreAction()
         {
             if (Instance != null)
             {

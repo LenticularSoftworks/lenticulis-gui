@@ -81,7 +81,10 @@ namespace lenticulis_gui.src.Containers
             return new LayerHistory()
             {
                 LayerId = this.Id,
-                AddLayer = false
+                UpLayer = false,
+                DownLayer = false,
+                AddLayer = false,
+                RemoveLayer = false
             };
         }
     }

@@ -34,51 +34,6 @@ namespace lenticulis_gui
         #region Timeline methods
 
         /// <summary>
-        /// Add timeline header
-        /// </summary>
-        private void AddTimelineHeader()
-        {
-            for (int i = 0; i < ProjectHolder.ImageCount; i++)
-            {
-                System.Windows.Controls.Label label = new System.Windows.Controls.Label()
-                {
-                    Content = "#" + (i + 1),
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
-
-                Grid.SetColumn(label, i);
-
-                TimelineHeader.Children.Add(label);
-            }
-        }
-
-        /// <summary>
-        /// Set image count
-        /// </summary>
-        /// <param name="count">image count</param>
-        private void SetImageCount(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                //Add Timeline column definition
-                ColumnDefinition colDef = new ColumnDefinition();
-                colDef.MinWidth = columnMinWidth;
-
-                Timeline.ColumnDefinitions.Add(colDef);
-
-                //Add TimelineHeader column definition
-                colDef = new ColumnDefinition();
-                colDef.MinWidth = columnMinWidth;
-
-                TimelineHeader.ColumnDefinitions.Add(colDef);
-            }
-
-            ProjectHolder.ImageCount = count;
-
-            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
-        }
-
-        /// <summary>
         /// Updates image count in opened project
         /// </summary>
         /// <param name="newcount">new image count</param>
@@ -158,24 +113,20 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="count">layer count</param>
         /// <param name="setHistory">Set history item if true</param>
-        public void AddTimelineLayer(int count, bool setHistory)
+        /// <param name="top">If true, layer wil be insert to top, else to end</param>
+        public void AddTimelineLayer(int count, bool setHistory, bool top)
         {
             if (ProjectHolder.ImageCount == 0)
                 return;
 
             for (int i = 0; i < count; i++)
             {
+                ProjectHolder.LayerCount++;
+
                 //timeline row def.
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
-
-                //layer row def
-                RowDefinition depthRowDef = new RowDefinition();
-                depthRowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
-
-                //Add row definitions
                 Timeline.RowDefinitions.Add(rowDef);
-                ProjectHolder.LayerCount++;
 
                 //add textbox to layer depth column
                 AddDepthBox("0");
@@ -187,12 +138,19 @@ namespace lenticulis_gui
                 Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
                 Timeline.Children.Add(horizontalBorder);
 
-                //increment id of existing layers
-                IncrementLayerId();
+                int position;
+                if (top)
+                {
+                    //increment id of existing layers
+                    IncrementLayerId();
+                    position = 0;
+                }
+                else
+                    position = ProjectHolder.LayerCount - 1;
 
                 // create layer object and put it into layer list in project holder class
-                Layer layer = new Layer(0);
-                ProjectHolder.Layers.Insert(0, layer);
+                Layer layer = new Layer(position);
+                ProjectHolder.Layers.Insert(position, layer);
 
                 //store to history list
                 if (setHistory)
@@ -210,123 +168,12 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Add textbox for depth value
-        /// </summary>
-        /// <param name="depthValue">default value</param>
-        private void AddDepthBox(string depthValue) 
-        {
-            //if default value get last highest
-            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0)
-            {
-                depthValue = ((TextBox)LayerDepth.Children[0]).Text;
-            }
-
-            TextBox depthBox = new TextBox();
-            depthBox.Text = depthValue;
-            depthBox.TextChanged += DepthBox_TextChanged;
-            depthBox.Height = rowHeight;
-            LayerDepth.Children.Insert(0, depthBox);
-        }
-
-        /// <summary>
-        /// Increments id in all existing layers.
-        /// </summary>
-        private void IncrementLayerId()
-        {
-            foreach (Layer l in ProjectHolder.Layers)
-            {
-                l.IncrementLayerId();
-            }
-        }
-
-        /// <summary>
-        /// Decrements id in all existing layers.
-        /// </summary>
-        private void DecrementLayerId()
-        {
-            foreach (Layer layer in ProjectHolder.Layers)
-            {
-                layer.DecrementLayerId();
-            }
-        }
-
-        /// <summary>
-        /// Refresh timeline items position.
-        /// </summary>
-        private void RefreshTimelineItemPosition()
-        {
-            // return if timeline list is not set
-            if (timelineList == null)
-                return;
-
-            foreach (TimelineItem item in timelineList)
-            {
-                LayerObject lo = item.GetLayerObject();
-
-                //refresh position with new layer object properties
-                item.SetPosition(lo.Layer, lo.Column, lo.Length);
-            }
-        }
-
-        /// <summary>
-        /// Add vertical lines
-        /// </summary>
-        private void SetTimelineVerticalLines()
-        {
-            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
-            {
-                Border el = Timeline.Children[i] as Border;
-                // all vertical lines
-                if (el != null && el.BorderThickness.Right > 0)
-                    Timeline.Children.RemoveAt(i);
-            }
-
-            //Create and add vertical border
-            for (int i = 0; i < ProjectHolder.ImageCount; i++)
-            {
-                Border verticalBorder = new Border() { BorderBrush = Brushes.Gray };
-                verticalBorder.BorderThickness = new Thickness() { Right = 1 };
-
-                Grid.SetColumn(verticalBorder, i);
-                Grid.SetRowSpan(verticalBorder, ProjectHolder.LayerCount);
-
-                Timeline.Children.Add(verticalBorder);
-            }
-        }
-
-        /// <summary>
-        /// Add vertical lines
-        /// </summary>
-        private void SetTimelineHorizontalLines()
-        {
-            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
-            {
-                Border el = Timeline.Children[i] as Border;
-                // all vertical lines
-                if (el != null && el.BorderThickness.Bottom > 0)
-                    Timeline.Children.RemoveAt(i);
-            }
-
-            //Create and add vertical border
-            for (int i = 0; i < ProjectHolder.LayerCount; i++)
-            {
-                Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
-                horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
-
-                Grid.SetRow(horizontalBorder, i);
-                Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
-
-                Timeline.Children.Add(horizontalBorder);
-            }
-        }
-
-        /// <summary>
         /// Removes first (top) layer from timeline. Used for undo action when layer should be empty.
         /// </summary>
         public void RemoveFirstLayer()
         {
             //layer is not empty or no layer
-            if ((ProjectHolder.Layers[0]).GetLayerObjects().Count != 0 || ProjectHolder.Layers.Count == 0) 
+            if ((ProjectHolder.Layers[0]).GetLayerObjects().Count != 0 || ProjectHolder.Layers.Count == 0)
                 return;
 
             //remove from Timeline
@@ -345,7 +192,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Remove last layer in timeline and project holder and its images
         /// </summary>
-        private void RemoveLastLayer()
+        /// <param name="setHistory">set history item if true</param>
+        public void RemoveLastLayer(bool setHistory)
         {
             int lastLayer = ProjectHolder.LayerCount - 1;
             //list of deleting items
@@ -355,16 +203,23 @@ namespace lenticulis_gui
             foreach (TimelineItem item in timelineList)
             {
                 if (item.GetLayerObject().Layer == lastLayer)
-                {
                     deleteItems.Add(item);
-                }
+            }
+
+            if (setHistory)
+            {
+                //create history item
+                LayerHistory history = ProjectHolder.Layers[lastLayer].GetHistoryItem();
+                history.RemoveLayer = true;
+
+                //store deleted items as history items and save
+                history.StoreAction(deleteItems);
+                ProjectHolder.HistoryList.AddHistoryItem(history);
             }
 
             //remove items in timelineList
             foreach (TimelineItem item in deleteItems)
-            {
-                RemoveTimelineItem(item, true);
-            }
+                RemoveTimelineItem(item, false);
 
             //remove from Timeline
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
@@ -411,7 +266,7 @@ namespace lenticulis_gui
 
             if (newcount > ProjectHolder.LayerCount)
             {
-                AddTimelineLayer(newcount - ProjectHolder.LayerCount, false);
+                AddTimelineLayer(newcount - ProjectHolder.LayerCount, false, true);
             }
             else
             {
@@ -432,7 +287,7 @@ namespace lenticulis_gui
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     while (ProjectHolder.LayerCount > newcount)
-                        RemoveLastLayer();
+                        RemoveLastLayer(true);
                 }
             }
         }
@@ -452,93 +307,6 @@ namespace lenticulis_gui
 
             ProjectHolder.Layers.Clear();
             ProjectHolder.LayerCount = 0;
-        }
-
-        /// <summary>
-        /// Time line item shift
-        /// </summary>
-        /// <param name="columnWidth">column width</param>
-        private void TimelineItemShift(double columnWidth)
-        {
-            Point mouse = Mouse.GetPosition(Timeline);
-
-            //Position in grid calculated from mouse position and grid dimensions
-            int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
-            int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
-
-            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.GetLayerObject().Length);
-        }
-
-        /// <summary>
-        /// Timeline item resize
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="columnWidth"></param>
-        private void TimelineItemResize(object sender, double columnWidth)
-        {
-            Point mouse = Mouse.GetPosition(Timeline);
-
-            int length;
-            int column;
-            int currentColumn = (int)(mouse.X / columnWidth);
-
-            //if left panel is dragged else right panel is dragged
-            if (capturedResizePanel.HorizontalAlignment.ToString() == "Left")
-            {
-                column = currentColumn;
-                length = capturedTimelineItemLength - column + capturedTimelineItemColumn;
-            }
-            else
-            {
-                column = capturedTimelineItemColumn;
-                length = currentColumn - column + 1; //index start at 0 - length + 1
-            }
-
-            SetTimelineItemPosition(capturedTimelineItem.GetLayerObject().Layer, column, length);
-        }
-
-        /// <summary>
-        /// Set timeline item position in grid
-        /// </summary>
-        /// <param name="row">row number</param>
-        /// <param name="column">column number</param>
-        /// <param name="length">image length (column span)</param>
-        private void SetTimelineItemPosition(int row, int column, int length)
-        {
-            bool overlap = TimelineItemOverlap(column, row, length);
-            int endColumn = column + length - 1;
-
-            //if the whole element is in grid and doesn't overlaps another item
-            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.GetLayerObject().Layer >= 0 && capturedTimelineItem.GetLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
-            {
-                capturedTimelineItem.SetPosition(row, column, length);
-            }
-        }
-
-        /// <summary>
-        /// Returns true if timeline item overlaps another
-        /// </summary>
-        /// <param name="timelineColumn">column number</param>
-        /// <param name="timelineRow">row (layer) number</param>
-        /// <param name="timelineLength">length (column span)</param>
-        /// <returns></returns>
-        private bool TimelineItemOverlap(int timelineColumn, int timelineRow, int timelineLength)
-        {
-            foreach (TimelineItem item in timelineList)
-            {
-                //if its the same item
-                if (item == capturedTimelineItem)
-                    continue;
-
-                for (int i = 0; i < timelineLength; i++)
-                {
-                    //overlaps antoher item
-                    if (item.IsInPosition(timelineRow, timelineColumn + i))
-                        return true;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -631,6 +399,301 @@ namespace lenticulis_gui
             return true;
         }
 
+        /// <summary>
+        /// Move all items from selected layer one position up
+        /// </summary>
+        /// <param name="layer"></param>
+        public void LayerUp(int layer)
+        {
+            //if it is first layer
+            if (layer == 0)
+                return;
+
+            //change layer id (position)
+            ProjectHolder.Layers[layer].DecrementLayerId();
+            ProjectHolder.Layers[layer - 1].IncrementLayerId();
+
+            Layer tmp = ProjectHolder.Layers[layer];
+            ProjectHolder.Layers.RemoveAt(layer);
+            ProjectHolder.Layers.Insert(layer - 1, tmp);
+
+            RefreshTimelineItemPosition();
+            RepaintCanvas();
+
+            capturedTimelineItemContext = null;
+        }
+
+        /// <summary>
+        /// Move all items from selected layer one position down
+        /// </summary>
+        /// <param name="layer"></param>
+        public void LayerDown(int layer)
+        {
+            //if it is last layer
+            if (layer == ProjectHolder.LayerCount - 1)
+                return;
+
+            //change layer id (position)
+            ProjectHolder.Layers[layer].IncrementLayerId();
+            ProjectHolder.Layers[layer + 1].DecrementLayerId();
+
+            Layer tmp = ProjectHolder.Layers[layer + 1];
+            ProjectHolder.Layers.RemoveAt(layer + 1);
+            ProjectHolder.Layers.Insert(layer, tmp);
+
+            RefreshTimelineItemPosition();
+            RepaintCanvas();
+
+            capturedTimelineItemContext = null;
+        }
+
+        /// <summary>
+        /// Add timeline header
+        /// </summary>
+        private void AddTimelineHeader()
+        {
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
+            {
+                System.Windows.Controls.Label label = new System.Windows.Controls.Label()
+                {
+                    Content = "#" + (i + 1),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+
+                Grid.SetColumn(label, i);
+
+                TimelineHeader.Children.Add(label);
+            }
+        }
+
+        /// <summary>
+        /// Set image count
+        /// </summary>
+        /// <param name="count">image count</param>
+        private void SetImageCount(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                //Add Timeline column definition
+                ColumnDefinition colDef = new ColumnDefinition();
+                colDef.MinWidth = columnMinWidth;
+
+                Timeline.ColumnDefinitions.Add(colDef);
+
+                //Add TimelineHeader column definition
+                colDef = new ColumnDefinition();
+                colDef.MinWidth = columnMinWidth;
+
+                TimelineHeader.ColumnDefinitions.Add(colDef);
+            }
+
+            ProjectHolder.ImageCount = count;
+
+            SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
+        } 
+
+        /// <summary>
+        /// Add textbox for depth value
+        /// </summary>
+        /// <param name="depthValue">default value</param>
+        private void AddDepthBox(string depthValue)
+        {
+            //if default value get last highest
+            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0)
+            {
+                depthValue = ((TextBox)LayerDepth.Children[0]).Text;
+            }
+
+            //layer depth row def
+            RowDefinition depthRowDef = new RowDefinition();
+            depthRowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
+
+            TextBox depthBox = new TextBox();
+            depthBox.Text = depthValue;
+            depthBox.TextChanged += DepthBox_TextChanged;
+            depthBox.Height = rowHeight;
+            LayerDepth.Children.Insert(0, depthBox);
+        }
+
+        /// <summary>
+        /// Increments id in all existing layers.
+        /// </summary>
+        private void IncrementLayerId()
+        {
+            foreach (Layer l in ProjectHolder.Layers)
+            {
+                l.IncrementLayerId();
+            }
+        }
+
+        /// <summary>
+        /// Decrements id in all existing layers.
+        /// </summary>
+        private void DecrementLayerId()
+        {
+            foreach (Layer layer in ProjectHolder.Layers)
+            {
+                layer.DecrementLayerId();
+            }
+        }
+
+        /// <summary>
+        /// Refresh timeline items position.
+        /// </summary>
+        private void RefreshTimelineItemPosition()
+        {
+            // return if timeline list is not set
+            if (timelineList == null)
+                return;
+
+            foreach (TimelineItem item in timelineList)
+            {
+                LayerObject lo = item.GetLayerObject();
+
+                //refresh position with new layer object properties
+                item.SetPosition(lo.Layer, lo.Column, lo.Length);
+            }
+        }
+
+        /// <summary>
+        /// Add vertical lines
+        /// </summary>
+        private void SetTimelineVerticalLines()
+        {
+            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
+            {
+                Border el = Timeline.Children[i] as Border;
+                // all vertical lines
+                if (el != null && el.BorderThickness.Right > 0)
+                    Timeline.Children.RemoveAt(i);
+            }
+
+            //Create and add vertical border
+            for (int i = 0; i < ProjectHolder.ImageCount; i++)
+            {
+                Border verticalBorder = new Border() { BorderBrush = Brushes.Gray };
+                verticalBorder.BorderThickness = new Thickness() { Right = 1 };
+
+                Grid.SetColumn(verticalBorder, i);
+                Grid.SetRowSpan(verticalBorder, ProjectHolder.LayerCount);
+
+                Timeline.Children.Insert(0, verticalBorder);
+            }
+        }
+
+        /// <summary>
+        /// Add vertical lines
+        /// </summary>
+        private void SetTimelineHorizontalLines()
+        {
+            for (int i = Timeline.Children.Count - 1; i >= 0; i--)
+            {
+                Border el = Timeline.Children[i] as Border;
+                // all vertical lines
+                if (el != null && el.BorderThickness.Bottom > 0)
+                    Timeline.Children.RemoveAt(i);
+            }
+
+            //Create and add vertical border
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
+            {
+                Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
+                horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
+
+                Grid.SetRow(horizontalBorder, i);
+                Grid.SetColumnSpan(horizontalBorder, ProjectHolder.ImageCount);
+
+                Timeline.Children.Add(horizontalBorder);
+            }
+        }
+
+        /// <summary>
+        /// Time line item shift
+        /// </summary>
+        /// <param name="columnWidth">column width</param>
+        private void TimelineItemShift(double columnWidth)
+        {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            //Position in grid calculated from mouse position and grid dimensions
+            int timelineColumn = (int)((mouse.X - capturedX + columnWidth / 2) / columnWidth);
+            int timelineRow = (int)((mouse.Y - capturedY + rowHeight / 2) / rowHeight);
+
+            SetTimelineItemPosition(timelineRow, timelineColumn, capturedTimelineItem.GetLayerObject().Length);
+        }
+
+        /// <summary>
+        /// Timeline item resize
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="columnWidth"></param>
+        private void TimelineItemResize(object sender, double columnWidth)
+        {
+            Point mouse = Mouse.GetPosition(Timeline);
+
+            int length;
+            int column;
+            int currentColumn = (int)(mouse.X / columnWidth);
+
+            //if left panel is dragged else right panel is dragged
+            if (capturedResizePanel.HorizontalAlignment.ToString() == "Left")
+            {
+                column = currentColumn;
+                length = capturedTimelineItemLength - column + capturedTimelineItemColumn;
+            }
+            else
+            {
+                column = capturedTimelineItemColumn;
+                length = currentColumn - column + 1; //index start at 0 - length + 1
+            }
+
+            SetTimelineItemPosition(capturedTimelineItem.GetLayerObject().Layer, column, length);
+        }
+
+        /// <summary>
+        /// Set timeline item position in grid
+        /// </summary>
+        /// <param name="row">row number</param>
+        /// <param name="column">column number</param>
+        /// <param name="length">image length (column span)</param>
+        private void SetTimelineItemPosition(int row, int column, int length)
+        {
+            bool overlap = TimelineItemOverlap(column, row, length);
+            int endColumn = column + length - 1;
+
+            //if the whole element is in grid and doesn't overlaps another item
+            if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.GetLayerObject().Layer >= 0 && capturedTimelineItem.GetLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
+            {
+                capturedTimelineItem.SetPosition(row, column, length);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if timeline item overlaps another
+        /// </summary>
+        /// <param name="timelineColumn">column number</param>
+        /// <param name="timelineRow">row (layer) number</param>
+        /// <param name="timelineLength">length (column span)</param>
+        /// <returns></returns>
+        private bool TimelineItemOverlap(int timelineColumn, int timelineRow, int timelineLength)
+        {
+            foreach (TimelineItem item in timelineList)
+            {
+                //if its the same item
+                if (item == capturedTimelineItem)
+                    continue;
+
+                for (int i = 0; i < timelineLength; i++)
+                {
+                    //overlaps antoher item
+                    if (item.IsInPosition(timelineRow, timelineColumn + i))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion Timeline methods
 
         #region Timeline listeners
@@ -641,7 +704,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void AddLayer_Click(object sender, RoutedEventArgs e)
         {
-            AddTimelineLayer(1, true);
+            AddTimelineLayer(1, true, true);
         }
 
         /// <summary>
@@ -674,7 +737,7 @@ namespace lenticulis_gui
             //remove last layer
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                RemoveLastLayer();
+                RemoveLastLayer(true);
             }
         }
 
@@ -851,32 +914,16 @@ namespace lenticulis_gui
 
             //switch between click to empty column or timeline item
             if (capturedTimelineItemContext == null)
-            {
                 layer = layerContext;
-            }
             else
-            {
                 layer = capturedTimelineItemContext.GetLayerObject().Layer;
-            }
 
-            //if it is last layer
-            if (layer == ProjectHolder.LayerCount - 1)
-            {
-                return;
-            }
+            LayerDown(layer);
 
-            //change layer id (position)
-            ProjectHolder.Layers[layer].IncrementLayerId();
-            ProjectHolder.Layers[layer + 1].DecrementLayerId();
-
-            Layer tmp = ProjectHolder.Layers[layer + 1];
-            ProjectHolder.Layers.RemoveAt(layer + 1);
-            ProjectHolder.Layers.Insert(layer, tmp);
-
-            RefreshTimelineItemPosition();
-            RepaintCanvas();
-
-            capturedTimelineItemContext = null;
+            //store history
+            LayerHistory history = (ProjectHolder.Layers[layer]).GetHistoryItem();
+            history.DownLayer = true;
+            ProjectHolder.HistoryList.AddHistoryItem(history);
         }
 
         /// <summary>
@@ -890,32 +937,16 @@ namespace lenticulis_gui
 
             //switch between click to empty column or timeline item
             if (capturedTimelineItemContext == null)
-            {
                 layer = layerContext;
-            }
             else
-            {
                 layer = capturedTimelineItemContext.GetLayerObject().Layer;
-            }
 
-            //if it is first layer
-            if (layer == 0)
-            {
-                return;
-            }
+            LayerUp(layer);
 
-            //change layer id (position)
-            ProjectHolder.Layers[layer].DecrementLayerId();
-            ProjectHolder.Layers[layer - 1].IncrementLayerId();
-
-            Layer tmp = ProjectHolder.Layers[layer];
-            ProjectHolder.Layers.RemoveAt(layer);
-            ProjectHolder.Layers.Insert(layer - 1, tmp);
-
-            RefreshTimelineItemPosition();
-            RepaintCanvas();
-
-            capturedTimelineItemContext = null;
+            //store history
+            LayerHistory history = (ProjectHolder.Layers[layer]).GetHistoryItem();
+            history.UpLayer = true;
+            ProjectHolder.HistoryList.AddHistoryItem(history);
         }
 
         /// <summary>
@@ -932,7 +963,17 @@ namespace lenticulis_gui
                 MessageBox.Show(LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT"), LangProvider.getString("ITEM_CANNOT_BE_SPREAD_CONFLICT_TITLE"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
+            //store history
+            TimelineItemHistory history = capturedTimelineItemContext.GetHistoryItem();
+
+
+            //set position
             capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.GetLayerObject().Layer, 0, ProjectHolder.ImageCount);
+
+            //save redo
+            history.StoreAction();
+            ProjectHolder.HistoryList.AddHistoryItem(history);
+
             capturedTimelineItemContext = null;
         }
 
@@ -968,19 +1009,22 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Timeline_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
-            if (capturedTimelineItem != null && capturedResizePanel != null && timelineHistory != null)
+            if (capturedTimelineItem != null && capturedResizePanel != null)
             {
                 if (capturedTimelineItem.GetLayerObject().Length == 1)
                     capturedTimelineItem.GetLayerObject().resetTransformations();
+            }
 
+            if (timelineHistory != null)
+            {
                 //store to history list
                 timelineHistory.StoreAction();
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
-
-                timelineHistory = null;
-                capturedTimelineItem = null;
-                capturedResizePanel = null;
             }
+
+            timelineHistory = null;
+            capturedTimelineItem = null;
+            capturedResizePanel = null;
         }
 
         /// <summary>

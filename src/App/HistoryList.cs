@@ -41,6 +41,8 @@ namespace lenticulis_gui.src.Containers
 
             historyList.AddLast(item);
             historyListPointer = historyList.Count - 1;
+
+            //Debug.WriteLine("add {0}", historyListPointer);
         }
 
         /// <summary>
@@ -55,6 +57,8 @@ namespace lenticulis_gui.src.Containers
                 
                 if(historyListPointer > 0)
                     historyListPointer--;
+
+                //Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }
         }
 
@@ -69,6 +73,8 @@ namespace lenticulis_gui.src.Containers
 
                 if (historyListPointer < historyList.Count - 1)
                     historyListPointer++;
+
+                //Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }
         }
     }
