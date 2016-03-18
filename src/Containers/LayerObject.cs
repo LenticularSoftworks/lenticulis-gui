@@ -9,7 +9,7 @@ namespace lenticulis_gui.src.Containers
     /// <summary>
     /// Container class for object placed into layer
     /// </summary>
-    public class LayerObject
+    public class LayerObject : IHistoryStorable<LayerObjectHistory>
     {
         /// <summary>
         /// Next ID to be assigned to LayerObject instance - unique within project
@@ -221,10 +221,10 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
-        /// Creates and returns LayerObjectAction insance for history save
+        /// Creates and returns HistoryItem insance for history save
         /// </summary>
-        /// <returns>LayerObjectAction copy of LayerObject</returns>
-        public LayerObjectHistory GetLayerObjectAction()
+        /// <returns>HistoryItem copy of LayerObject</returns>
+        public LayerObjectHistory GetHistoryItem()
         {
             LayerObjectHistory layerObjectAction = new LayerObjectHistory()
             {

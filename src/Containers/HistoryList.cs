@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -17,6 +18,9 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         private int historyListPointer;
 
+        /// <summary>
+        /// reates new list
+        /// </summary>
         public HistoryList()
         {
             historyList = new LinkedList<HistoryItem>();
@@ -44,24 +48,31 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void Undo()
         {
-            if (historyList.Count == 0)
-                return;
+            Debug.WriteLine("undo " + historyListPointer);
 
-            historyList.ElementAt(historyListPointer).ApplyUndo();
-
-            if (historyListPointer > 0)
-                historyListPointer--;
+            if (historyListPointer >= 0)
+            {
+                historyList.ElementAt(historyListPointer).ApplyUndo();
+                
+                if(historyListPointer > 0)
+                    historyListPointer--;
+            }
         }
 
         /// <summary>
         /// Redo action
         /// </summary>
-        public void Redo() 
+        public void Redo()
         {
-            if (historyListPointer < historyList.Count - 1)
-                historyListPointer++;
+            Debug.WriteLine("redo " + historyListPointer);
 
-            historyList.ElementAt(historyListPointer).ApplyRedo();
+            if (historyListPointer <= historyList.Count - 1)
+            {
+                historyList.ElementAt(historyListPointer).ApplyRedo();
+
+                if (historyListPointer < historyList.Count - 1)
+                    historyListPointer++;
+            }
         }
     }
 }

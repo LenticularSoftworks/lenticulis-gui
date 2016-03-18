@@ -48,11 +48,6 @@ namespace lenticulis_gui
         /// </summary>
         public static TransformType SelectedTool = TransformType.Translation;
 
-        /// <summary>
-        /// List of undo / redo actions
-        /// </summary>
-        public HistoryList historyList;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -93,7 +88,7 @@ namespace lenticulis_gui
             AddTimelineLayer(layerCount);
             
             timelineList = new List<TimelineItem>();
-            historyList = new HistoryList();
+            ProjectHolder.HistoryList = new HistoryList();
 
             RefreshCanvasList();
         }
@@ -414,7 +409,7 @@ namespace lenticulis_gui
         /// </summary>
         private void Undo()
         {
-            historyList.Undo();
+            ProjectHolder.HistoryList.Undo();
             RepaintCanvas();
         }
 
@@ -423,7 +418,7 @@ namespace lenticulis_gui
         /// </summary>
         private void Redo()
         {
-            historyList.Redo();
+            ProjectHolder.HistoryList.Redo();
             RepaintCanvas();
         }
 

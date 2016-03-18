@@ -60,6 +60,11 @@ namespace lenticulis_gui.src.App
         public static int Lpi { get; set; }
 
         /// <summary>
+        /// List of undo / redo actions
+        /// </summary>
+        public static HistoryList HistoryList { get; set; }
+
+        /// <summary>
         /// Force cleanup of whole project - clears all layers, its objects, and restores default settings
         /// This should be done after program startup, and before loading project, or creating new project
         /// </summary>

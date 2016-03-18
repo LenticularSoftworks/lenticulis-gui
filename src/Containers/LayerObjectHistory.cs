@@ -1,6 +1,7 @@
 ﻿using lenticulis_gui.src.App;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -11,21 +12,33 @@ namespace lenticulis_gui.src.Containers
     /// </summary>
     public class LayerObjectHistory : HistoryItem
     {
-        //stored properties for undo
+        /// <summary>
+        /// Properties for Undo action
+        /// </summary>
         public float UndoInitialX { get; set; }
         public float UndoInitialY { get; set; }
         public float UndoInitialAngle { get; set; }
         public float UndoInitialScaleX { get; set; }
         public float UndoInitialScaleY { get; set; }
+
+        /// <summary>
+        /// Undo Transform dictionary
+        /// </summary>
         public Dictionary<TransformType, Transformation> UndoTransformations { get; set; }
 
-        //stored properties for redo
-        public float RedoInitialX { get; set; }
-        public float RedoInitialY { get; set; }
-        public float RedoInitialAngle { get; set; }
-        public float RedoInitialScaleX { get; set; }
-        public float RedoInitialScaleY { get; set; }
-        public Dictionary<TransformType, Transformation> RedoTransformations { get; set; }
+        /// <summary>
+        /// Properties for Redo action
+        /// </summary>
+        private float RedoInitialX { get; set; }
+        private float RedoInitialY { get; set; }
+        private float RedoInitialAngle { get; set; }
+        private float RedoInitialScaleX { get; set; }
+        private float RedoInitialScaleY { get; set; }
+
+        /// <summary>
+        /// Redo Transform dictionary
+        /// </summary>
+        private Dictionary<TransformType, Transformation> RedoTransformations { get; set; }
 
         /// <summary>
         /// Instance of LayerObject
@@ -37,12 +50,14 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public override void ApplyUndo()
         {
+            //initial properties
             Instance.InitialX = this.UndoInitialX;
             Instance.InitialY = this.UndoInitialY;
             Instance.InitialAngle = this.UndoInitialAngle;
             Instance.InitialScaleX = this.UndoInitialScaleX;
             Instance.InitialScaleY = this.UndoInitialScaleY;
 
+            //rewrite transformations
             foreach (var item in UndoTransformations)
             {
                 Instance.setTransformation(item.Value);

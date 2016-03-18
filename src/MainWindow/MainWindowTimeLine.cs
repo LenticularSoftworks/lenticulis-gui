@@ -356,11 +356,10 @@ namespace lenticulis_gui
 
             if (setHistory)
             {
-                timelineHistory = item.GetTimeLineItemAction();
-                timelineHistory.RemoveAction = true;
-                timelineHistory.StoreAction();
-                historyList.AddHistoryItem(timelineHistory);
-                timelineHistory = null;
+                TimelineItemHistory historyItem = item.GetHistoryItem();
+                historyItem.RemoveAction = true;
+                historyItem.StoreAction();
+                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
             }
 
             RepaintCanvas();
@@ -495,17 +494,13 @@ namespace lenticulis_gui
             {
                 //if its the same item
                 if (item == capturedTimelineItem)
-                {
                     continue;
-                }
 
                 for (int i = 0; i < timelineLength; i++)
                 {
                     //overlaps antoher item
                     if (item.IsInPosition(timelineRow, timelineColumn + i))
-                    {
                         return true;
-                    }
                 }
             }
 
@@ -525,24 +520,27 @@ namespace lenticulis_gui
             {
                 newItem.MouseLeftButtonDown += TimelineItem_MouseLeftButtonDown;
                 newItem.MouseRightButtonUp += TimelineItem_MouseRightButtonUp;
-                newItem.leftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                newItem.rightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
-                newItem.deleteMenuItem.Click += TimelineDelete_Click;
-                newItem.spreadMenuItem.Click += TimelineSpreadItem_Click;
-                newItem.transformMenuItem.Click += TimelineTransformItem_Click;
-                newItem.layerUp.Click += LayerUp_Click;
-                newItem.layerDown.Click += LayerDown_Click;
+                newItem.LeftResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.RightResizePanel.MouseLeftButtonDown += TimelineResize_MouseLeftButtonDown;
+                newItem.DeleteMenuItem.Click += TimelineDelete_Click;
+                newItem.SpreadMenuItem.Click += TimelineSpreadItem_Click;
+                newItem.TransformMenuItem.Click += TimelineTransformItem_Click;
+                newItem.LayerUp.Click += LayerUp_Click;
+                newItem.LayerDown.Click += LayerDown_Click;
             }
 
             // add into timeline
-            Timeline.Children.Add(newItem);
+            if (!Timeline.Children.Contains(newItem))
+                Timeline.Children.Add(newItem);
 
             if (setHistory)
             {
-                timelineHistory = newItem.GetTimeLineItemAction();
-                timelineHistory.AddAction = true;
-                timelineHistory.StoreAction();
-                historyList.AddHistoryItem(timelineHistory);
+                //add
+                TimelineItemHistory historyItem = newItem.GetHistoryItem();
+                historyItem.AddAction = true;
+                historyItem.StoreAction();
+                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+
                 timelineHistory = null;
             }
 
@@ -662,7 +660,7 @@ namespace lenticulis_gui
                 capturedTimelineItem = (TimelineItem)sender;
 
                 //create history action
-                timelineHistory = capturedTimelineItem.GetTimeLineItemAction();
+                timelineHistory = capturedTimelineItem.GetHistoryItem();
 
                 Point mouse = Mouse.GetPosition((UIElement)sender);
 
@@ -718,7 +716,7 @@ namespace lenticulis_gui
             capturedResizePanel = (WrapPanel)sender;
 
             //create history action
-            timelineHistory = capturedTimelineItem.GetTimeLineItemAction();
+            timelineHistory = capturedTimelineItem.GetHistoryItem();
 
             capturedTimelineItemColumn = capturedTimelineItem.GetLayerObject().Column;
             capturedTimelineItemLength = capturedTimelineItem.GetLayerObject().Length;
@@ -942,11 +940,11 @@ namespace lenticulis_gui
                     capturedTimelineItem.GetLayerObject().resetTransformations();
             }
 
-            //store for udno action
+            //store to history list
             timelineHistory.StoreAction();
-            historyList.AddHistoryItem(timelineHistory);
-
+            ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             timelineHistory = null;
+
             capturedTimelineItem = null;
             capturedResizePanel = null;
         }

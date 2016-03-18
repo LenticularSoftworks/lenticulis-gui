@@ -165,6 +165,7 @@
     <Compile Include="src\App\LangProvider.cs" />
     <Compile Include="src\App\ProjectLoader.cs" />
     <Compile Include="src\Containers\HistoryList.cs" />
+    <Compile Include="src\Containers\IHistoryStorable.cs" />
     <Compile Include="src\Containers\LayerObjectHistory.cs" />
     <Compile Include="src\Containers\HistoryItem.cs" />
     <Compile Include="src\Containers\TimelineItemHistory.cs" />
@@ -205,7 +206,7 @@
     <Compile Include="src\MainWindow\MainWindowCanvas.cs" />
     <Compile Include="src\MainWindow\MainWindowTimeLine.cs" />
     <Compile Include="src\MainWindow\WorkCanvas.cs" />
-    <Compile Include="src\MainWindow\TimelineItem.cs" />
+    <Compile Include="src\Containers\TimelineItem.cs" />
     <Compile Include="src\SupportLib\ImageLoader.cs" />
     <Compile Include="src\SupportLib\ImageProcessor.cs" />
     <Compile Include="src\SupportLib\SupportLib.cs" />
