@@ -159,6 +159,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\App\Anaglyph.cs" />
     <Compile Include="src\App\Generator3D.cs" />
     <Compile Include="src\App\Interpolator.cs" />
     <Compile Include="src\App\LangConverter.cs" />
