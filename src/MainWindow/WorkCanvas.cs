@@ -89,7 +89,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // there may not be source we are looking for
             Image source = sender as Image;
@@ -97,7 +97,6 @@ namespace lenticulis_gui
                 return;
 
             capturedElement = source;
-            Mouse.Capture(source);
             captured = true;
 
             // cache image position, and position relative to image
@@ -147,7 +146,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Image_MouseMove(object sender, MouseEventArgs e)
+        public void Image_MouseMove(object sender, MouseEventArgs e)
         {
             // use captured element as event sender
             sender = capturedElement;
@@ -161,9 +160,6 @@ namespace lenticulis_gui
                     case TransformType.Scale: Image_MouseMoveScale(sender, e); break;
                     case TransformType.Rotate: Image_MouseMoveRotate(sender, e); break;
                 }
-
-                //repaint bounding box
-                bounding.PaintBox((Image)sender);
             }
         }
 
@@ -238,7 +234,7 @@ namespace lenticulis_gui
         private void Image_MouseMoveScale(object sender, MouseEventArgs e)
         {
             Image img = sender as Image;
-            Point mouse = mouse = Mouse.GetPosition(this);
+            Point mouse = Mouse.GetPosition(this);
 
             double halfWidth = initWidth / 2.0;
             double halfHeight = initHeight / 2.0;
@@ -356,7 +352,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.Capture(null);
 
@@ -553,6 +549,9 @@ namespace lenticulis_gui
             //add layer object
             AddLayerObjects(this, true);
 
+            //add bounding - always on top
+            this.Children.Add(bounding);
+
             // add border around canvas
             CreateBorder();
         }
@@ -608,9 +607,7 @@ namespace lenticulis_gui
                 {
                     // attach listeners
                     image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
-                    image.MouseMove += Image_MouseMove;
                     image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
-                    image.MouseMove += ImageCursor_MouseMove;
                 }
 
                 // set transformations
@@ -803,54 +800,6 @@ namespace lenticulis_gui
             this.Children.Add(bottom);
             this.Children.Add(left);
             this.Children.Add(right);
-        }
-
-        /// <summary>
-        /// Sets cursors by selected tool
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ImageCursor_MouseMove(object sender, MouseEventArgs e)
-        {
-            // do not change cursor during transformation
-            if (captured)
-                return;
-
-            // gets image on position
-            Image img = sender as Image;
-            // retrieves mouse position
-            Point mouse = Mouse.GetPosition(img);
-
-            // and set cursor according to selected tool
-            switch (MainWindow.SelectedTool)
-            {
-                case TransformType.Translation:
-                    img.Cursor = Cursors.SizeAll;
-                    break;
-                case TransformType.Scale:
-                    SetScaleCursor(img, mouse);
-                    break;
-                case TransformType.Rotate:
-                    img.Cursor = Cursors.Hand;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Sets cusror for scale by cursor position in image
-        /// </summary>
-        /// <param name="image">image</param>
-        /// <param name="mouse">cursor point</param>
-        private void SetScaleCursor(Image image, Point mouse)
-        {
-            double halfWidth = image.ActualWidth / 2.0;
-            double halfHeight = image.ActualHeight / 2.0;
-
-            //left top / right bottom = NWSE
-            if ((mouse.X < halfWidth && mouse.Y < halfHeight) || (mouse.X > halfWidth && mouse.Y > halfHeight) || Keyboard.IsKeyDown(Key.LeftShift))
-                image.Cursor = Cursors.SizeNWSE;
-            else
-                image.Cursor = Cursors.SizeNESW;
         }
     }
 }
