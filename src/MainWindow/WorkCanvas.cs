@@ -111,7 +111,7 @@ namespace lenticulis_gui
             initHeight = bounding.ActualHeight;
 
             centerX = imageX + initWidth / 2.0;
-            centerY = imageY + initHeight / 2.0; 
+            centerY = imageY + initHeight / 2.0;
 
             float progress = 0.0f;
             // if the image is longer than 1 frame, and column is not the initial one, set proper progress
@@ -234,26 +234,29 @@ namespace lenticulis_gui
             Image img = sender as Image;
             Point mouse = Mouse.GetPosition(this);
 
-            double halfWidth = initWidth / 2.0;
-            double halfHeight = initHeight / 2.0;
+            double tmpWidth = initWidth / 3.0;
+            double tmpHeight = initHeight / 3.0;
 
-            ScaleTransform transform;
+            ScaleTransform transform = new ScaleTransform();
 
             //select specific scale method
             if (Keyboard.IsKeyDown(Key.LeftAlt))
                 transform = Image_CenterScale(img, mouse);
-            else
+            else if (imageMouseY < tmpHeight)
             {
-                if ((imageMouseX > halfWidth && imageMouseY > halfHeight)) 
-                    transform = Image_TopLeftCornerScale(img, mouse);
-                else if ((imageMouseX < halfWidth && imageMouseY < halfHeight)) 
+                if (imageMouseX < tmpWidth)
                     transform = Image_BottomRightCornerScale(img, mouse);
-                else if ((imageMouseX > halfWidth && imageMouseY < halfHeight)) 
-                    transform = Image_BottomLeftCornerScale(img, mouse);
                 else
-                    transform = Image_TopRightCornerScale(img, mouse);
+                    transform = Image_BottomLeftCornerScale(img, mouse);
             }
-
+            else if (imageMouseY > tmpHeight * 2)
+            {
+                if (imageMouseX < tmpWidth)
+                    transform = Image_TopRightCornerScale(img, mouse);
+                else
+                    transform = Image_TopLeftCornerScale(img, mouse);
+            }
+            
             if (transform != null)
                 img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
         }
@@ -309,7 +312,10 @@ namespace lenticulis_gui
             scaleY = scaleStartY * Math.Abs(mouse.Y - centerY) / initHeight * 2.0;
 
             if (Keyboard.IsKeyDown(Key.LeftShift))
-                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
+            {
+                double ratio = initWidth / initHeight;
+                scaleX = scaleY * ratio;
+            }
 
             if (scaleX > 0.0 && scaleY > 0.0)
             {
@@ -362,7 +368,6 @@ namespace lenticulis_gui
             if (scaleX > 0.0 && scaleY > 0.0)
             {
                 Canvas.SetTop(img, imageY + initHeight - scaleY * img.Height);
-
                 return new ScaleTransform(scaleX, scaleY);
             }
             else
@@ -385,7 +390,6 @@ namespace lenticulis_gui
             if (scaleX > 0.0 && scaleY > 0.0)
             {
                 Canvas.SetLeft(img, imageX + initWidth - scaleX * img.Width);
-
                 return new ScaleTransform(scaleX, scaleY);
             }
             else

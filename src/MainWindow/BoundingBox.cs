@@ -25,7 +25,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Squares in border corners
         /// </summary>
-        private Rectangle topLeft, topRight, bottomLeft, bottomRight;
+        private Rectangle topLeft, topRight, bottomLeft, bottomRight, top, bottom, left, right;
 
         /// <summary>
         /// Square scale
@@ -100,11 +100,12 @@ namespace lenticulis_gui
         /// </summary>
         private void Paint()
         {
+            //get bounds size
             Rect bounds = image.TransformToVisual(canvas).TransformBounds(new Rect(image.RenderSize));
 
+            //Set size to box and hit rectangle
             this.Width = bounds.Width;
             this.Height = bounds.Height;
-
             mouseHitRectangle.Width = this.Width;
             mouseHitRectangle.Height = this.Height;
 
@@ -131,7 +132,7 @@ namespace lenticulis_gui
 
             this.BorderThickness = new Thickness(thickness);
 
-            //do not update squares if they weren't painted yet
+            //do not update squares if they weren't painted
             if (canvas.Children.Contains(topLeft))
                 UpdateSquares();
         }
@@ -147,8 +148,12 @@ namespace lenticulis_gui
             ScaleTransform transform = new ScaleTransform(squareScale, squareScale);
 
             topLeft.LayoutTransform = transform;
+            top.LayoutTransform = transform;
             topRight.LayoutTransform = transform;
+            left.LayoutTransform = transform;
+            right.LayoutTransform = transform;
             bottomLeft.LayoutTransform = transform;
+            bottom.LayoutTransform = transform;
             bottomRight.LayoutTransform = transform;
             RepaintSquarePositions();
         }
@@ -161,15 +166,28 @@ namespace lenticulis_gui
             double borderTop = Canvas.GetTop(this);
             double borderLeft = Canvas.GetLeft(this);
 
+            //top left
             Canvas.SetTop(topLeft, borderTop);
             Canvas.SetLeft(topLeft, borderLeft);
-
+            //top
+            Canvas.SetTop(top, borderTop);
+            Canvas.SetLeft(top, borderLeft + this.Width / 2.0 - squareScale * initSquareSize);
+            //top right
             Canvas.SetTop(topRight, borderTop);
             Canvas.SetLeft(topRight, borderLeft + this.Width - squareScale * initSquareSize);
-
+            //left
+            Canvas.SetTop(left, borderTop + this.Height / 2.0 - squareScale * initSquareSize);
+            Canvas.SetLeft(left, borderLeft);
+            //right
+            Canvas.SetTop(right, borderTop + this.Height / 2.0 - squareScale * initSquareSize);
+            Canvas.SetLeft(right, borderLeft + this.Width - squareScale * initSquareSize);
+            //bottom left
             Canvas.SetTop(bottomLeft, borderTop + this.Height - squareScale * initSquareSize);
             Canvas.SetLeft(bottomLeft, borderLeft);
-
+            //bottom
+            Canvas.SetTop(bottom, borderTop + this.Height - squareScale * initSquareSize);
+            Canvas.SetLeft(bottom, borderLeft + this.Width / 2.0 - squareScale * initSquareSize);
+            //bottom right
             Canvas.SetTop(bottomRight, borderTop + this.Height - squareScale * initSquareSize);
             Canvas.SetLeft(bottomRight, borderLeft + this.Width - squareScale * initSquareSize);
         }
@@ -180,8 +198,12 @@ namespace lenticulis_gui
         private void AddSquares()
         {
             canvas.Children.Add(topLeft);
+            canvas.Children.Add(top);
             canvas.Children.Add(topRight);
+            canvas.Children.Add(left);
+            canvas.Children.Add(right);
             canvas.Children.Add(bottomLeft);
+            canvas.Children.Add(bottom);
             canvas.Children.Add(bottomRight);
         }
 
@@ -191,8 +213,12 @@ namespace lenticulis_gui
         private void RemoveSquares()
         {
             canvas.Children.Remove(topLeft);
+            canvas.Children.Remove(top);
             canvas.Children.Remove(topRight);
+            canvas.Children.Remove(left);
+            canvas.Children.Remove(right);
             canvas.Children.Remove(bottomLeft);
+            canvas.Children.Remove(bottom);
             canvas.Children.Remove(bottomRight);
         }
 
@@ -268,14 +294,19 @@ namespace lenticulis_gui
         /// <param name="mouse">cursor point</param>
         private void SetScaleCursor(Rectangle rect, Point mouse)
         {
-            double halfWidth = rect.ActualWidth / 2.0;
-            double halfHeight = rect.ActualHeight / 2.0;
+            double tmpWidth = rect.ActualWidth / 3.0;
+            double tmpHeight = rect.ActualHeight / 3.0;
 
-            //left top / right bottom = NWSE
-            if ((mouse.X < halfWidth && mouse.Y < halfHeight) || (mouse.X > halfWidth && mouse.Y > halfHeight))
+            if (mouse.Y < tmpHeight * 2 && mouse.Y > tmpHeight && (mouse.X < tmpWidth || mouse.X > tmpWidth * 2))
+                rect.Cursor = Cursors.SizeWE;
+            else if (mouse.X < tmpWidth * 2 && mouse.X > tmpWidth && (mouse.Y < tmpHeight || mouse.Y > tmpHeight * 2))
+                rect.Cursor = Cursors.SizeNS;
+            else if ((mouse.X > tmpWidth * 2 && tmpHeight * 2 > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X < tmpWidth * 2))
+                rect.Cursor = Cursors.SizeNESW;
+            else if ((mouse.X < tmpWidth && tmpHeight > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X > tmpWidth * 2))
                 rect.Cursor = Cursors.SizeNWSE;
             else
-                rect.Cursor = Cursors.SizeNESW;
+                rect.Cursor = Cursors.Arrow;
         }
 
         /// <summary>
@@ -283,42 +314,25 @@ namespace lenticulis_gui
         /// </summary>
         private void InitializeSquares()
         {
+            topLeft = CreateSquare();
+            top = CreateSquare();
+            topRight = CreateSquare();
+            left = CreateSquare();
+            right = CreateSquare();
+            bottomLeft = CreateSquare();
+            bottom = CreateSquare();
+            bottomRight = CreateSquare();
+        }
+
+        /// <summary>
+        /// Creates Rectangle instance as drag square
+        /// </summary>
+        /// <returns></returns>
+        private Rectangle CreateSquare()
+        {
             DoubleCollection dash = new DoubleCollection() { 2 };
 
-            topLeft = new Rectangle()
-            {
-                Width = initSquareSize,
-                Height = initSquareSize,
-                Stroke = Brushes.Black,
-                StrokeDashArray = dash,
-                Fill = Brushes.Yellow,
-                Opacity = 0.5,
-                IsHitTestVisible = false
-            };
-
-            topRight = new Rectangle()
-            {
-                Width = initSquareSize,
-                Height = initSquareSize,
-                Stroke = Brushes.Black,
-                StrokeDashArray = dash,
-                Fill = Brushes.Yellow,
-                Opacity = 0.5,
-                IsHitTestVisible = false
-            };
-
-            bottomLeft = new Rectangle()
-            {
-                Width = initSquareSize,
-                Height = initSquareSize,
-                Stroke = Brushes.Black,
-                StrokeDashArray = dash,
-                Fill = Brushes.Yellow,
-                Opacity = 0.5,
-                IsHitTestVisible = false
-            };
-
-            bottomRight = new Rectangle()
+            return new Rectangle()
             {
                 Width = initSquareSize,
                 Height = initSquareSize,
