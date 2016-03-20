@@ -22,17 +22,13 @@ namespace lenticulis_gui
         public int imageID { get; set; }
 
         /// <summary>
-        /// Drag and drop indicator
-        /// </summary>
-        private bool captured = false;
-
-        /// <summary>
         /// Working attributes, for transformations
         /// </summary>
         private float canvasX, canvasY, imageX, imageY, imageMouseX, imageMouseY, initialAngle, alpha = 0;
         private double scaleX = 1.0, scaleY = 1.0;
         private double scaleStartX, scaleStartY;
         private double initWidth, initHeight;
+        private double centerX, centerY;
 
         /// <summary>
         /// Captured element of transformation in progress
@@ -97,7 +93,6 @@ namespace lenticulis_gui
                 return;
 
             capturedElement = source;
-            captured = true;
 
             // cache image position, and position relative to image
             imageX = (float)Canvas.GetLeft(source);
@@ -114,6 +109,9 @@ namespace lenticulis_gui
             bounding.PaintBox(source);
             initWidth = bounding.ActualWidth;
             initHeight = bounding.ActualHeight;
+
+            centerX = imageX + initWidth / 2.0;
+            centerY = imageY + initHeight / 2.0; 
 
             float progress = 0.0f;
             // if the image is longer than 1 frame, and column is not the initial one, set proper progress
@@ -152,7 +150,7 @@ namespace lenticulis_gui
             sender = capturedElement;
 
             // if there's a captured element, proceed
-            if (captured)
+            if (capturedElement != null)
             {
                 switch (MainWindow.SelectedTool)
                 {
@@ -242,20 +240,42 @@ namespace lenticulis_gui
             ScaleTransform transform;
 
             //select specific scale method
-            if ((imageMouseX > halfWidth && imageMouseY > halfHeight) || Keyboard.IsKeyDown(Key.LeftShift))
-                transform = Image_TopLeftCornerScale(img, mouse);
-            else if ((imageMouseX < halfWidth && imageMouseY < halfHeight))
-                transform = Image_BottomRightCornerScale(img, mouse);
-            else if ((imageMouseX > halfWidth && imageMouseY < halfHeight))
-                transform = Image_BottomLeftCornerScale(img, mouse);
+            if (Keyboard.IsKeyDown(Key.LeftAlt))
+                transform = Image_CenterScale(img, mouse);
             else
-                transform = Image_TopRightCornerScale(img, mouse);
+            {
+                if ((imageMouseX > halfWidth && imageMouseY > halfHeight)) 
+                    transform = Image_TopLeftCornerScale(img, mouse);
+                else if ((imageMouseX < halfWidth && imageMouseY < halfHeight)) 
+                    transform = Image_BottomRightCornerScale(img, mouse);
+                else if ((imageMouseX > halfWidth && imageMouseY < halfHeight)) 
+                    transform = Image_BottomLeftCornerScale(img, mouse);
+                else
+                    transform = Image_TopRightCornerScale(img, mouse);
+            }
 
             if (transform != null)
                 img = SetTransformations(GetLayerObjectByImage(img), img, transform, false);
         }
 
         #region Scale methods
+
+        /// <summary>
+        /// Keeps aspect ratio when scaling
+        /// </summary>
+        /// <param name="xScale">x - scale vale</param>
+        /// <param name="yScale">y - scale value</param>
+        /// <param name="width">actual width</param>
+        /// <param name="height">actual height</param>
+        private void keepRatio(ref double xScale, ref double yScale, double width, double height)
+        {
+            double ratio = width / height;
+
+            if (xScale > yScale)
+                yScale = xScale / ratio;
+            else
+                xScale = yScale * ratio;
+        }
 
         /// <summary>
         /// Scale to top left corner
@@ -269,17 +289,35 @@ namespace lenticulis_gui
 
             //if left shift down - scale with keep aspect ratio
             if (Keyboard.IsKeyDown(Key.LeftShift))
-            {
-                double ratio = initWidth / initHeight;
-
-                if (scaleX > scaleY)
-                    scaleY = scaleX / ratio;
-                else
-                    scaleX = scaleY * ratio;
-            }
+                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
 
             if (scaleX > 0.0 && scaleY > 0.0)
                 return new ScaleTransform(scaleX, scaleY);
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Scale image to its center
+        /// </summary>
+        /// <param name="img">Image</param>
+        /// <param name="mouse">mouse point</param>
+        /// <returns></returns>
+        private ScaleTransform Image_CenterScale(Image img, Point mouse)
+        {
+            scaleX = scaleStartX * Math.Abs(mouse.X - centerX) / initWidth * 2.0;
+            scaleY = scaleStartY * Math.Abs(mouse.Y - centerY) / initHeight * 2.0;
+
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
+
+            if (scaleX > 0.0 && scaleY > 0.0)
+            {
+                Canvas.SetTop(img, centerY - (img.Height * scaleY) / 2.0);
+                Canvas.SetLeft(img, centerX - (img.Width * scaleX) / 2.0);
+
+                return new ScaleTransform(scaleX, scaleY);
+            }
             else
                 return null;
         }
@@ -294,10 +332,13 @@ namespace lenticulis_gui
             scaleX = scaleStartX * (initWidth + imageX - mouse.X) / initWidth;
             scaleY = scaleStartY * (initHeight + imageY - mouse.Y) / initHeight;
 
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
+
             if (scaleX > 0.0 && scaleY > 0.0)
             {
-                Canvas.SetTop(img, mouse.Y);
-                Canvas.SetLeft(img, mouse.X);
+                Canvas.SetTop(img, imageY + initHeight - scaleY * img.Height);
+                Canvas.SetLeft(img, imageX + initWidth - scaleX * img.Width);
 
                 return new ScaleTransform(scaleX, scaleY);
             }
@@ -315,9 +356,12 @@ namespace lenticulis_gui
             scaleX = scaleStartX * (mouse.X - imageX) / initWidth;
             scaleY = scaleStartY * (initHeight + imageY - mouse.Y) / initHeight;
 
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
+
             if (scaleX > 0.0 && scaleY > 0.0)
             {
-                Canvas.SetTop(img, mouse.Y);
+                Canvas.SetTop(img, imageY + initHeight - scaleY * img.Height);
 
                 return new ScaleTransform(scaleX, scaleY);
             }
@@ -335,9 +379,12 @@ namespace lenticulis_gui
             scaleX = scaleStartX * (initWidth + imageX - mouse.X) / initWidth;
             scaleY = scaleStartY * (mouse.Y - imageY) / initHeight;
 
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                keepRatio(ref scaleX, ref scaleY, initWidth, initHeight);
+
             if (scaleX > 0.0 && scaleY > 0.0)
             {
-                Canvas.SetLeft(img, mouse.X);
+                Canvas.SetLeft(img, imageX + initWidth - scaleX * img.Width);
 
                 return new ScaleTransform(scaleX, scaleY);
             }
@@ -372,7 +419,6 @@ namespace lenticulis_gui
             alpha = 0;
             scaleX = 1.0;
             scaleY = 1.0;
-            captured = false;
             capturedElement = null;
         }
 

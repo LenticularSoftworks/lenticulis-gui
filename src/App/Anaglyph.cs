@@ -11,6 +11,9 @@ using System.Windows.Media.Imaging;
 
 namespace lenticulis_gui.src.App
 {
+    /// <summary>
+    /// Class provides rendering anaglyph bitmap image from 2 canvases
+    /// </summary>
     public static class Anaglyph
     {
         /// <summary>

@@ -272,7 +272,7 @@ namespace lenticulis_gui
             double halfHeight = rect.ActualHeight / 2.0;
 
             //left top / right bottom = NWSE
-            if ((mouse.X < halfWidth && mouse.Y < halfHeight) || (mouse.X > halfWidth && mouse.Y > halfHeight) || Keyboard.IsKeyDown(Key.LeftShift))
+            if ((mouse.X < halfWidth && mouse.Y < halfHeight) || (mouse.X > halfWidth && mouse.Y > halfHeight))
                 rect.Cursor = Cursors.SizeNWSE;
             else
                 rect.Cursor = Cursors.SizeNESW;
