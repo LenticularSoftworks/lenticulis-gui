@@ -30,6 +30,11 @@ namespace lenticulis_gui
         private double initWidth, initHeight;
         private double centerX, centerY;
 
+        /// <summary>
+        /// save history only if true (mousemove method was called)
+        /// </summary>
+        private bool saveHistory = false;
+
         //scale type
         private ScaleType scaleType;
 
@@ -194,6 +199,7 @@ namespace lenticulis_gui
         {
             // use captured element as event sender
             sender = capturedImage;
+            saveHistory = true;
 
             // if there's a captured element, proceed
             if (capturedImage != null)
@@ -473,6 +479,8 @@ namespace lenticulis_gui
             // finish transformation by setting transformations properly interpolated/extrapolated to layerobject itself
             SetLayerObjectProperties(capturedImage);
 
+            saveHistory = false;
+
             // and restore initial attribute values
             alpha = 0;
             scaleX = 1.0;
@@ -500,8 +508,11 @@ namespace lenticulis_gui
                 SetOtherFrameProperties(lo);
 
             //store history item for redo
-            historyItem.StoreAction();
-            ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+            if (saveHistory)
+            {
+                historyItem.StoreAction();
+                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+            }
         }
 
         /// <summary>

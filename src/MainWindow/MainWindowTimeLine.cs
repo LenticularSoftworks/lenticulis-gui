@@ -31,6 +31,11 @@ namespace lenticulis_gui
         private int capturedTimelineItemColumn;
         private int capturedTimelineItemLength;
 
+        /// <summary>
+        /// save history only if true (mousemove method was called)
+        /// </summary>
+        private bool saveHistory = false;
+
         #region Timeline methods
 
         /// <summary>
@@ -665,6 +670,8 @@ namespace lenticulis_gui
             if (column >= 0 && endColumn < ProjectHolder.ImageCount && capturedTimelineItem.GetLayerObject().Layer >= 0 && capturedTimelineItem.GetLayerObject().Layer < ProjectHolder.LayerCount && !overlap)
             {
                 capturedTimelineItem.SetPosition(row, column, length);
+
+                saveHistory = true;
             }
         }
 
@@ -1015,13 +1022,14 @@ namespace lenticulis_gui
                     capturedTimelineItem.GetLayerObject().resetTransformations();
             }
 
-            if (timelineHistory != null)
+            if (timelineHistory != null && saveHistory)
             {
                 //store to history list
                 timelineHistory.StoreAction();
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             }
 
+            saveHistory = false;
             timelineHistory = null;
             capturedTimelineItem = null;
             capturedResizePanel = null;

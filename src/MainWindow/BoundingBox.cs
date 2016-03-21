@@ -288,6 +288,16 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Removes hit area when right button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mouseHitRectangle_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            canvas.Children.Remove(mouseHitRectangle);
+        }
+
+        /// <summary>
         /// Sets cusror for scale by cursor position in image
         /// </summary>
         /// <param name="rect">image</param>
@@ -354,6 +364,7 @@ namespace lenticulis_gui
             mouseHitRectangle.MouseMove += mouseHitRectangle_MouseMove;
             mouseHitRectangle.MouseMove += ImageCursor_MouseMove;
             mouseHitRectangle.MouseLeftButtonUp += mouseHitRectangle_MouseLeftButtonUp;
+            mouseHitRectangle.MouseRightButtonUp += mouseHitRectangle_MouseRightButtonUp;
         }
 
         /// <summary>
