@@ -30,4 +30,16 @@ namespace lenticulis_gui.src.App
         cm, //centimeters 
         @in //inches
     };
+
+    public enum ScaleType //scale direction types
+    {
+        Top,
+        TopLeft,
+        TopRight,
+        Left,
+        Right,
+        BottomLeft,
+        Bottom,
+        BottomRight
+    }
 }
