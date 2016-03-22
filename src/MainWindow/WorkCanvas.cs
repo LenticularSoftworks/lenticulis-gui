@@ -664,8 +664,9 @@ namespace lenticulis_gui
             //add layer object
             AddLayerObjects(this, true);
 
-            //add bounding - always on top
-            this.Children.Add(bounding);
+            //re-add bounding - always on top
+            this.Children.Remove(bounding);
+            bounding = new BoundingBox(this);
 
             // add border around canvas
             CreateBorder();

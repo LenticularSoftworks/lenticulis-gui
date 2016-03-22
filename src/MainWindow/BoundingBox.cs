@@ -295,6 +295,7 @@ namespace lenticulis_gui
         private void mouseHitRectangle_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             canvas.Children.Remove(mouseHitRectangle);
+            RemoveSquares();
         }
 
         /// <summary>

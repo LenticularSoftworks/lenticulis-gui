@@ -13,6 +13,16 @@ namespace lenticulis_gui.src.Dialogs
     /// </summary>
     public partial class ProjectPropertiesWindow : MetroWindow
     {
+        /// <summary>
+        /// milimeters to inches
+        /// </summary>
+        private float mmToIn = 25.4f;
+
+        /// <summary>
+        /// Selected units
+        /// </summary>
+        private string unitSelect = "px";
+
         public ProjectPropertiesWindow()
         {
             InitializeComponent();
@@ -23,8 +33,8 @@ namespace lenticulis_gui.src.Dialogs
             if (ProjectHolder.ValidProject)
             {
                 PropertiesProjectName.Text = ProjectHolder.ProjectName;
-                PropertiesHeight.Value = ProjectHolder.Height;
-                PropertiesWidth.Value = ProjectHolder.Width;
+                PropertiesHeight.Text = ProjectHolder.Height.ToString();
+                PropertiesWidth.Text = ProjectHolder.Width.ToString();
                 PropertiesImages.Value = ProjectHolder.ImageCount;
                 PropertiesLayers.Value = ProjectHolder.LayerCount;
                 PropertiesDPI.Value = ProjectHolder.Dpi;
@@ -39,7 +49,8 @@ namespace lenticulis_gui.src.Dialogs
                 PropertiesProjectName.Text = LangProvider.getString("PROP_DEFAULT_PROJECT_NAME");
             }
 
-            SourcePSDPathEdit.TextChanged += delegate(object sender, TextChangedEventArgs e) {
+            SourcePSDPathEdit.TextChanged += delegate(object sender, TextChangedEventArgs e)
+            {
                 if (SourcePSDPathEdit.Text.Length > 0)
                     PropertiesLayers.IsEnabled = false;
                 else
@@ -64,6 +75,11 @@ namespace lenticulis_gui.src.Dialogs
         /// <param name="e"></param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            LoadingWindow lw = new LoadingWindow("create");
+
+            if (!ProjectHolder.ValidProject)
+                lw.Show();
+
             // project name must be filled
             if (PropertiesProjectName.Text == "")
             {
@@ -72,7 +88,7 @@ namespace lenticulis_gui.src.Dialogs
             }
 
             // also width and height must be filled
-            if (PropertiesHeight.Value == null || PropertiesWidth.Value == null)
+            if (PropertiesHeight.Text == "" || PropertiesWidth.Text == "")
             {
                 MessageBox.Show(LangProvider.getString("PROP_ERR_BOTHVALUES"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -106,17 +122,17 @@ namespace lenticulis_gui.src.Dialogs
                 return;
             }
 
-            // height must be an integer larger than zero
-            int height = (int)(PropertiesHeight.Value);
-            if (height <= 0)
+            // height must be double larger than zero
+            double height = Double.MinValue;
+            if (!Double.TryParse(PropertiesHeight.Text, out height) || height <= 0)
             {
                 MessageBox.Show(LangProvider.getString("PROP_ERR_HEIGHT_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // width must be an integer larger than zero
-            int width = (int)(PropertiesWidth.Value);
-            if (width <= 0)
+            // width must be double larger than zero
+            double width = Double.MinValue;
+            if (!Double.TryParse(PropertiesWidth.Text, out width) || width <= 0)
             {
                 MessageBox.Show(LangProvider.getString("PROP_ERR_WIDTH_NEGATIVE"), LangProvider.getString("PROP_CREATE_ERROR_TITLE"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -168,10 +184,13 @@ namespace lenticulis_gui.src.Dialogs
                 layers = count;
             }
 
+            //convert to px
+            ConvertToPx(ref width, ref height, dpi, Units.SelectedItem.ToString());
+
             // set all properties according to actual data in inputs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
-            ProjectHolder.Height = height;
-            ProjectHolder.Width = width;
+            ProjectHolder.Height = (int)height;
+            ProjectHolder.Width = (int)width;
             ProjectHolder.Dpi = dpi;
             ProjectHolder.Lpi = lpi;
 
@@ -188,9 +207,6 @@ namespace lenticulis_gui.src.Dialogs
             }
             else
             {
-                LoadingWindow lw = new LoadingWindow("create");
-                lw.Show();
-
                 // just hardly set frame and layer count
                 mw.SetProjectProperties(images, layers);
 
@@ -218,8 +234,6 @@ namespace lenticulis_gui.src.Dialogs
                         mw.AddTimelineItem(newItem, true, false);
                     }
                 }
-
-                lw.Close();
             }
 
             // in every case, we have valid project now
@@ -227,7 +241,43 @@ namespace lenticulis_gui.src.Dialogs
 
             mw.PropertyChanged();
 
+            lw.Close();
             this.Close();
+        }
+
+        /// <summary>
+        /// Convert to image points by print resolution
+        /// </summary>
+        /// <param name="width">width</param>
+        /// <param name="height">height</param>
+        /// <param name="dpi">dpi</param>
+        /// <param name="units">units</param>
+        private void ConvertToPx(ref double width, ref double height, int dpi, string units)
+        {
+            if (units.Equals("px"))
+                return;
+
+            double tmpWidth = width;
+            double tmpHeight = height;
+
+            //to inches
+            if (units.Equals(LengthUnits.mm.ToString()) || units.Equals(LengthUnits.cm.ToString()))
+            {
+                tmpWidth /= mmToIn;
+                tmpHeight /= mmToIn;
+                if (units.Equals(LengthUnits.cm.ToString()))
+                {
+                    tmpWidth *= 10;
+                    tmpHeight *= 10;
+                }
+            }
+
+            //to px
+            tmpWidth *= dpi;
+            tmpHeight *= dpi;
+
+            width = (int)Math.Round(tmpWidth);
+            height = (int)Math.Round(tmpHeight);
         }
 
         /// <summary>
@@ -266,6 +316,80 @@ namespace lenticulis_gui.src.Dialogs
             //recommended frame count = DPI / LPI
             int framesRec = dpi / lpi;
             PropertiesRecommended.Content = framesRec;
+        }
+
+        /// <summary>
+        /// Units combobox loaded method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+
+            var values = LengthUnits.GetValues(typeof(LengthUnits));
+
+            //Add units
+            cb.Items.Add("px");
+            foreach (var value in values)
+            {
+                cb.Items.Add(value);
+            }
+
+            cb.SelectedItem = "px";
+        }
+
+        /// <summary>
+        /// Units combo box selection changed method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Units_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int dpi;
+            double width, height;
+            var selectedItem = (sender as ComboBox).SelectedItem;
+
+            //get dpi
+            if (PropertiesDPI.Value == null)
+                return;
+            if ((dpi = (int)PropertiesDPI.Value) <= 0)
+                return;
+
+            if (Double.TryParse(PropertiesHeight.Text, out height) && Double.TryParse(PropertiesWidth.Text, out width))
+            {
+                //to px
+                if (!unitSelect.Equals("px"))
+                    ConvertToPx(ref width, ref height, dpi, unitSelect);
+
+                //to in 
+                double widthTmp = width / (double)dpi;
+                double heightTmp = height / (double)dpi;
+                if (selectedItem.Equals(LengthUnits.mm)) 
+                {
+                    widthTmp *= mmToIn;
+                    heightTmp *= mmToIn;
+                }
+                else if (selectedItem.Equals(LengthUnits.cm)) 
+                {
+                    widthTmp *= mmToIn / 10;
+                    heightTmp *= mmToIn / 10;
+                }
+                else if (selectedItem.Equals("px"))
+                {
+                    widthTmp = width;
+                    heightTmp = height;
+                }
+
+                heightTmp = (int)Math.Round(heightTmp * 1000) / 1000.0;
+                widthTmp = (int)Math.Round(widthTmp * 1000) / 1000.0;
+
+                //set new values
+                PropertiesHeight.Text = heightTmp.ToString();
+                PropertiesWidth.Text = widthTmp.ToString();
+
+                unitSelect = selectedItem.ToString();
+            }
         }
     }
 }

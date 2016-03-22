@@ -26,11 +26,9 @@
         <Label Content="{app:LangConverter str=PROP_CANVAS_SIZE}" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="{app:LangConverter str=PROP_SIZE_WIDTH}" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>
         <Label Content="{app:LangConverter str=PROP_SIZE_HEIGHT}" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
-        <Controls:NumericUpDown Name="PropertiesWidth" HorizontalAlignment="Left" Minimum="0" Margin="53,93,0,0" VerticalAlignment="Top" Width="102"/>
-        <Controls:NumericUpDown Name="PropertiesHeight" HorizontalAlignment="Left" Minimum="0" Margin="53,120,0,0" VerticalAlignment="Top" Width="102"/>
-        <ComboBox HorizontalAlignment="Left" Margin="166,120,0,0" VerticalAlignment="Top" Width="61">
-            <ComboBoxItem IsSelected="True">px</ComboBoxItem>
-        </ComboBox>
+        <TextBox Name="PropertiesWidth" HorizontalAlignment="Left" TextAlignment="Right" Margin="53,93,0,0" VerticalAlignment="Top" Width="102"/>
+        <TextBox Name="PropertiesHeight" HorizontalAlignment="Left" TextAlignment="Right" Margin="53,120,0,0" VerticalAlignment="Top" Width="102"/>
+        <ComboBox Name="Units" HorizontalAlignment="Left" Margin="166,120,0,0" VerticalAlignment="Top" Width="61" Loaded="ComboBox_Loaded" SelectionChanged="Units_SelectionChanged" />
 
         <Label Content="{app:LangConverter str=PROP_MISCELLANOUS}" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" FontWeight="Bold" Width="131" />
         <Label Content="{app:LangConverter str=PROP_PSD_AS_INPUT}" HorizontalAlignment="Left" Margin="10,263,0,0" VerticalAlignment="Top"/>

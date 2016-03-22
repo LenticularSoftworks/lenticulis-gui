@@ -102,7 +102,7 @@ namespace lenticulis_gui
             }
 
             float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitToInches;
-            realWidth = (int)(width * 100) / 100.0f;
+            realWidth = (int)Math.Round(width * 1000) / 1000.0f;
 
             Width3D.Content = realWidth + " " + Units3D.SelectedValue;
         }
