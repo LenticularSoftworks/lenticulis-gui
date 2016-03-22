@@ -144,6 +144,21 @@ namespace lenticulis_gui
             }
         }
 
+        /// <summary>
+        /// Rescale initial scale of layer objects
+        /// </summary>
+        /// <param name="scaleX">x scale</param>
+        /// <param name="scaleY">y scale</param>
+        public void RescaleLayers(float scaleX, float scaleY)
+        {
+            foreach (var item in timelineList)
+            {
+                LayerObject lo = item.GetLayerObject();
+                lo.InitialScaleX *= scaleX;
+                lo.InitialScaleY *= scaleY;
+            }
+        }
+
         #endregion Canvas methods
 
         #region Slider methods

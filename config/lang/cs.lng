@@ -164,6 +164,7 @@ PROP_ERR_IMAGES_IN_DELETED_FRAMES=Ve snímcích, které se chystáte odebrat, se
 PROP_PSD_AS_INPUT=Vytvořit z PSD:
 PSD_SOURCE_INVALID=Nelze načíst vybraný PSD soubor!
 PROP_FRAME_CNT_TEXT=Doporučeno
+PROP_RESCALE_LAYERS=Přeškálovat vrstvy
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformace

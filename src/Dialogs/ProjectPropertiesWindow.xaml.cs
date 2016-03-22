@@ -39,6 +39,7 @@ namespace lenticulis_gui.src.Dialogs
                 PropertiesLayers.Value = ProjectHolder.LayerCount;
                 PropertiesDPI.Value = ProjectHolder.Dpi;
                 PropertiesLPI.Value = ProjectHolder.Lpi;
+                LayerScaleCB.Visibility = Visibility.Visible;
 
                 // do not enable PSD source when not creating new project
                 SourcePSDPathEdit.IsEnabled = false;
@@ -187,6 +188,10 @@ namespace lenticulis_gui.src.Dialogs
             //convert to px
             ConvertToPx(ref width, ref height, dpi, Units.SelectedItem.ToString());
 
+            //old values
+            int oldWidth = ProjectHolder.Width;
+            int oldHeight = ProjectHolder.Height;
+
             // set all properties according to actual data in inputs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = (int)height;
@@ -203,6 +208,11 @@ namespace lenticulis_gui.src.Dialogs
                 // update image count, layer count, and then refresh canvases
                 mw.UpdateImageCount(images);
                 mw.UpdateLayerCount(layers);
+
+                //rescale layers if needed
+                if(LayerScaleCB.IsChecked == true)
+                    mw.RescaleLayers((float)width / (float)oldWidth, (float)height / (float)oldHeight);
+
                 mw.RefreshCanvasList();
             }
             else
