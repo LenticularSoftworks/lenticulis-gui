@@ -75,26 +75,90 @@ namespace lenticulis_gui.src.Containers
 
         // Section for canvas object properties
 
+        private float initialX;
         /// <summary>
         /// Initial X position of element on canvas
         /// </summary>
-        public float InitialX { get; set; }
+        public float InitialX
+        {
+            get
+            {
+                return initialX;
+            }
+            set
+            {
+                initialX = value;
+                transformationChanged = true;
+            }
+        }
+
+        private float initialY;
         /// <summary>
         /// Initial Y position of element on canvas
         /// </summary>
-        public float InitialY { get; set; }
+        public float InitialY
+        {
+            get
+            {
+                return initialY;
+            }
+            set
+            {
+                initialY = value;
+                transformationChanged = true;
+            }
+        }
+
+        private float initialAngle;
         /// <summary>
         /// Initial angle of element on canvas
         /// </summary>
-        public float InitialAngle { get; set; }
+        public float InitialAngle
+        {
+            get
+            {
+                return initialAngle;
+            }
+            set
+            {
+                initialAngle = value;
+                transformationChanged = true;
+            }
+        }
+
+        private float initialScaleX;
         /// <summary>
         /// Initial X scale of element on canvas
         /// </summary>
-        public float InitialScaleX { get; set; }
+        public float InitialScaleX
+        {
+            get
+            {
+                return initialScaleX;
+            }
+            set
+            {
+                initialScaleX = value;
+                transformationChanged = true;
+            }
+        }
+
+        private float initialScaleY;
         /// <summary>
         /// Initial Y scale of element on canvas
         /// </summary>
-        public float InitialScaleY { get; set; }
+        public float InitialScaleY
+        {
+            get
+            {
+                return initialScaleY;
+            }
+            set
+            {
+                initialScaleY = value;
+                transformationChanged = true;
+            }
+        }
 
         /// <summary>
         /// Dictionary of transformations done on this object during its lifetime

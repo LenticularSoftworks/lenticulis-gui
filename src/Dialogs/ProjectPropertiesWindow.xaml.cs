@@ -211,7 +211,7 @@ namespace lenticulis_gui.src.Dialogs
 
                 //rescale layers if needed
                 if(LayerScaleCB.IsChecked == true)
-                    mw.RescaleLayers((float)width / (float)oldWidth, (float)height / (float)oldHeight);
+                    mw.RescaleLayers((float)width / oldWidth, (float)height / oldHeight);
 
                 mw.RefreshCanvasList();
             }

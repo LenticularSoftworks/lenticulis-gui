@@ -196,7 +196,10 @@ namespace lenticulis_gui
         {
             if (ProjectHolder.ValidProject)
             {
-                MessageBoxResult messageBoxResult = MessageBox.Show(LangProvider.getString("NEW_PROJECT_CONFIRM_TEXT"), LangProvider.getString("NEW_PROJECT_CONFIRM_TITLE"), MessageBoxButton.YesNo);
+                MessageBoxResult messageBoxResult = MessageBox.Show(LangProvider.getString("NEW_PROJECT_CONFIRM_TEXT"), LangProvider.getString("NEW_PROJECT_CONFIRM_TITLE"), MessageBoxButton.YesNoCancel);
+
+                if (messageBoxResult == MessageBoxResult.Cancel)
+                    return;
 
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
