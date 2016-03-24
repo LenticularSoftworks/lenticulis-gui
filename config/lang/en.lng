@@ -165,6 +165,7 @@ PROP_PSD_AS_INPUT=Create from PSD:
 PSD_SOURCE_INVALID=Chosen PSD could not be loaded!
 PROP_FRAME_CNT_TEXT=Recommended
 PROP_RESCALE_LAYERS=Rescale layers
+PROP_CONSTRAIN_PROPORTIONS=Constrain proportions
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformations

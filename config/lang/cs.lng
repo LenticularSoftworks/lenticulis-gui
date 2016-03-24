@@ -165,6 +165,7 @@ PROP_PSD_AS_INPUT=Vytvořit z PSD:
 PSD_SOURCE_INVALID=Nelze načíst vybraný PSD soubor!
 PROP_FRAME_CNT_TEXT=Doporučeno
 PROP_RESCALE_LAYERS=Přeškálovat vrstvy
+PROP_CONSTRAIN_PROPORTIONS=Zachovat proporce
 
 ## Okno transformací
 TRANSFORMATION_WINDOW_TITLE=Transformace

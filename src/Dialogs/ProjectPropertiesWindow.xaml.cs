@@ -23,6 +23,11 @@ namespace lenticulis_gui.src.Dialogs
         /// </summary>
         private string unitSelect = "px";
 
+        /// <summary>
+        /// Aspect ratio of canvas width and height. AspectRatio = MinValue if it wasnt initialized
+        /// </summary>
+        private double aspectRatio = Double.MinValue;
+
         public ProjectPropertiesWindow()
         {
             InitializeComponent();
@@ -399,6 +404,57 @@ namespace lenticulis_gui.src.Dialogs
                 PropertiesWidth.Text = widthTmp.ToString();
 
                 unitSelect = selectedItem.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Save aspect ratio when width or height textbox got focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PropertiesSize_GotFocus(object sender, RoutedEventArgs e)
+        {
+            double width, height;
+
+            if (Double.TryParse(PropertiesWidth.Text, out width) && Double.TryParse(PropertiesHeight.Text, out height))
+                aspectRatio = width / height;
+        }  
+
+        /// <summary>
+        /// Constrain proportions method when size changed and checkbox is checked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PropertiesSize_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //if aspect ratio wasnt initialized or constraint proportions is not checked
+            if (aspectRatio == Double.MinValue || (bool)!ProportionsCB.IsChecked)
+                return;
+
+            TextBox sizeBox = sender as TextBox;
+            if (!sizeBox.IsFocused) //apply changes only by focused textbox
+                return;
+
+            double width, height;
+
+            if (Double.TryParse(PropertiesWidth.Text, out width) && Double.TryParse(PropertiesHeight.Text, out height))
+            {
+                if (sizeBox == PropertiesWidth)
+                {
+                    //set height
+                    double newHeight = width / aspectRatio;
+                    newHeight = (int)Math.Round(newHeight * 1000) / 1000.0;
+
+                    PropertiesHeight.Text = newHeight.ToString();
+                }
+                else if (sizeBox == PropertiesHeight)
+                {
+                    //set width
+                    double newWidth = height * aspectRatio;
+                    newWidth = (int)Math.Round(newWidth * 1000) / 1000.0;
+
+                    PropertiesWidth.Text = newWidth.ToString();
+                }
             }
         }
     }

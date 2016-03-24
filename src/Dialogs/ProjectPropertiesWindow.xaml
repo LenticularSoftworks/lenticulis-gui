@@ -26,10 +26,11 @@
         <Label Content="{app:LangConverter str=PROP_CANVAS_SIZE}" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         <Label Content="{app:LangConverter str=PROP_SIZE_WIDTH}" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top"/>
         <Label Content="{app:LangConverter str=PROP_SIZE_HEIGHT}" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="PropertiesWidth" HorizontalAlignment="Left" TextAlignment="Right" Margin="53,93,0,0" VerticalAlignment="Top" Width="102"/>
-        <TextBox Name="PropertiesHeight" HorizontalAlignment="Left" TextAlignment="Right" Margin="53,120,0,0" VerticalAlignment="Top" Width="102"/>
+        <TextBox Name="PropertiesWidth" HorizontalAlignment="Left" GotFocus="PropertiesSize_GotFocus" TextChanged="PropertiesSize_TextChanged" TextAlignment="Right" Margin="53,93,0,0" VerticalAlignment="Top" Width="102"/>
+        <TextBox Name="PropertiesHeight" HorizontalAlignment="Left" GotFocus="PropertiesSize_GotFocus" TextChanged="PropertiesSize_TextChanged" TextAlignment="Right" Margin="53,120,0,0" VerticalAlignment="Top" Width="102"/>
         <ComboBox Name="Units" HorizontalAlignment="Left" Margin="166,120,0,0" VerticalAlignment="Top" Width="61" Loaded="ComboBox_Loaded" SelectionChanged="Units_SelectionChanged" />
-
+        
+        <CheckBox Name="ProportionsCB"  Content="{app:LangConverter str=PROP_CONSTRAIN_PROPORTIONS}" HorizontalAlignment="Left" Margin="166,94,0,0" VerticalAlignment="Top"/>
         <CheckBox Name="LayerScaleCB" Content="{app:LangConverter str=PROP_RESCALE_LAYERS}" Visibility="Hidden" HorizontalAlignment="Left" Margin="53,151,0,0" VerticalAlignment="Top" Width="123" Height="22" RenderTransformOrigin="-0.837,3.136"/>
 
 
