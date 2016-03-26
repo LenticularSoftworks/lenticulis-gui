@@ -16,6 +16,11 @@ namespace lenticulis_gui.src.Containers
         public int Id { get; private set; }
 
         /// <summary>
+        /// Depth of layer in inches
+        /// </summary>
+        public double Depth { get; set; }
+
+        /// <summary>
         /// List of objects placed within this layer
         /// </summary>
         private List<LayerObject> objects = new List<LayerObject>();
@@ -27,6 +32,7 @@ namespace lenticulis_gui.src.Containers
         public Layer(int id)
         {
             this.Id = id;
+            this.Depth = 0.0;
         }
 
         /// <summary>

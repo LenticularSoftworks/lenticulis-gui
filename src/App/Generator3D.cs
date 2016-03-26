@@ -34,8 +34,7 @@ namespace lenticulis_gui.src.App
         /// <param name="width">Width of image</param>
         /// <param name="dpi">DPI</param>
         /// <param name="timelineList">List of objects in project</param>
-        /// <param name="depthArray">Array of depths of layers</param>
-        public static void Generate3D(double viewDistance, double viewAngle, int imageCount, int width, double dpi, List<TimelineItem> timelineList, double[] depthArray)
+        public static void Generate3D(double viewDistance, double viewAngle, int imageCount, int width, double dpi, List<TimelineItem> timelineList)
         {
             //image step for left and right eye
             viewZoneDistance = CalculateZoneDistance(viewDistance, viewAngle, imageCount);
@@ -46,7 +45,7 @@ namespace lenticulis_gui.src.App
                 LayerObject lo = item.GetLayerObject();
 
                 int layer = lo.Layer;
-                double depth = depthArray[layer];
+                double depth = ProjectHolder.Layers[layer].Depth;
 
                 //calculates and set disparity of object
                 SetDisparity(width, dpi, viewDistance, depth, lo);

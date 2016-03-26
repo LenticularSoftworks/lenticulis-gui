@@ -52,45 +52,6 @@ namespace lenticulis_gui
 
         #region 3D methods
         /// <summary>
-        /// Gets layer dpeths from timeline and return them as array
-        /// </summary>
-        /// <param name="foreground">foreground depth</param>
-        /// <param name="background">background depth</param>
-        /// <returns>depths array</returns>
-        private double[] GetDepthArray(double foreground, double background)
-        {
-            double[] depthArray = new double[ProjectHolder.LayerCount];
-            double tmpDepth = Double.NegativeInfinity;
-
-            for (int i = 0; i < ProjectHolder.LayerCount; i++)
-            {
-                TextBox tb = LayerDepth.Children[i] as TextBox;
-
-                if (Double.TryParse(tb.Text, out tmpDepth))
-                {
-                    //if is set in %
-                    if (UnitsDepth.SelectedItem.Equals("%"))
-                    {
-                        if (tmpDepth > 0)
-                            tmpDepth = (tmpDepth / 100.0) * foreground;
-                        else if (tmpDepth < 0)
-                            tmpDepth = (tmpDepth / 100.0) * background * -1;
-                    }
-
-                    //must be between foreground and background
-                    if (tmpDepth <= foreground && tmpDepth >= background)
-                        depthArray[i] = tmpDepth / unitToInches;
-                    else
-                        return null;
-                }
-                else
-                    return null;
-            }
-
-            return depthArray;
-        }
-
-        /// <summary>
         /// Sets width text in 3D panel
         /// </summary>
         private void SetWidthText()
@@ -230,17 +191,8 @@ namespace lenticulis_gui
 
             if (Double.TryParse(ViewDist3D.Text, out viewDist) && Double.TryParse(ViewAngle3D.Text, out viewAngle) && Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
             {
-                //get depths of layers
-                double[] depthArray = GetDepthArray(foreground, background);
-
-                if (depthArray == null)
-                {
-                    Warning3D.Content = LangProvider.getString("INVALID_DEPTH");
-                    return;
-                }
-
                 //set new positions
-                Generator3D.Generate3D(viewDist / unitToInches, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList, depthArray);
+                Generator3D.Generate3D(viewDist / unitToInches, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList);
 
                 //repaint result
                 RepaintCanvas();
@@ -370,15 +322,7 @@ namespace lenticulis_gui
 
             if (UnitsDepth.SelectedItem == null || !Panel3D.IsEnabled)
                 return;
-
-            //if units are in % bound are 100, ale parse input
-            string selectedItem = UnitsDepth.SelectedItem.ToString();
-            if (selectedItem == "%")
-            {
-                foreground = 100.0;
-                background = -100.0;
-            }
-            else if (!(Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background)))
+            if (!(Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background)))
                 return;
 
             TextBox tb = sender as TextBox;
@@ -387,8 +331,22 @@ namespace lenticulis_gui
             double value;
             if (Double.TryParse(tb.Text, out value))
             {
+                //if is set in %
+                if (UnitsDepth.SelectedItem.Equals("%"))
+                {
+                    if (value > 0)
+                        value = (value / 100.0) * foreground;
+                    else if (value < 0)
+                        value = (value / 100.0) * background * -1;
+                }
+
+                //must be between foreground and background
                 if (value <= foreground && value >= background)
+                {
+                    //store value to layer object
+                    ProjectHolder.Layers[LayerDepth.Children.IndexOf(tb)].Depth = value / unitToInches;
                     tb.Background = Brushes.White;
+                }
                 else
                     tb.Background = Brushes.Firebrick;
             }

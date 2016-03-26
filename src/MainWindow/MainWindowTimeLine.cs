@@ -133,9 +133,6 @@ namespace lenticulis_gui
                 rowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
                 Timeline.RowDefinitions.Add(rowDef);
 
-                //add textbox to layer depth column
-                AddDepthBox("0");
-
                 //Create and add horizontal border
                 Border horizontalBorder = new Border() { BorderBrush = Brushes.Gray };
                 horizontalBorder.BorderThickness = new Thickness() { Bottom = 1 };
@@ -152,6 +149,9 @@ namespace lenticulis_gui
                 }
                 else
                     position = ProjectHolder.LayerCount - 1;
+
+                //add textbox to layer depth column
+                AddDepthBox("0", position);
 
                 // create layer object and put it into layer list in project holder class
                 Layer layer = new Layer(position);
@@ -501,10 +501,11 @@ namespace lenticulis_gui
         /// Add textbox for depth value
         /// </summary>
         /// <param name="depthValue">default value</param>
-        private void AddDepthBox(string depthValue)
+        /// <param name="position">Position of depth text box</param>
+        private void AddDepthBox(string depthValue, int position)
         {
             //if default value get last highest
-            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0)
+            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0 && position == 0)
             {
                 depthValue = ((TextBox)LayerDepth.Children[0]).Text;
             }
@@ -517,7 +518,7 @@ namespace lenticulis_gui
             depthBox.Text = depthValue;
             depthBox.TextChanged += DepthBox_TextChanged;
             depthBox.Height = rowHeight;
-            LayerDepth.Children.Insert(0, depthBox);
+            LayerDepth.Children.Insert(position, depthBox);
         }
 
         /// <summary>
