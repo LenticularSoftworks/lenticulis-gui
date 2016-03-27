@@ -119,7 +119,7 @@ namespace lenticulis_gui
         /// <param name="count">layer count</param>
         /// <param name="setHistory">Set history item if true</param>
         /// <param name="top">If true, layer wil be insert to top, else to end</param>
-        public void AddTimelineLayer(int count, bool setHistory, bool top)
+        public void AddTimelineLayer(int count, bool setHistory, bool top, double depth)
         {
             if (ProjectHolder.ImageCount == 0)
                 return;
@@ -130,7 +130,7 @@ namespace lenticulis_gui
 
                 //timeline row def.
                 RowDefinition rowDef = new RowDefinition();
-                rowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
+                rowDef.Height = new GridLength(rowHeight - 1, GridUnitType.Pixel); // - 1 border size
                 Timeline.RowDefinitions.Add(rowDef);
 
                 //Create and add horizontal border
@@ -151,10 +151,11 @@ namespace lenticulis_gui
                     position = ProjectHolder.LayerCount - 1;
 
                 //add textbox to layer depth column
-                AddDepthBox("0", position);
+                double newDepth = AddDepthBox(depth, position);
 
                 // create layer object and put it into layer list in project holder class
                 Layer layer = new Layer(position);
+                layer.Depth = newDepth;
                 ProjectHolder.Layers.Insert(position, layer);
 
                 //store to history list
@@ -164,6 +165,8 @@ namespace lenticulis_gui
                     history.AddLayer = true;
                     ProjectHolder.HistoryList.AddHistoryItem(history);
                 }
+
+                Generate3D();
             }
 
             SetTimelineVerticalLines();
@@ -271,7 +274,7 @@ namespace lenticulis_gui
 
             if (newcount > ProjectHolder.LayerCount)
             {
-                AddTimelineLayer(newcount - ProjectHolder.LayerCount, false, true);
+                AddTimelineLayer(newcount - ProjectHolder.LayerCount, false, true, 0.0);
             }
             else
             {
@@ -502,23 +505,42 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="depthValue">default value</param>
         /// <param name="position">Position of depth text box</param>
-        private void AddDepthBox(string depthValue, int position)
+        /// <returns>new depth</returns>
+        private double AddDepthBox(double depthValue, int position)
         {
             //if default value get last highest
-            if (depthValue.Equals("0") && LayerDepth.Children.Count > 0 && position == 0)
+            if (depthValue == 0.0 && LayerDepth.Children.Count > 0 && position == 0)
             {
-                depthValue = ((TextBox)LayerDepth.Children[0]).Text;
+                depthValue = ProjectHolder.Layers[0].Depth;
             }
 
-            //layer depth row def
-            RowDefinition depthRowDef = new RowDefinition();
-            depthRowDef.Height = new GridLength(rowHeight, GridUnitType.Pixel);
-
             TextBox depthBox = new TextBox();
-            depthBox.Text = depthValue;
-            depthBox.TextChanged += DepthBox_TextChanged;
             depthBox.Height = rowHeight;
+            depthBox.Text = depthValue.ToString();
+
+            //convert to actual unit selection
+            double foreground;
+            double background;
+            double convertedDepth = depthValue;
+            if (Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
+            {
+                switch (Units3D.SelectedItem.ToString())
+                {
+                    case "mm": convertedDepth *= cmToInch * 100; break;
+                    case "cm": convertedDepth *= cmToInch; break;
+                }
+
+                depthBox.Text = convertedDepth.ToString();
+
+                //if % is selected
+                if (UnitsDepth.SelectedItem.Equals("%"))
+                    SetDepthText_SelectionChanged(depthBox, foreground, background);
+            }
+
+            depthBox.TextChanged += DepthBox_TextChanged;
             LayerDepth.Children.Insert(position, depthBox);
+
+            return depthValue;
         }
 
         /// <summary>
@@ -712,7 +734,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void AddLayer_Click(object sender, RoutedEventArgs e)
         {
-            AddTimelineLayer(1, true, true);
+            AddTimelineLayer(1, true, true, 0.0);
         }
 
         /// <summary>

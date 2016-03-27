@@ -50,6 +50,11 @@ namespace lenticulis_gui
         /// </summary>
         private float unitToInches = 1;
 
+        /// <summary>
+        /// wont fire textchange event if false
+        /// </summary>
+        private bool textChange = true;
+
         #region 3D methods
         /// <summary>
         /// Sets width text in 3D panel
@@ -120,7 +125,7 @@ namespace lenticulis_gui
         /// Converts text inputs when units are changed
         /// </summary>
         /// <param name="input"></param>
-        private void ResetTextInput(TextBox input)
+        private void ConvertTextInput(TextBox input)
         {
             double value;
 
@@ -130,9 +135,7 @@ namespace lenticulis_gui
             if (Double.TryParse(input.Text, out value))
             {
                 value *= unitConvert;
-                value *= 100;
-                value = Math.Round(value);
-                value /= 100;
+                value = Math.Round(value * 1000) / 1000.0;
 
                 input.Text = value + "";
                 input.Background = Brushes.White;
@@ -151,9 +154,9 @@ namespace lenticulis_gui
         {
             SetWidthText();
 
-            ResetTextInput(ViewDist3D);
-            ResetTextInput(Background3D);
-            ResetTextInput(Foreground3D);
+            ConvertTextInput(ViewDist3D);
+            ConvertTextInput(Background3D);
+            ConvertTextInput(Foreground3D);
 
             if (UnitsDepth.SelectedItem != null)
             {
@@ -161,16 +164,13 @@ namespace lenticulis_gui
                 {
                     foreach (TextBox tb in LayerDepth.Children)
                     {
-                        ResetTextInput(tb);
+                        ConvertTextInput(tb);
                     }
                 }
             }
 
             SetSpacingText();
-            DepthBox_PropertyChanged(null, null);
-
             unitConvert = 1;
-
             Generate3D();
         }
 
@@ -283,6 +283,8 @@ namespace lenticulis_gui
             //update UnitsDepth ComboBox
             if (UnitsDepth.Items.Count > 0)
             {
+                textChange = false;
+
                 string selectedItem = UnitsDepth.SelectedItem.ToString();
 
                 UnitsDepth.Items.RemoveAt(0);
@@ -291,6 +293,8 @@ namespace lenticulis_gui
                 //if selected != % change selected item to new units
                 if (!selectedItem.Equals("%"))
                     UnitsDepth.SelectedItem = Units3D.SelectedItem;
+
+                textChange = true;
             }
 
             PropertyChanged();
@@ -368,6 +372,70 @@ namespace lenticulis_gui
             {
                 DepthBox_TextChanged((object)LayerDepth.Children[i], null);
             }
+        }
+
+        /// <summary>
+        /// Make conversion between in,cm,mm and %
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnitsDepth_SelectionChanged(object sender, EventArgs e)
+        {
+            if (!Panel3D.IsEnabled || !textChange)
+                return;
+
+            double foreground;
+            double background;
+            if (!Double.TryParse(Foreground3D.Text, out foreground) || !Double.TryParse(Background3D.Text, out background))
+                return;
+
+            TextBox tb;
+            for (int i = 0; i < ProjectHolder.LayerCount; i++)
+            {
+                tb = (TextBox)LayerDepth.Children[i];
+
+                SetDepthText_SelectionChanged(tb, foreground, background);
+            }
+        }
+
+        /// <summary>
+        /// Convert value by selected units
+        /// </summary>
+        /// <param name="textBox">textbox</param>
+        /// <param name="foreground">foreground value</param>
+        /// <param name="background">background value</param>
+        public void SetDepthText_SelectionChanged(TextBox textBox, double foreground, double background)
+        {
+            double value;
+            double newValue = 0;
+
+            if (Double.TryParse(textBox.Text, out value))
+            {
+                if (value == 0)
+                    return;
+
+                //conversion between % and length units
+                if (UnitsDepth.SelectedItem.Equals("%"))
+                {
+                    if (value > 0)
+                        newValue = (value / foreground) * 100;
+                    else
+                        newValue = (value / background) * -100;
+
+                    if (newValue > 100.0) newValue = 100;
+                    if (newValue < -100.0) newValue = -100;
+                }
+                else
+                {
+                    if (value > 0)
+                        newValue = foreground * (value / 100);
+                    else
+                        newValue = background * (value / -100);
+                }
+            }
+
+            newValue = Math.Round(newValue * 1000) / 1000;
+            textBox.Text = newValue.ToString();
         }
 
         /// <summary>

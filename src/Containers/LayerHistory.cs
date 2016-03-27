@@ -14,7 +14,10 @@ namespace lenticulis_gui.src.Containers
         /// Layer id
         /// </summary>
         public int LayerId { get; set; }
-
+        /// <summary>
+        /// Depth in inches
+        /// </summary>
+        public double LayerDepth { get; set; }
         /// <summary>
         /// Add layer flag
         /// </summary>
@@ -61,7 +64,7 @@ namespace lenticulis_gui.src.Containers
             else if (RemoveLayer)
             {
                 //add layer first
-                mw.AddTimelineLayer(1, false, false);
+                mw.AddTimelineLayer(1, false, false, LayerDepth);
 
                 foreach (var item in deletedList)
                     item.ApplyUndo();
@@ -81,7 +84,7 @@ namespace lenticulis_gui.src.Containers
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
 
             if (AddLayer)
-                mw.AddTimelineLayer(1, false, true);
+                mw.AddTimelineLayer(1, false, true, LayerDepth);
             else if (UpLayer)
                 mw.LayerUp(LayerId);
             else if (DownLayer)

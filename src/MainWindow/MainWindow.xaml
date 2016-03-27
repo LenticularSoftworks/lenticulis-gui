@@ -255,7 +255,7 @@
             <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <DockPanel LastChildFill="True">
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" Width="50">
-                        <ComboBox Name="UnitsDepth" DockPanel.Dock="Top" SelectionChanged="DepthBox_PropertyChanged" Loaded="UnitsDepth_Loaded" IsEnabled="False" Height="30" />
+                        <ComboBox Name="UnitsDepth" DockPanel.Dock="Top" SelectionChanged="UnitsDepth_SelectionChanged" Loaded="UnitsDepth_Loaded" IsEnabled="False" Height="30" />
                         <StackPanel Name="LayerDepth" IsEnabled="False" DockPanel.Dock="Left"/>
                     </DockPanel>
                     <Grid DockPanel.Dock="Top" Name="TimelineHeader" Background="LightGray" Height="30" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
