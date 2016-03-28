@@ -39,6 +39,7 @@
                         <MenuItem Header="{app:LangConverter str=SAVE_FILE}" Click="ButtonSave_Click" />
                         <Separator/>
                         <MenuItem Header="{app:LangConverter str=PROJ_PROPS}" Click="ProjectPropertiesButton_Click" />
+                        <MenuItem Header="{app:LangConverter str=PROJ_MEM}" Click="MemoryUsageButton_Click" />
                         <Separator/>
                         <MenuItem Header="{app:LangConverter str=EXPORT}" Click="ExportButton_Clicked" />
                         <Separator/>

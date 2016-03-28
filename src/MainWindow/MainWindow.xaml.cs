@@ -240,6 +240,20 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Opens memory usage dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MemoryUsageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectHolder.ValidProject)
+            {
+                HistoryMemoryWindow hmw = new HistoryMemoryWindow();
+                hmw.ShowDialog();
+            }
+        }
+
+        /// <summary>
         /// Change canvas view event
         /// </summary>
         /// <param name="sender"></param>

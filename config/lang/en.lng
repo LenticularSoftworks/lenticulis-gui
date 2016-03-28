@@ -35,6 +35,7 @@ OPEN_FILE=Open
 SAVE_FILE=Save
 CLOSE_APP=Close
 PROJ_PROPS=Project properties
+PROJ_MEM=History memory
 # Úpravy
 EDIT=_Edit
 CHOOSELANG=Program language

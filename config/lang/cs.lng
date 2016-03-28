@@ -35,6 +35,7 @@ OPEN_FILE=Otevřít
 SAVE_FILE=Uložit
 CLOSE_APP=Zavřít
 PROJ_PROPS=Vlastnosti projektu
+PROJ_MEM=Paměť historie
 # Úpravy
 EDIT=Úpravy
 CHOOSELANG=Jazyk prostředí
