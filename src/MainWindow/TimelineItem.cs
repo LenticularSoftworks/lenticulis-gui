@@ -250,7 +250,10 @@ namespace lenticulis_gui
                 return;
 
             // repaint canvas
-            mw.RepaintCanvas();
+            if (mw.Panel3D.IsEnabled)
+                mw.Generate3D();
+            else
+                mw.RepaintCanvas();
         }
 
         /// <summary>
