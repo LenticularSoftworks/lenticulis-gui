@@ -59,6 +59,28 @@ namespace lenticulis_gui.src.App
         /// </summary>
         public static int Lpi { get; set; }
 
+        //3D parameters
+
+        /// <summary>
+        /// View distance [in]
+        /// </summary>
+        public static double ViewDistance {get; set; }
+
+        /// <summary>
+        /// View angle [°]
+        /// </summary>
+        public static double ViewAngle { get; set; }
+
+        /// <summary>
+        /// Foreground [in]
+        /// </summary>
+        public static double Foreground { get; set; }
+
+        /// <summary>
+        /// Background [in]
+        /// </summary>
+        public static double Background { get; set; }
+
         /// <summary>
         /// List of undo / redo actions
         /// </summary>

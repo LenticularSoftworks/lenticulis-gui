@@ -95,6 +95,18 @@ namespace lenticulis_gui.src.App
                 writeProperty(xw, "canvas-width", ProjectHolder.Width.ToString());
                 // height of canvas
                 writeProperty(xw, "canvas-height", ProjectHolder.Height.ToString());
+                //dpi
+                writeProperty(xw, "dpi", ProjectHolder.Dpi.ToString());
+                //lpi
+                writeProperty(xw, "lpi", ProjectHolder.Lpi.ToString());
+                //view distance
+                writeProperty(xw, "view-distance", ProjectHolder.ViewDistance.ToString());
+                //view angle
+                writeProperty(xw, "view-angle", ProjectHolder.ViewAngle.ToString());
+                //foreground
+                writeProperty(xw, "foreground", ProjectHolder.Foreground.ToString());
+                //background
+                writeProperty(xw, "background", ProjectHolder.Background.ToString());
             }
             xw.WriteEndElement();
         }
@@ -231,6 +243,7 @@ namespace lenticulis_gui.src.App
             // store layer element, and write Id attribute (mandatory)
             xw.WriteStartElement("layer");
             xw.WriteAttributeString("id", layer.Id.ToString());
+            xw.WriteAttributeString("depth", layer.Depth.ToString());
             {
                 // then write all layer objects
                 List<LayerObject> objects = layer.GetLayerObjects();

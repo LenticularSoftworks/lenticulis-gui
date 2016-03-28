@@ -198,6 +198,12 @@ namespace lenticulis_gui
                 RepaintCanvas();
 
                 Warning3D.Content = "";
+
+                //save to project holder
+                ProjectHolder.ViewDistance = viewDist;
+                ProjectHolder.ViewAngle = viewAngle;
+                ProjectHolder.Foreground = foreground;
+                ProjectHolder.Background = background;
             }
             else
                 Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
