@@ -11,7 +11,7 @@ namespace lenticulis_gui.src.Containers
         /// <summary>
         /// Stored actions in linked list for undo redo
         /// </summary>
-        private LinkedList<HistoryItem> historyList;
+        private List<HistoryItem> historyList;
 
         /// <summary>
         /// Index to historyList
@@ -23,8 +23,8 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public HistoryList()
         {
-            historyList = new LinkedList<HistoryItem>();
-            historyListPointer = 0;
+            historyList = new List<HistoryItem>();
+            historyListPointer = -1;
         }
 
         /// <summary>
@@ -33,16 +33,19 @@ namespace lenticulis_gui.src.Containers
         /// <param name="item">history item</param>
         public void AddHistoryItem(HistoryItem item)
         {
-            if (historyList.Count > 0)
+            int index = historyList.Count - 1;
+            while (index != historyListPointer)
             {
-                while (historyList.Count - 1 != historyListPointer)
-                    historyList.RemoveLast();
+                historyList.RemoveAt(index);
+                index--;
+
+                Debug.WriteLine("removing");
             }
 
-            historyList.AddLast(item);
-            historyListPointer = historyList.Count - 1;
+            historyList.Add(item);
+            historyListPointer++;
 
-            //Debug.WriteLine("add {0}", historyListPointer);
+            Debug.WriteLine("add {0}", historyListPointer);
         }
 
         /// <summary>
@@ -52,13 +55,12 @@ namespace lenticulis_gui.src.Containers
         {
             if (historyListPointer >= 0)
             {
-                if(historyList.Count != 0)
+                if (historyList.Count != 0)
                     historyList.ElementAt(historyListPointer).ApplyUndo();
-                
-                if(historyListPointer > 0)
+
                     historyListPointer--;
 
-                //Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+                Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }
         }
 
@@ -67,14 +69,14 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void Redo()
         {
-            if (historyListPointer <= historyList.Count - 1)
+            if (historyListPointer <= historyList.Count - 1 && historyListPointer >= -1)
             {
-                historyList.ElementAt(historyListPointer).ApplyRedo();
-
                 if (historyListPointer < historyList.Count - 1)
                     historyListPointer++;
 
-                //Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+                historyList.ElementAt(historyListPointer).ApplyRedo();
+
+                Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }
         }
     }

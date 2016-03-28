@@ -28,6 +28,10 @@ namespace lenticulis_gui.src.App
                     s_instance = new Storage();
                 return s_instance;
             }
+            private set
+            {
+                s_instance = value;
+            }
         }
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace lenticulis_gui.src.App
         {
             ImageLoader.unloadAllImages();
             loadedImages.Clear();
+            Storage.Instance = null;
         }
     }
 }

@@ -177,7 +177,10 @@ namespace lenticulis_gui.src.SupportLib
                 {
                     // and for every column in layer it occupies, put it into matrix to that position
                     for (int i = lobj.Column; i < lobj.Column + lobj.Length; i++)
-                        returnArray[i][lobj.Layer] = lobj;
+                    {
+                        if(i < ProjectHolder.ImageCount)
+                            returnArray[i][lobj.Layer] = lobj;
+                    }
                 }
             }
 

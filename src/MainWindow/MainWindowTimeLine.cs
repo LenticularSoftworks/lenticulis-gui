@@ -180,8 +180,8 @@ namespace lenticulis_gui
         /// </summary>
         public void RemoveFirstLayer()
         {
-            //layer is not empty or no layer
-            if ((ProjectHolder.Layers[0]).GetLayerObjects().Count != 0 || ProjectHolder.Layers.Count == 0)
+            //project layers not empty
+            if (ProjectHolder.Layers.Count == 0)
                 return;
 
             //remove from Timeline
@@ -246,12 +246,6 @@ namespace lenticulis_gui
         /// <param name="item"></param>
         public void RemoveTimelineItem(TimelineItem item, bool setHistory)
         {
-            timelineList.Remove(item);
-            Timeline.Children.Remove(item);
-
-            //item.GetLayerObject().dispose(); 
-            //TODO replace dispose when removing from history list
-
             if (setHistory)
             {
                 TimelineItemHistory historyItem = item.GetHistoryItem();
@@ -259,6 +253,10 @@ namespace lenticulis_gui
                 historyItem.StoreAction();
                 ProjectHolder.HistoryList.AddHistoryItem(historyItem);
             }
+
+            timelineList.Remove(item);
+            Timeline.Children.Remove(item);
+            item.GetLayerObject().dispose(); 
 
             RepaintCanvas();
         }

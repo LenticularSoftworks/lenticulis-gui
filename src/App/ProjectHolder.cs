@@ -19,11 +19,11 @@ namespace lenticulis_gui.src.App
         /// <summary>
         /// Name of project - can be set in properties
         /// </summary>
-        public static String ProjectName { get; set; }
+        public static string ProjectName { get; set; }
         /// <summary>
         /// Name of file containing saved project work, if any
         /// </summary>
-        public static String ProjectFileName { get; set; }
+        public static string ProjectFileName { get; set; }
 
         /// <summary>
         /// Count of images, "keyframes" in this project

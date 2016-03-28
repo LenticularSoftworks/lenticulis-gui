@@ -170,6 +170,7 @@
     <Compile Include="src\Containers\LayerHistory.cs" />
     <Compile Include="src\Containers\LayerObjectHistory.cs" />
     <Compile Include="src\Containers\HistoryItem.cs" />
+    <Compile Include="src\Containers\ProjectHolderHistory.cs" />
     <Compile Include="src\Containers\TimelineItemHistory.cs" />
     <Compile Include="src\Dialogs\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>

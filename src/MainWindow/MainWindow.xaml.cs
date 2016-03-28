@@ -193,6 +193,8 @@ namespace lenticulis_gui
                 this.IsEnabled = true;
                 // and close loading window
                 lw.Close();
+
+                RepaintCanvas();
             }
         }
 
