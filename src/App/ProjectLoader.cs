@@ -152,6 +152,24 @@ namespace lenticulis_gui.src.App
                         case "canvas-height":
                             ProjectHolder.Height = int.Parse(el.GetAttribute("value"));
                             break;
+                        case "dpi":
+                            ProjectHolder.Dpi = int.Parse(el.GetAttribute("value"));
+                            break;
+                        case "lpi":
+                            ProjectHolder.Lpi = int.Parse(el.GetAttribute("value"));
+                            break;
+                        case "view-distance":
+                            ProjectHolder.ViewDistance = double.Parse(el.GetAttribute("value"));
+                            break;
+                        case "view-angle":
+                            ProjectHolder.ViewAngle = double.Parse(el.GetAttribute("value"));
+                            break;
+                        case "foreground":
+                            ProjectHolder.Foreground = double.Parse(el.GetAttribute("value"));
+                            break;
+                        case "background":
+                            ProjectHolder.Background = double.Parse(el.GetAttribute("value"));
+                            break;
                     }
                 }
             }
@@ -318,10 +336,12 @@ namespace lenticulis_gui.src.App
         private static bool loadLayer(XmlElement element)
         {
             int layerId;
+            double depth;
             // each layer has to have its layer ID ("position" in layer list)
             try
             {
                 layerId = int.Parse(element.GetAttribute("id"));
+                depth = double.Parse(element.GetAttribute("depth"));
             }
             catch (Exception)
             {
@@ -334,6 +354,7 @@ namespace lenticulis_gui.src.App
             float objX, objY, objAngle, objScaleX, objScaleY;
 
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            mw.UpdateDepthBox(layerId, depth);
 
             XmlNodeList objects = element.GetElementsByTagName("object");
 

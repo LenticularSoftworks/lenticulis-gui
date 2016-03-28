@@ -150,7 +150,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Set values in 3D panel and generate
         /// </summary>
-        public void PropertyChanged()
+        public void PropertyChanged3D()
         {
             SetWidthText();
 
@@ -174,14 +174,10 @@ namespace lenticulis_gui
             Generate3D();
         }
 
-        #endregion 3D methods
-
-        #region 3D listeners
-
         /// <summary>
         /// Action to generate shifts for 3D print
         /// </summary>
-        private void Generate3D()
+        public void Generate3D()
         {
             if (!ProjectHolder.ValidProject || timelineList.Count == 0 || !Panel3D.IsEnabled || !generate)
                 return;
@@ -209,6 +205,9 @@ namespace lenticulis_gui
                 Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
         }
 
+        #endregion 3D methods
+
+        #region 3D listeners
         /// <summary>
         /// Calculates frame spacing and enable 3D generate button if higher than 0.
         /// </summary>
@@ -303,7 +302,7 @@ namespace lenticulis_gui
                 textChange = true;
             }
 
-            PropertyChanged();
+            PropertyChanged3D();
         }
 
         /// <summary>
@@ -470,9 +469,9 @@ namespace lenticulis_gui
 
                 SetWidthText();
                 SetDepthBounds();
-                PropertyChanged();
 
                 generate = true;
+                PropertyChanged3D();
             }
         }
 

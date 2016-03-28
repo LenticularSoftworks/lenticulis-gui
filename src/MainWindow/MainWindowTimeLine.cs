@@ -456,6 +456,20 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Update depth box value and layer depth property
+        /// </summary>
+        /// <param name="layer">layer id</param>
+        /// <param name="value">value</param>
+        public void UpdateDepthBox(int layer, double value)
+        {
+            if(value < ProjectHolder.LayerCount && ProjectHolder.Layers[layer] != null && LayerDepth.Children[layer] != null) 
+            {
+                ProjectHolder.Layers[layer].Depth = value;
+                ((TextBox)LayerDepth.Children[layer]).Text = value.ToString();
+            }
+        }
+
+        /// <summary>
         /// Add timeline header
         /// </summary>
         private void AddTimelineHeader()
@@ -995,7 +1009,6 @@ namespace lenticulis_gui
             }
             //store history
             TimelineItemHistory history = capturedTimelineItemContext.GetHistoryItem();
-
 
             //set position
             capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.GetLayerObject().Layer, 0, ProjectHolder.ImageCount);

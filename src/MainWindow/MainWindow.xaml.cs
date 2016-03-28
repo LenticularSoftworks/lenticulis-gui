@@ -86,9 +86,18 @@ namespace lenticulis_gui
             SetImageCount(imageCount);
             AddTimelineHeader();
             AddTimelineLayer(layerCount, false, true, 0.0);
-            
+
             timelineList = new List<TimelineItem>();
             ProjectHolder.HistoryList = new HistoryList();
+
+            if (ProjectHolder.ViewDistance != 0.0)
+                ViewDist3D.Text = ProjectHolder.ViewDistance.ToString();
+            if (ProjectHolder.ViewAngle != 0.0)
+                ViewAngle3D.Text = ProjectHolder.ViewAngle.ToString();
+            if (ProjectHolder.Foreground != 0.0)
+                Foreground3D.Text = ProjectHolder.Foreground.ToString();
+            if (ProjectHolder.Background != 0.0)
+                Background3D.Text = ProjectHolder.Background.ToString();
 
             RefreshCanvasList();
         }

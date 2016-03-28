@@ -254,7 +254,7 @@ namespace lenticulis_gui.src.Dialogs
             // in every case, we have valid project now
             ProjectHolder.ValidProject = true;
 
-            mw.PropertyChanged();
+            mw.PropertyChanged3D();
 
             lw.Close();
             this.Close();
