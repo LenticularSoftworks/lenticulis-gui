@@ -149,8 +149,8 @@ namespace lenticulis_gui
             if (obj.Length > 1 && imageID != obj.Column)
                 progress = 1.0f / ((float)(imageID - obj.Column) / (float)(obj.Length - 1));
 
-            float imageCenterX = (float)source.ActualWidth / 2.0f;
-            float imageCenterY = (float)source.ActualHeight / 2.0f;
+            float imageCenterX = (float)centerX;
+            float imageCenterY = (float)centerY;
 
             float dx = canvasX - imageCenterX;
             float dy = canvasY - imageCenterY;
@@ -259,20 +259,16 @@ namespace lenticulis_gui
         {
             Image img = source as Image;
 
-            // current center (so we can calculate the rotation angle using it)
-            float imageCenterX = (float)img.RenderSize.Width / 2.0f;
-            float imageCenterY = (float)img.RenderSize.Height / 2.0f;
-
-            float x = (float)e.GetPosition(this).X;
-            float y = (float)e.GetPosition(this).Y;
+            double x = e.GetPosition(this).X;
+            double y = e.GetPosition(this).Y;
 
             // current angle
-            float dx = x - imageCenterX;
-            float dy = y - imageCenterY;
-            float new_angle = (float)Math.Atan2(dy, dx);
+            double dx = x - centerX;
+            double dy = y - centerY;
+            double new_angle = Math.Atan2(dy, dx);
 
             // alpha is final angle
-            alpha = new_angle - initialAngle;
+            alpha = (float)(new_angle - initialAngle);
 
             // convert to degrees
             alpha *= 180 / (float)Math.PI;
@@ -280,8 +276,8 @@ namespace lenticulis_gui
             // apply new tranfrormation
             RotateTransform rotateTransform = new RotateTransform(alpha + GetLayerObjectByImage(img).InitialAngle)
             {
-                CenterX = imageCenterX,
-                CenterY = imageCenterY,
+                CenterX = centerX,
+                CenterY = centerY,
             };
 
             SetTransformations(GetLayerObjectByImage(img), img, rotateTransform, true);
