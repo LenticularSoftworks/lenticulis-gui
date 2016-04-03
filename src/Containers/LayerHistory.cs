@@ -95,7 +95,7 @@ namespace lenticulis_gui.src.Containers
                 foreach (var item in deletedList)
                     item.ApplyRedo();
 
-                mw.RemoveLastLayer(false);
+                mw.RemoveLastLayer(false, null);
             }
 
             IsUndo = false;

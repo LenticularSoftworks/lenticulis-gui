@@ -24,6 +24,9 @@ namespace lenticulis_gui.src.App
         Cubic           // y(t) = 4*(t-1/2)^3 + 1/2
     };
 
+    /// <summary>
+    /// Units of length
+    /// </summary>
     public enum LengthUnits
     {
         mm, //milimetres
@@ -31,7 +34,10 @@ namespace lenticulis_gui.src.App
         @in //inches
     };
 
-    public enum ScaleType //scale direction types
+    /// <summary>
+    /// Scale directions
+    /// </summary>
+    public enum ScaleType
     {
         Top,
         TopLeft,

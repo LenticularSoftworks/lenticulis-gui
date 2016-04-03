@@ -197,6 +197,9 @@ namespace lenticulis_gui.src.Dialogs
             int oldWidth = ProjectHolder.Width;
             int oldHeight = ProjectHolder.Height;
 
+            ProjectHistory historyItem = new ProjectHistory();
+            historyItem.SaveUndo();
+
             // set all properties according to actual data in inputs
             ProjectHolder.ProjectName = PropertiesProjectName.Text;
             ProjectHolder.Height = (int)height;
@@ -211,12 +214,23 @@ namespace lenticulis_gui.src.Dialogs
             if (ProjectHolder.ValidProject)
             {
                 // update image count, layer count, and then refresh canvases
-                mw.UpdateImageCount(images);
-                mw.UpdateLayerCount(layers);
+                mw.UpdateImageCount(images, historyItem);
+                mw.UpdateLayerCount(layers, historyItem);
 
                 //rescale layers if needed
-                if(LayerScaleCB.IsChecked == true)
-                    mw.RescaleLayers((float)width / oldWidth, (float)height / oldHeight);
+                if (LayerScaleCB.IsChecked == true)
+                {
+                    float newScaleX = (float)width / oldWidth;
+                    float newScaleY = (float)height / oldHeight;
+
+                    mw.RescaleLayers(newScaleX, newScaleY);
+
+                    historyItem.ScaleX = newScaleX;
+                    historyItem.ScaleY = newScaleY;
+                }
+
+                historyItem.SaveRedo();
+                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
 
                 mw.RefreshCanvasList();
             }

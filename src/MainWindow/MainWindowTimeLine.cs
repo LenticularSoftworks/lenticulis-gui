@@ -42,7 +42,8 @@ namespace lenticulis_gui
         /// Updates image count in opened project
         /// </summary>
         /// <param name="newcount">new image count</param>
-        public void UpdateImageCount(int newcount)
+        /// <param name="historyItem">history item</param>
+        public void UpdateImageCount(int newcount, ProjectHistory historyItem)
         {
             int current = ProjectHolder.ImageCount;
 
@@ -75,6 +76,9 @@ namespace lenticulis_gui
             {
                 bool removeConfirmed = false;
 
+                if (historyItem == null)
+                    removeConfirmed = true;
+
                 for (int i = timelineList.Count - 1; i >= 0; i--)
                 {
                     TimelineItem item = timelineList[i];
@@ -93,7 +97,11 @@ namespace lenticulis_gui
                                     return;
                             }
 
-                            RemoveTimelineItem(item, true);
+                            if (historyItem != null)
+                            {
+                                historyItem.StoreDeletedItem(item);
+                                RemoveTimelineItem(item, false);
+                            }
                         }
                     }
                 }
@@ -201,7 +209,8 @@ namespace lenticulis_gui
         /// Remove last layer in timeline and project holder and its images
         /// </summary>
         /// <param name="setHistory">set history item if true</param>
-        public void RemoveLastLayer(bool setHistory)
+        /// <param name="projectHistoryItem">project history item</param>
+        public void RemoveLastLayer(bool setHistory, ProjectHistory projectHistoryItem)
         {
             int lastLayer = ProjectHolder.LayerCount - 1;
             //list of deleting items
@@ -214,7 +223,7 @@ namespace lenticulis_gui
                     deleteItems.Add(item);
             }
 
-            if (setHistory)
+            if (setHistory || projectHistoryItem != null)
             {
                 //create history item
                 LayerHistory history = ProjectHolder.Layers[lastLayer].GetHistoryItem();
@@ -222,12 +231,21 @@ namespace lenticulis_gui
 
                 //store deleted items as history items and save
                 history.StoreAction(deleteItems);
-                ProjectHolder.HistoryList.AddHistoryItem(history);
+
+                if (projectHistoryItem != null)
+                    projectHistoryItem.StoreDeletedLayer(history);
+                else if (setHistory)
+                    ProjectHolder.HistoryList.AddHistoryItem(history);
             }
 
             //remove items in timelineList
             foreach (TimelineItem item in deleteItems)
+            {
+                if (projectHistoryItem != null)
+                    projectHistoryItem.StoreDeletedItem(item);
+
                 RemoveTimelineItem(item, false);
+            }
 
             //remove from Timeline
             Timeline.RowDefinitions.Remove(Timeline.RowDefinitions[Timeline.RowDefinitions.Count - 1]);
@@ -256,7 +274,7 @@ namespace lenticulis_gui
 
             timelineList.Remove(item);
             Timeline.Children.Remove(item);
-            item.GetLayerObject().dispose(); 
+            item.GetLayerObject().dispose();
 
             RepaintCanvas();
         }
@@ -265,7 +283,8 @@ namespace lenticulis_gui
         /// Updates layer count
         /// </summary>
         /// <param name="newcount">new layer count</param>
-        public void UpdateLayerCount(int newcount)
+        /// <param name="historyItem">history item</param>
+        public void UpdateLayerCount(int newcount, ProjectHistory historyItem)
         {
             if (newcount == ProjectHolder.LayerCount)
                 return;
@@ -293,7 +312,12 @@ namespace lenticulis_gui
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     while (ProjectHolder.LayerCount > newcount)
-                        RemoveLastLayer(true);
+                    {
+                        if (historyItem == null)
+                            RemoveLastLayer(true, historyItem);
+                        else
+                            RemoveLastLayer(false, historyItem);
+                    }
                 }
             }
         }
@@ -322,6 +346,7 @@ namespace lenticulis_gui
         /// <param name="setListeners">if true set listeners to new item</param>
         public void AddTimelineItem(TimelineItem newItem, bool setListeners, bool setHistory)
         {
+            //TODO if !contains?
             timelineList.Add(newItem);
 
             if (setListeners)
@@ -460,7 +485,7 @@ namespace lenticulis_gui
         /// <param name="value">value</param>
         public void UpdateDepthBox(int layer, double value)
         {
-            if(value < ProjectHolder.LayerCount && ProjectHolder.Layers[layer] != null && LayerDepth.Children[layer] != null) 
+            if (value < ProjectHolder.LayerCount && ProjectHolder.Layers[layer] != null && LayerDepth.Children[layer] != null)
             {
                 ProjectHolder.Layers[layer].Depth = value;
                 ((TextBox)LayerDepth.Children[layer]).Text = value.ToString();
@@ -510,7 +535,7 @@ namespace lenticulis_gui
             ProjectHolder.ImageCount = count;
 
             SliderPanel.Margin = new Thickness() { Left = 43 + (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2, Right = (Timeline.ActualWidth / Timeline.ColumnDefinitions.Count) / 2 };
-        } 
+        }
 
         /// <summary>
         /// Add textbox for depth value
@@ -778,9 +803,7 @@ namespace lenticulis_gui
 
             //remove last layer
             if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                RemoveLastLayer(true);
-            }
+                RemoveLastLayer(true, null);
         }
 
         /// <summary>

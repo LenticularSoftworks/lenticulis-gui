@@ -95,10 +95,12 @@ namespace lenticulis_gui.src.App
         {
             if (historyListPointer <= historyList.Count - 1 && historyListPointer >= -1)
             {
+                int tmpPointer = historyListPointer;
+
                 if (historyListPointer < historyList.Count - 1)
                     historyListPointer++;
-
-                historyList.ElementAt(historyListPointer).ApplyRedo();
+                if (historyListPointer >= 0 && tmpPointer != historyListPointer)
+                    historyList.ElementAt(historyListPointer).ApplyRedo();
 
                 Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }

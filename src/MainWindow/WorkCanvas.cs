@@ -109,18 +109,29 @@ namespace lenticulis_gui
 
             //create bounding box and store initial real size
             bounding.PaintBox(capturedImage);
-            initWidth = bounding.ActualWidth;
-            initHeight = bounding.ActualHeight;
+            initWidth = capturedImage.Width;
+            initHeight = capturedImage.Height;
+
+            TransformGroup tGroup = capturedImage.RenderTransform as TransformGroup;
+            ScaleTransform scale = tGroup.Children[0] as ScaleTransform;
+
+            if (scale != null)
+            {
+                initWidth *= scale.ScaleX;
+                initHeight *= scale.ScaleY;
+                scaleStartX = scale.ScaleX;
+                scaleStartY = scale.ScaleY;
+            }
 
             //set center coordinates
             centerX = imageX + initWidth / 2.0;
             centerY = imageY + initHeight / 2.0;
 
             // for scaling, we save scale on start of transformation
-            if (MainWindow.SelectedTool == TransformType.Scale)
+            //if (MainWindow.SelectedTool == TransformType.Scale)
                 SetScaleProperties(capturedImage);
             // for rotation, we save angle on stat of transformation, and determine absolute angle on start (so we can deal with relative angle later)
-            else if (MainWindow.SelectedTool == TransformType.Rotate)
+            //else if (MainWindow.SelectedTool == TransformType.Rotate)
                 SetRotateProperties(capturedImage);
         }
 
