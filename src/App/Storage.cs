@@ -92,5 +92,19 @@ namespace lenticulis_gui.src.App
             loadedImages.Clear();
             Storage.Instance = null;
         }
+
+        /// <summary>
+        /// Unload single image from storage by it's id
+        /// </summary>
+        /// <param name="id">resource id</param>
+        public void unloadImage(int id)
+        {
+            if (loadedImages.ContainsKey(id))
+            {
+                ImageLoader.unloadImage(id);
+                loadedImages.Remove(id);
+            }
+            
+        }
     }
 }

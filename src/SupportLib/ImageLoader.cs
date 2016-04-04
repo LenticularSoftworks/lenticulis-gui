@@ -192,5 +192,14 @@ namespace lenticulis_gui.src.SupportLib
             // just call support library to free all registered images
             SupportLib.clearRegisteredImages();
         }
+
+        /// <summary>
+        /// Clear single registered image
+        /// </summary>
+        /// <param name="id">image id</param>
+        public static void unloadImage(int id)
+        {
+            SupportLib.destroyImage(id);
+        }
     }
 }

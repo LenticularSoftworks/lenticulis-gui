@@ -113,6 +113,13 @@ namespace lenticulis_gui.src.SupportLib
         public static extern void clearRegisteredImages();
 
         /// <summary>
+        /// Destroy image by it's id
+        /// </summary>
+        /// <param name="id"></param>
+        [DllImport(SupportLib.LENT_SUPPORT_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void destroyImage(int id);
+
+        /// <summary>
         /// Initializes new canvas for future image composition
         /// </summary>
         /// <param name="width">width of canvas</param>

@@ -57,7 +57,7 @@ namespace lenticulis_gui.src.App
         /// <param name="item">history item</param>
         public void AddHistoryItem(HistoryItem item)
         {
-            int index = historyList.Count - 1;
+            /*int index = historyList.Count - 1;
             while (index != historyListPointer)
             {
                 historyList.RemoveAt(index);
@@ -69,7 +69,7 @@ namespace lenticulis_gui.src.App
             historyList.Add(item);
             historyListPointer++;
 
-            Debug.WriteLine("add {0}", historyListPointer);
+            Debug.WriteLine("add {0}", historyListPointer);*/
         }
 
         /// <summary>

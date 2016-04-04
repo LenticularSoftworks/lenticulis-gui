@@ -55,6 +55,7 @@ namespace lenticulis_gui.src.Containers
 
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
 
+            //select operation
             if (AddLayer)
                 mw.RemoveFirstLayer();
             else if (UpLayer)
@@ -83,6 +84,7 @@ namespace lenticulis_gui.src.Containers
 
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
 
+            //Select operation
             if (AddLayer)
                 mw.AddTimelineLayer(1, false, true, LayerDepth);
             else if (UpLayer)

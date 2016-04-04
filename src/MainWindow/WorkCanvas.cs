@@ -115,6 +115,7 @@ namespace lenticulis_gui
             TransformGroup tGroup = capturedImage.RenderTransform as TransformGroup;
             ScaleTransform scale = tGroup.Children[0] as ScaleTransform;
 
+            //renew init size by scale if scale is not null
             if (scale != null)
             {
                 initWidth *= scale.ScaleX;
@@ -128,11 +129,9 @@ namespace lenticulis_gui
             centerY = imageY + initHeight / 2.0;
 
             // for scaling, we save scale on start of transformation
-            //if (MainWindow.SelectedTool == TransformType.Scale)
-                SetScaleProperties(capturedImage);
+            SetScaleProperties(capturedImage);
             // for rotation, we save angle on stat of transformation, and determine absolute angle on start (so we can deal with relative angle later)
-            //else if (MainWindow.SelectedTool == TransformType.Rotate)
-                SetRotateProperties(capturedImage);
+            SetRotateProperties(capturedImage);
         }
 
         /// <summary>
@@ -716,6 +715,8 @@ namespace lenticulis_gui
                 ImageHolder imageHolder = Storage.Instance.getImageHolder(lo.ResourceId);
                 // and retrieve image source for specified size
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
+
+                //TODO chyba
 
                 // create new image instance
                 Image image = new Image();

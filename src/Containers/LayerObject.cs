@@ -184,7 +184,7 @@ namespace lenticulis_gui.src.Containers
         }
 
         /// <summary>
-        /// Destroys any references to this object in layer, etc.
+        /// Removes from layer object list
         /// </summary>
         public void dispose()
         {
@@ -193,6 +193,14 @@ namespace lenticulis_gui.src.Containers
                 parentLayer.RemoveLayerObject(this);
                 parentLayer = null;
             }
+        }
+
+        /// <summary>
+        /// Unload image from storage
+        /// </summary>
+        public void unloadImage()
+        {
+            Storage.Instance.unloadImage(ResourceId);
         }
 
         /// <summary>
