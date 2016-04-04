@@ -57,7 +57,7 @@ namespace lenticulis_gui.src.App
         /// <param name="item">history item</param>
         public void AddHistoryItem(HistoryItem item)
         {
-            /*int index = historyList.Count - 1;
+            int index = historyList.Count - 1;
             while (index != historyListPointer)
             {
                 historyList.RemoveAt(index);
@@ -69,7 +69,10 @@ namespace lenticulis_gui.src.App
             historyList.Add(item);
             historyListPointer++;
 
-            Debug.WriteLine("add {0}", historyListPointer);*/
+            //check history list size and free memory if needed
+            FreeHistoryList();
+
+            Debug.WriteLine("add {0}", historyListPointer);
         }
 
         /// <summary>
@@ -103,6 +106,21 @@ namespace lenticulis_gui.src.App
                     historyList.ElementAt(historyListPointer).ApplyRedo();
 
                 Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+            }
+        }
+
+        /// <summary>
+        /// Check history list memory size and free if needed
+        /// </summary>
+        private void FreeHistoryList()
+        {
+            //less or equal = ok, else remove first n items
+            while (historyList.Count > historyListSize)
+            {
+                Debug.WriteLine("free");
+
+                historyList.RemoveAt(0);
+                historyListPointer--;
             }
         }
     }

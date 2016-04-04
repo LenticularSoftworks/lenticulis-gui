@@ -79,5 +79,7 @@ namespace lenticulis_gui.src.Containers
                 this.RedoLength = Instance.GetLayerObject().Length;
             }
         }
+
+        //TODO dispose, unload Image if RemoveAction
     }
 }
