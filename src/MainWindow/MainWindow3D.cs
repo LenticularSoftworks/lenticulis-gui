@@ -1,4 +1,5 @@
 ﻿using lenticulis_gui.src.App;
+using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.Dialogs;
 using System;
 using System.Diagnostics;
@@ -54,6 +55,16 @@ namespace lenticulis_gui
         /// wont fire textchange event if false
         /// </summary>
         private bool textChange = true;
+
+        /// <summary>
+        /// Serve lost focus depth textbox if true
+        /// </summary>
+        private bool checkFocus = false;
+
+        /// <summary>
+        /// Layer history item
+        /// </summary>
+        private HistoryItem historyItem = null;
 
         #region 3D methods
         /// <summary>
@@ -148,6 +159,31 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Set 3D parameters inputs
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <param name="distance">Distance</param>
+        /// <param name="foreground">Foreground</param>
+        /// <param name="background">Background</param>
+        /// <param name="units">units</param>
+        public void Set3DInputs(string angle, string distance, string foreground, string background, string units)
+        {
+            var values = Enum.GetValues(typeof(LengthUnits));
+            foreach (var value in values)
+            {
+                if (value.ToString() == units)
+                {
+                    Units3D.SelectedItem = value;
+                }
+            }
+
+            ViewAngle3D.Text = angle;
+            ViewDist3D.Text = distance;
+            Foreground3D.Text = foreground;
+            Background3D.Text = background;
+        }
+
+        /// <summary>
         /// Set values in 3D panel and generate
         /// </summary>
         public void PropertyChanged3D()
@@ -213,7 +249,7 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ViewDist3D_Changed(object sender, TextChangedEventArgs e)
+        private void View3D_Changed(object sender, TextChangedEventArgs e)
         {
             if (!ProjectHolder.ValidProject)
                 return;
@@ -227,6 +263,8 @@ namespace lenticulis_gui
 
             SetSpacingText();
             Generate3D();
+
+            checkFocus = true;
         }
 
         /// <summary>
@@ -303,6 +341,8 @@ namespace lenticulis_gui
             }
 
             PropertyChanged3D();
+
+            checkFocus = true;
         }
 
         /// <summary>
@@ -320,11 +360,21 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Listener that controls layer depths if they're between foreground and background
+        /// Listener that controls layer depths
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DepthBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckLayerDepthInput(sender);
+            checkFocus = true;
+        }
+
+        /// <summary>
+        /// Controls layer depths if they're between foreground and background
+        /// </summary>
+        /// <param name="sender">text box</param>
+        private void CheckLayerDepthInput(object sender)
         {
             double foreground;
             double background;
@@ -364,6 +414,79 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Prepare new history item when got focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DepthBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Layer layer = ProjectHolder.Layers[LayerDepth.Children.IndexOf((TextBox)sender)];
+            historyItem = layer.GetHistoryItem();
+        }
+
+        /// <summary>
+        /// Adds layer history when 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DepthBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!checkFocus)
+            {
+                historyItem = null;
+                return;
+            }
+
+            Layer layer = ProjectHolder.Layers[LayerDepth.Children.IndexOf((TextBox)sender)];
+            ((LayerHistory)historyItem).DepthRedo = layer.Depth;
+            ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+
+            checkFocus = false;
+        }
+
+        /// <summary>
+        /// If hase focus prepares new historyItem
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Param3D_GotFocus(object sender, RoutedEventArgs e)
+        {
+            historyItem = new ProjectHisotry3D()
+            {
+                UndoAngle = ViewAngle3D.Text,
+                UndoDistance = ViewDist3D.Text,
+                UndoBackground = Background3D.Text,
+                UndoForeground = Foreground3D.Text,
+                UndoUnits = Units3D.SelectedItem.ToString()
+            };
+        }
+
+        /// <summary>
+        /// If needed and lost focus, store historyItem to history list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Param3D_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!checkFocus)
+            {
+                historyItem = null;
+                return;
+            }
+
+            ProjectHisotry3D history = historyItem as ProjectHisotry3D;
+            history.RedoAngle = ViewAngle3D.Text;
+            history.RedoDistance = ViewDist3D.Text;
+            history.RedoBackground = Background3D.Text;
+            history.RedoForeground = Foreground3D.Text;
+            history.RedoUnits = Units3D.SelectedItem.ToString();
+
+            ProjectHolder.HistoryList.AddHistoryItem(history);
+
+            checkFocus = false;
+        }
+
+        /// <summary>
         /// Check every depth layer text box
         /// </summary>
         /// <param name="sender"></param>
@@ -375,8 +498,10 @@ namespace lenticulis_gui
 
             for (int i = 0; i < ProjectHolder.LayerCount; i++)
             {
-                DepthBox_TextChanged((object)LayerDepth.Children[i], null);
+                CheckLayerDepthInput((object)LayerDepth.Children[i]);
             }
+
+            checkFocus = true;
         }
 
         /// <summary>

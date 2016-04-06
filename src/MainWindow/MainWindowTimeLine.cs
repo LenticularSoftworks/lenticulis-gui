@@ -230,7 +230,7 @@ namespace lenticulis_gui
                 history.RemoveLayer = true;
 
                 //store deleted items as history items and save
-                history.StoreAction(deleteItems);
+                history.StoreDeletedItem(deleteItems);
 
                 if (projectHistoryItem != null)
                     projectHistoryItem.StoreDeletedLayer(history);
@@ -268,7 +268,7 @@ namespace lenticulis_gui
             {
                 TimelineItemHistory historyItem = item.GetHistoryItem();
                 historyItem.RemoveAction = true;
-                historyItem.StoreAction();
+                historyItem.StoreRedo();
                 ProjectHolder.HistoryList.AddHistoryItem(historyItem);
             }
 
@@ -371,7 +371,7 @@ namespace lenticulis_gui
                 //add
                 TimelineItemHistory historyItem = newItem.GetHistoryItem();
                 historyItem.AddAction = true;
-                historyItem.StoreAction();
+                historyItem.StoreRedo();
                 ProjectHolder.HistoryList.AddHistoryItem(historyItem);
 
                 timelineHistory = null;
@@ -493,6 +493,22 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Sets value to textbox by layerId and current unit selection
+        /// </summary>
+        /// <param name="layerId">layer ID</param>
+        /// <param name="value">value</param>
+        public void ConvertDepthBoxSelection(int layerId, double value)
+        {
+            if (LayerDepth.Children.Count <= layerId)
+                return;
+
+            TextBox tb = LayerDepth.Children[layerId] as TextBox;
+
+            if (tb != null)
+                ConvertDepthBoxSelection(tb, value);
+        }
+
+        /// <summary>
         /// Add timeline header
         /// </summary>
         private void AddTimelineHeader()
@@ -540,7 +556,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Add textbox for depth value
         /// </summary>
-        /// <param name="depthValue">default value</param>
+        /// <param name="depthValue">default value [in]</param>
         /// <param name="position">Position of depth text box</param>
         /// <returns>new depth</returns>
         private double AddDepthBox(double depthValue, int position)
@@ -553,12 +569,28 @@ namespace lenticulis_gui
 
             TextBox depthBox = new TextBox();
             depthBox.Height = rowHeight;
+            LayerDepth.Children.Insert(position, depthBox);
+            depthBox.TextChanged += DepthBox_TextChanged;
+            depthBox.LostFocus += DepthBox_LostFocus;
+            depthBox.GotFocus += DepthBox_GotFocus;
             depthBox.Text = depthValue.ToString();
 
+            ConvertDepthBoxSelection(depthBox, depthValue);
+
+            return depthValue;
+        }
+
+        /// <summary>
+        /// Set text box value by selected unit
+        /// </summary>
+        /// <param name="depthBox">textbox with depth</param>
+        /// <param name="value">value in inches</param>
+        private void ConvertDepthBoxSelection(TextBox depthBox, double value)
+        {
             //convert to actual unit selection
             double foreground;
             double background;
-            double convertedDepth = depthValue;
+            double convertedDepth = value;
             if (Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
             {
                 switch (Units3D.SelectedItem.ToString())
@@ -573,11 +605,6 @@ namespace lenticulis_gui
                 if (UnitsDepth.SelectedItem.Equals("%"))
                     SetDepthText_SelectionChanged(depthBox, foreground, background);
             }
-
-            depthBox.TextChanged += DepthBox_TextChanged;
-            LayerDepth.Children.Insert(position, depthBox);
-
-            return depthValue;
         }
 
         /// <summary>
@@ -1035,7 +1062,7 @@ namespace lenticulis_gui
             capturedTimelineItemContext.SetPosition(capturedTimelineItemContext.GetLayerObject().Layer, 0, ProjectHolder.ImageCount);
 
             //save redo
-            history.StoreAction();
+            history.StoreRedo();
             ProjectHolder.HistoryList.AddHistoryItem(history);
 
             capturedTimelineItemContext = null;
@@ -1082,7 +1109,7 @@ namespace lenticulis_gui
             if (timelineHistory != null && saveHistory)
             {
                 //store to history list
-                timelineHistory.StoreAction();
+                timelineHistory.StoreRedo();
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             }
 

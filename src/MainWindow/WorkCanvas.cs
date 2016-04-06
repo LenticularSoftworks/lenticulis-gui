@@ -516,7 +516,7 @@ namespace lenticulis_gui
             //store history item for redo
             if (saveHistory)
             {
-                historyItem.StoreAction();
+                historyItem.StoreRedo();
                 ProjectHolder.HistoryList.AddHistoryItem(historyItem);
             }
         }

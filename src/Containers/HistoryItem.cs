@@ -19,11 +19,5 @@ namespace lenticulis_gui.src.Containers
         /// Action for redo
         /// </summary>
         public abstract void ApplyRedo();
-
-        /// <summary>
-        /// Return history item memory size
-        /// </summary>
-        /// <returns>memory size</returns>
-        public abstract int ItemSize();
     }
 }

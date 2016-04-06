@@ -36,6 +36,11 @@ namespace lenticulis_gui.src.Containers
         public bool DownLayer { get; set; }
 
         /// <summary>
+        /// Redo depth value
+        /// </summary>
+        public double DepthRedo {get; set;}
+
+        /// <summary>
         /// Set to true when call undo
         /// </summary>
         private bool IsUndo = false;
@@ -71,6 +76,7 @@ namespace lenticulis_gui.src.Containers
                     item.ApplyUndo();
             }
 
+            mw.ConvertDepthBoxSelection(LayerId, LayerDepth);
             IsUndo = true;
         }
 
@@ -86,7 +92,7 @@ namespace lenticulis_gui.src.Containers
 
             //Select operation
             if (AddLayer)
-                mw.AddTimelineLayer(1, false, true, LayerDepth);
+                mw.AddTimelineLayer(1, false, true, LayerDepth); //adding and removing layer doesnt change depth
             else if (UpLayer)
                 mw.LayerUp(LayerId);
             else if (DownLayer)
@@ -100,6 +106,7 @@ namespace lenticulis_gui.src.Containers
                 mw.RemoveLastLayer(false, null);
             }
 
+            mw.ConvertDepthBoxSelection(LayerId, DepthRedo);
             IsUndo = false;
         }
 
@@ -107,7 +114,7 @@ namespace lenticulis_gui.src.Containers
         /// Store TimelineitemHistory items to re-add last layer
         /// </summary>
         /// <param name="deletedItems"></param>
-        public void StoreAction(List<TimelineItem> deletedItems)
+        public void StoreDeletedItem(List<TimelineItem> deletedItems)
         {
             deletedList = new List<TimelineItemHistory>();
 
