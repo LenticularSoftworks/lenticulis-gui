@@ -127,5 +127,19 @@ namespace lenticulis_gui.src.Containers
                 deletedList.Insert(0, history);
             }
         }
+
+        /// <summary>
+        /// If stored action was remove layer call dispose to every
+        /// TimelineHistoryItem object to unload image from storage
+        /// </summary>
+        public void Dispose()
+        {
+            if (RemoveLayer && deletedList != null)
+            {
+                foreach (var item in deletedList) {
+                    item.Dispose();
+                }
+            }
+        }
     }
 }

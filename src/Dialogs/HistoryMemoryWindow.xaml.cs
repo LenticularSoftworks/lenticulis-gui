@@ -24,7 +24,7 @@ namespace lenticulis_gui.src.Dialogs
         {
             InitializeComponent();
 
-            MemoryTextBox.Value = HistoryList.HistoryListSize;
+            MemoryTextBox.Value = HistoryList.MemorySize;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace lenticulis_gui.src.Dialogs
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //numeric updown control - parsing isnt necessary
-            HistoryList.HistoryListSize = (int)MemoryTextBox.Value;
+            HistoryList.MemorySize = (int)MemoryTextBox.Value;
 
             this.Close();
         }

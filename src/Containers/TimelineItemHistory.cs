@@ -80,6 +80,13 @@ namespace lenticulis_gui.src.Containers
             }
         }
 
-        //TODO dispose, unload Image if RemoveAction
+        /// <summary>
+        /// Unload image from storage if current action is RemoveImage
+        /// </summary>
+        public void Dispose()
+        {
+            if(RemoveAction)
+                Instance.GetLayerObject().unloadImage();
+        }
     }
 }

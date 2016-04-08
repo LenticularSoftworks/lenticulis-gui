@@ -64,7 +64,7 @@ namespace lenticulis_gui
             this.canvas.Children.Add(this);
 
             this.mouseHitRectangle = new Rectangle();
-            //TODO temp color - for debugging
+
             mouseHitRectangle.Fill = new SolidColorBrush(Colors.Red);
             mouseHitRectangle.Opacity = 0.5;
             mouseHitRectangle.Stretch = Stretch.Fill;

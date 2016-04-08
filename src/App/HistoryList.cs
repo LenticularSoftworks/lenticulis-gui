@@ -20,24 +20,30 @@ namespace lenticulis_gui.src.App
         private int historyListPointer;
 
         /// <summary>
-        /// Initial max history list size
+        /// Initial max process memory usage
         /// </summary>
-        private const int initSize = 4;
+        private const int initSize = 350;
 
-        private static int historyListSize;
         /// <summary>
-        /// Max size of history list
+        /// Minimum of history list items
         /// </summary>
-        public static int HistoryListSize
+        private const int minHistoryListSize = 10;
+
+        private static long memorySize;
+        /// <summary>
+        /// Max memory usage of process i MB. Used to 
+        /// reduce memory usage by removing history list items
+        /// </summary>
+        public static long MemorySize
         {
             get
             {
-                return HistoryList.historyListSize;
+                return HistoryList.memorySize;
             }
             set
             {
                 if (value > 0)
-                    historyListSize = value;
+                    memorySize = value;
             }
         }
 
@@ -48,7 +54,7 @@ namespace lenticulis_gui.src.App
         {
             historyList = new List<HistoryItem>();
             historyListPointer = -1;
-            HistoryListSize = initSize;
+            MemorySize = initSize;
         }
 
         /// <summary>
@@ -58,12 +64,12 @@ namespace lenticulis_gui.src.App
         public void AddHistoryItem(HistoryItem item)
         {
             int index = historyList.Count - 1;
+
+            //remove all items above history pointer
             while (index != historyListPointer)
             {
-                historyList.RemoveAt(index);
+                DisposeHistoryItem(index);
                 index--;
-
-                Debug.WriteLine("removing");
             }
 
             historyList.Add(item);
@@ -110,18 +116,43 @@ namespace lenticulis_gui.src.App
         }
 
         /// <summary>
-        /// Check history list memory size and free if needed
+        /// Check process memory usage and remove history items if memory
+        /// is more than defined value
         /// </summary>
         private void FreeHistoryList()
         {
-            //less or equal = ok, else remove first n items
-            while (historyList.Count > historyListSize)
-            {
-                Debug.WriteLine("free");
+            long megaBytes = Process.GetCurrentProcess().WorkingSet64 / 1000000;
 
-                historyList.RemoveAt(0);
+            //remove first N items to reduce  memory
+            //if historyList count is more than minimum and memory more than maximum memory value, remove items
+            while (megaBytes > memorySize && historyList.Count > minHistoryListSize)
+            {
+                DisposeHistoryItem(0);
                 historyListPointer--;
             }
+
+            Debug.WriteLine("{0} | {1}", megaBytes, Process.GetCurrentProcess().WorkingSet64 / 1000000);
+        }
+
+        /// <summary>
+        /// Remove history item from history list.
+        /// </summary>
+        /// <param name="index">Index of item in history list</param>
+        private void DisposeHistoryItem(int index)
+        {
+            HistoryItem item = historyList.ElementAt(index);
+
+            //if is type of timelinehistory call dispose to unload image from storage
+            if (item.GetType() == typeof(TimelineItemHistory))
+            {
+                ((TimelineItemHistory)item).Dispose();
+
+                Debug.WriteLine("unloading image from storage");
+            }
+
+            historyList.RemoveAt(index);
+
+            Debug.WriteLine("free");
         }
     }
 }

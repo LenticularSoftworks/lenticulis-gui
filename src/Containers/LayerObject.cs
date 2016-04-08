@@ -200,6 +200,7 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void unloadImage()
         {
+            dispose();
             Storage.Instance.unloadImage(ResourceId);
         }
 
