@@ -48,11 +48,6 @@ namespace lenticulis_gui
         private Rectangle mouseHitRectangle;
 
         /// <summary>
-        /// Drag started flag
-        /// </summary>
-        private bool buttonDown;
-
-        /// <summary>
         /// Class constructor creates border (bounding box) and adds to canvas.
         /// </summary>
         /// <param name="canvas">Canvas</param>
@@ -68,8 +63,7 @@ namespace lenticulis_gui
             mouseHitRectangle.Fill = new SolidColorBrush(Colors.Red);
             mouseHitRectangle.Opacity = 0.5;
             mouseHitRectangle.Stretch = Stretch.Fill;
-
-            SetListeners();
+            mouseHitRectangle.IsHitTestVisible = false;
 
             InitializeSquares();
         }
@@ -98,22 +92,26 @@ namespace lenticulis_gui
         /// <summary>
         /// Repaint bounding box
         /// </summary>
-        private void Paint()
+        public void Paint()
         {
-            //get bounds size
-            Rect bounds = image.TransformToVisual(canvas).TransformBounds(new Rect(image.RenderSize));
+            TransformGroup transGroup = image.RenderTransform as TransformGroup;
+            ScaleTransform scale = transGroup.Children[0] as ScaleTransform;
+            RotateTransform rotate = transGroup.Children[1] as RotateTransform;
 
             //Set size to box and hit rectangle
-            this.Width = bounds.Width;
-            this.Height = bounds.Height;
+            this.Width = image.Width;
+            this.Height = image.Height;
             mouseHitRectangle.Width = this.Width;
             mouseHitRectangle.Height = this.Height;
 
-            Canvas.SetTop(mouseHitRectangle, bounds.Top);
-            Canvas.SetLeft(mouseHitRectangle, bounds.Left);
+            this.RenderTransform = transGroup;
+            mouseHitRectangle.RenderTransform = transGroup;
 
-            Canvas.SetTop(this, bounds.Top);
-            Canvas.SetLeft(this, bounds.Left);
+            Canvas.SetTop(mouseHitRectangle, Canvas.GetTop(image));
+            Canvas.SetLeft(mouseHitRectangle, Canvas.GetLeft(image));
+
+            Canvas.SetTop(this, Canvas.GetTop(image));
+            Canvas.SetLeft(this, Canvas.GetLeft(image));
 
             RepaintSquarePositions();
         }
@@ -223,104 +221,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Mouse down event for hit test rectangle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mouseHitRectangle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Mouse.Capture(mouseHitRectangle);
-
-            canvas.Image_MouseLeftButtonDown(image, e);
-            buttonDown = true;
-        }
-
-        /// <summary>
-        /// Mouse move event for hit test rectangle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mouseHitRectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (!buttonDown)
-                return;
-
-            canvas.Image_MouseMove(image, e);
-
-            Paint();
-        }
-
-        /// <summary>
-        /// Mouse up event for hit test rectangle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mouseHitRectangle_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Mouse.Capture(null);
-            buttonDown = false;
-            canvas.Image_MouseLeftButtonUp(image, e);
-        }
-
-        /// <summary>
-        /// Sets cursors by selected tool
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ImageCursor_MouseMove(object sender, MouseEventArgs e)
-        {
-            // retrieves mouse position
-            Point mouse = Mouse.GetPosition(mouseHitRectangle);
-
-            // and set cursor according to selected tool
-            switch (MainWindow.SelectedTool)
-            {
-                case TransformType.Translation:
-                    mouseHitRectangle.Cursor = Cursors.SizeAll;
-                    break;
-                case TransformType.Scale:
-                    SetScaleCursor(mouseHitRectangle, mouse);
-                    break;
-                case TransformType.Rotate:
-                    mouseHitRectangle.Cursor = Cursors.Hand;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Removes hit area when right button click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mouseHitRectangle_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            canvas.Children.Remove(mouseHitRectangle);
-            RemoveSquares();
-        }
-
-        /// <summary>
-        /// Sets cusror for scale by cursor position in image
-        /// </summary>
-        /// <param name="rect">image</param>
-        /// <param name="mouse">cursor point</param>
-        private void SetScaleCursor(Rectangle rect, Point mouse)
-        {
-            double tmpWidth = rect.ActualWidth / 3.0;
-            double tmpHeight = rect.ActualHeight / 3.0;
-
-            if (mouse.Y < tmpHeight * 2 && mouse.Y > tmpHeight && (mouse.X < tmpWidth || mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeWE;
-            else if (mouse.X < tmpWidth * 2 && mouse.X > tmpWidth && (mouse.Y < tmpHeight || mouse.Y > tmpHeight * 2))
-                rect.Cursor = Cursors.SizeNS;
-            else if ((mouse.X > tmpWidth * 2 && tmpHeight * 2 > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X < tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNESW;
-            else if ((mouse.X < tmpWidth && tmpHeight > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNWSE;
-            else
-                rect.Cursor = Cursors.Arrow;
-        }
-
-        /// <summary>
         /// Init squares
         /// </summary>
         private void InitializeSquares()
@@ -353,19 +253,6 @@ namespace lenticulis_gui
                 Opacity = 0.5,
                 IsHitTestVisible = false
             };
-        }
-
-        /// <summary>
-        /// Set listeners to mouse hit test rectangle
-        /// </summary>
-        private void SetListeners()
-        {
-            mouseHitRectangle.IsHitTestVisible = true;
-            mouseHitRectangle.MouseLeftButtonDown += mouseHitRectangle_MouseLeftButtonDown;
-            mouseHitRectangle.MouseMove += mouseHitRectangle_MouseMove;
-            mouseHitRectangle.MouseMove += ImageCursor_MouseMove;
-            mouseHitRectangle.MouseLeftButtonUp += mouseHitRectangle_MouseLeftButtonUp;
-            mouseHitRectangle.MouseRightButtonUp += mouseHitRectangle_MouseRightButtonUp;
         }
 
         /// <summary>

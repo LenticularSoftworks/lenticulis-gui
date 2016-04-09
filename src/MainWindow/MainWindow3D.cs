@@ -403,6 +403,8 @@ namespace lenticulis_gui
                 if (value <= foreground && value >= background)
                 {
                     //store value to layer object
+
+                    //TODO index bounds 
                     ProjectHolder.Layers[LayerDepth.Children.IndexOf(tb)].Depth = value / unitToInches;
                     tb.Background = Brushes.White;
                 }
@@ -437,6 +439,7 @@ namespace lenticulis_gui
                 return;
             }
 
+            //TODO remove when focused 
             Layer layer = ProjectHolder.Layers[LayerDepth.Children.IndexOf((TextBox)sender)];
             ((LayerHistory)historyItem).DepthRedo = layer.Depth;
             ProjectHolder.HistoryList.AddHistoryItem(historyItem);

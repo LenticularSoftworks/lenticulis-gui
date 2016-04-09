@@ -297,7 +297,7 @@ namespace lenticulis_gui.src.App
                     resourceId = int.Parse(el.GetAttribute("id"));
 
                     // store object in remapping dictionary to be able to resolve it later
-                    objectResourceMap.Add(id, resourceRemap[resourceId]);
+                    objectResourceMap.Add(id, resourceRemap[resourceId]); //TODO resourceID nesedi
                 }
             }
             catch (Exception)
