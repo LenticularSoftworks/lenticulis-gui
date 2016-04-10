@@ -55,9 +55,7 @@ namespace lenticulis_gui
         {
             this.canvas = (WorkCanvas)canvas;
             this.BorderBrush = CreateBrush();
-
             this.canvas.Children.Add(this);
-
             this.mouseHitRectangle = new Rectangle();
 
             mouseHitRectangle.Fill = new SolidColorBrush(Colors.Red);
@@ -293,7 +291,6 @@ namespace lenticulis_gui
         private void mouseHitRectangle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Mouse.Capture(mouseHitRectangle);
-
             canvas.Image_MouseLeftButtonDown(image, e);
         }
 
@@ -367,15 +364,42 @@ namespace lenticulis_gui
             double tmpHeight = rect.ActualHeight / 3.0;
 
             if (mouse.Y < tmpHeight * 2 && mouse.Y > tmpHeight && (mouse.X < tmpWidth || mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeWE;
+                rect.Cursor = RotateMouseScaleCursor(Cursors.SizeWE);
             else if (mouse.X < tmpWidth * 2 && mouse.X > tmpWidth && (mouse.Y < tmpHeight || mouse.Y > tmpHeight * 2))
-                rect.Cursor = Cursors.SizeNS;
+                rect.Cursor = RotateMouseScaleCursor(Cursors.SizeNS);
             else if ((mouse.X > tmpWidth * 2 && tmpHeight * 2 > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X < tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNESW;
+                rect.Cursor = RotateMouseScaleCursor(Cursors.SizeNESW);
             else if ((mouse.X < tmpWidth && tmpHeight > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNWSE;
+                rect.Cursor = RotateMouseScaleCursor(Cursors.SizeNWSE);
             else
                 rect.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Return rotated scale cursor
+        /// </summary>
+        /// <param name="cursor">Default cursor with zero angle</param>
+        /// <returns>Rotated cursor</returns>
+        private Cursor RotateMouseScaleCursor(Cursor cursor)
+        {
+            List<Cursor> cursors = new List<Cursor>()
+            {
+                Cursors.SizeNWSE,
+                Cursors.SizeNS,
+                Cursors.SizeNESW,
+                Cursors.SizeWE,
+            };
+
+            RotateTransform rotate = ((TransformGroup)image.RenderTransform).Children[1] as RotateTransform;
+            //360 divided to 8 directions  - initial state -22,5 to 22,5 degrees
+            int index = cursors.IndexOf(cursor) + (int)Math.Abs(rotate.Angle + 22.5) / 45;
+            
+            index = index % cursors.Count;
+            
+            if (rotate.Angle > 180)
+                index = cursors.Count - 1 - index;
+
+            return cursors[index];
         }
 
         /// <summary>
