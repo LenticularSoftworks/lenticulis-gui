@@ -29,6 +29,7 @@ namespace lenticulis_gui
         private double scaleStartX, scaleStartY;
         private double initWidth, initHeight;
         private double centerX, centerY;
+        private double initialCapAngle = 0.0;
 
         private ScaleTransform scale = null;
         private RotateTransform rotate = null;
@@ -159,15 +160,14 @@ namespace lenticulis_gui
             if (obj.Length > 1 && imageID != obj.Column)
                 progress = 1.0f / ((float)(imageID - obj.Column) / (float)(obj.Length - 1));
 
-            float imageCenterX = (float)centerX;
-            float imageCenterY = (float)centerY;
-
-            float dx = canvasX - imageCenterX;
-            float dy = canvasY - imageCenterY;
-
             // get initial angle, and enhance it with interpolated transformation value
             initialAngle = (float)rotate.Angle;
             alpha = initialAngle;
+
+            // captured angle
+            double dx = centerX - canvasX;
+            double dy = centerY - canvasY;
+            initialCapAngle = Math.Atan2(dx, dy);
         }
 
         /// <summary>
@@ -181,6 +181,7 @@ namespace lenticulis_gui
 
             Point mouse = Mouse.GetPosition(source);
 
+            //set scale type
             if (mouse.Y < tmpHeight)
             {
                 if (mouse.X < tmpWidth)
@@ -275,12 +276,12 @@ namespace lenticulis_gui
             double y = e.GetPosition(this).Y;
 
             // current angle
-            double dx = x - centerX;
-            double dy = y - centerY;
-            double new_angle = Math.Atan2(dy, dx);
+            double dx = centerX - x;
+            double dy = centerY - y;
+            double new_angle = Math.Atan2(dx, dy);
 
             // alpha is final angle
-            alpha = (float)(new_angle);
+            alpha = (float)(ConvertToRadians(initialAngle) + initialCapAngle - new_angle);
 
             // convert to degrees
             alpha *= 180 / (float)Math.PI;
