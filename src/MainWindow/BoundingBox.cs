@@ -392,7 +392,7 @@ namespace lenticulis_gui
 
             RotateTransform rotate = ((TransformGroup)image.RenderTransform).Children[1] as RotateTransform;
             //360 divided to 8 directions  - initial state -22,5 to 22,5 degrees
-            int index = cursors.IndexOf(cursor) + (int)Math.Abs(rotate.Angle + 22.5) / 45;
+            int index = cursors.IndexOf(cursor) + (int)(Math.Abs(rotate.Angle + 22.5) % 360) / 45;
             
             index = index % cursors.Count;
             
