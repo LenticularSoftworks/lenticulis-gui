@@ -257,8 +257,6 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Image_MouseMoveRotate(object source, MouseEventArgs e)
         {
-            Image img = capturedImage;
-
             double x = e.GetPosition(this).X;
             double y = e.GetPosition(this).Y;
 
@@ -431,8 +429,6 @@ namespace lenticulis_gui
 
             // finish transformation by setting transformations properly interpolated/extrapolated to layerobject itself
             SetLayerObjectProperties(capturedImage);
-
-            bounding.Paint();
 
             saveHistory = false;
 
@@ -676,12 +672,9 @@ namespace lenticulis_gui
                 image.Height = imageHolder.height;
                 image.Stretch = Stretch.Fill;
 
+                // attach listener
                 if (listeners)
-                {
-                    // attach listener
                     image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
-                    image.MouseMove += ImageCursor_MouseMove;
-                }
 
                 // set transformations
                 image = SetTransformations(lo, image);
@@ -782,55 +775,6 @@ namespace lenticulis_gui
         }
 
         /// <summary>
-        /// Sets cursors by selected tool
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ImageCursor_MouseMove(object sender, MouseEventArgs e)
-        {
-            Image image = sender as Image;
-
-            // retrieves mouse position
-            Point mouse = Mouse.GetPosition(image);
-
-            // and set cursor according to selected tool
-            switch (MainWindow.SelectedTool)
-            {
-                case TransformType.Translation:
-                    image.Cursor = Cursors.SizeAll;
-                    break;
-                case TransformType.Scale:
-                    SetScaleCursor(image, mouse);
-                    break;
-                case TransformType.Rotate:
-                    image.Cursor = Cursors.Hand;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Sets cusror for scale by cursor position in image
-        /// </summary>
-        /// <param name="rect">image</param>
-        /// <param name="mouse">cursor point</param>
-        private void SetScaleCursor(Image rect, Point mouse)
-        {
-            double tmpWidth = rect.ActualWidth / 3.0;
-            double tmpHeight = rect.ActualHeight / 3.0;
-
-            if (mouse.Y < tmpHeight * 2 && mouse.Y > tmpHeight && (mouse.X < tmpWidth || mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeWE;
-            else if (mouse.X < tmpWidth * 2 && mouse.X > tmpWidth && (mouse.Y < tmpHeight || mouse.Y > tmpHeight * 2))
-                rect.Cursor = Cursors.SizeNS;
-            else if ((mouse.X > tmpWidth * 2 && tmpHeight * 2 > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X < tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNESW;
-            else if ((mouse.X < tmpWidth && tmpHeight > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X > tmpWidth * 2))
-                rect.Cursor = Cursors.SizeNWSE;
-            else
-                rect.Cursor = Cursors.Arrow;
-        }
-
-        /// <summary>
         /// Add border on canvas
         /// </summary>
         private void CreateBorder()
@@ -889,9 +833,22 @@ namespace lenticulis_gui
             this.Children.Add(right);
         }
 
+        /// <summary>
+        /// Degrees to Radians Conversion
+        /// </summary>
+        /// <param name="angle">Angle - degrees</param>
+        /// <returns>Angle - radians</returns>
         public double ConvertToRadians(double angle)
         {
             return (Math.PI / 180) * angle;
+        }
+
+        /// <summary>
+        /// Removes box from canvas
+        /// </summary>
+        public void HideBox() {
+            if (bounding != null)
+                bounding.HideBox();
         }
     }
 }

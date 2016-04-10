@@ -23,7 +23,7 @@ namespace lenticulis_gui
         private WorkCanvas canvas;
 
         /// <summary>
-        /// Squares in border corners
+        /// Scale diraction sqaures
         /// </summary>
         private Rectangle topLeft, topRight, bottomLeft, bottomRight, top, bottom, left, right;
 
@@ -65,6 +65,9 @@ namespace lenticulis_gui
             mouseHitRectangle.Stretch = Stretch.Fill;
             mouseHitRectangle.IsHitTestVisible = false;
 
+            //listeners to mouse hit layer
+            SetListeners();
+
             InitializeSquares();
         }
 
@@ -98,15 +101,17 @@ namespace lenticulis_gui
             ScaleTransform scale = transGroup.Children[0] as ScaleTransform;
             RotateTransform rotate = transGroup.Children[1] as RotateTransform;
 
-            //Set size to box and hit rectangle
-            this.Width = image.Width;
-            this.Height = image.Height;
+            //Set size by actual scale to box and hit rectangle
+            this.Width = image.Width * scale.ScaleX;
+            this.Height = image.Height * scale.ScaleY;
             mouseHitRectangle.Width = this.Width;
             mouseHitRectangle.Height = this.Height;
 
-            this.RenderTransform = transGroup;
-            mouseHitRectangle.RenderTransform = transGroup;
+            //apply only rotate scale resizec bounding box thickness
+            this.RenderTransform = rotate;
+            mouseHitRectangle.RenderTransform = rotate;
 
+            //place to canvas with new coordinates
             Canvas.SetTop(mouseHitRectangle, Canvas.GetTop(image));
             Canvas.SetLeft(mouseHitRectangle, Canvas.GetLeft(image));
 
@@ -161,33 +166,62 @@ namespace lenticulis_gui
         /// </summary>
         private void RepaintSquarePositions()
         {
-            double borderTop = Canvas.GetTop(this);
+            double borderTop = Canvas.GetTop(this); //TODO remove
             double borderLeft = Canvas.GetLeft(this);
 
+            //get bounds size and center of rotation
+            Rect bounds = image.TransformToVisual(canvas).TransformBounds(new Rect(image.RenderSize));
+            RotateTransform rotate = ((TransformGroup)image.RenderTransform).Children[1] as RotateTransform;
+            double centerX = bounds.Left + bounds.Width / 2.0;
+            double centerY = bounds.Top + bounds.Height / 2.0;
+
+            //center to rectangle corner distance
+            double radius = Math.Sqrt((this.Width / 2.0) * (this.Width / 2.0) + (this.Height / 2.0) * (this.Height / 2.0));
+            //diagonal angle
+            double initAngle = Math.Atan(this.Height / this.Width);
+
+            //corners coordinates
+            double topLeftX = centerX - radius * Math.Cos(initAngle + canvas.ConvertToRadians(rotate.Angle));
+            double topLeftY = centerY - radius * Math.Sin(initAngle + canvas.ConvertToRadians(rotate.Angle));
+            double bottomRightX = centerX + radius * Math.Cos(initAngle + canvas.ConvertToRadians(rotate.Angle));
+            double bottomRightY = centerY + radius * Math.Sin(initAngle + canvas.ConvertToRadians(rotate.Angle));
+            double bottomLeftX = centerX - radius * Math.Cos(initAngle + canvas.ConvertToRadians(-rotate.Angle));
+            double bottomLeftY = centerY + radius * Math.Sin(initAngle + canvas.ConvertToRadians(-rotate.Angle));
+            double topRightX = centerX + radius * Math.Cos(initAngle + canvas.ConvertToRadians(-rotate.Angle));
+            double topRightY = centerY - radius * Math.Sin(initAngle + canvas.ConvertToRadians(-rotate.Angle));
+
             //top left
-            Canvas.SetTop(topLeft, borderTop);
-            Canvas.SetLeft(topLeft, borderLeft);
-            //top
-            Canvas.SetTop(top, borderTop);
-            Canvas.SetLeft(top, borderLeft + this.Width / 2.0 - squareScale * initSquareSize);
-            //top right
-            Canvas.SetTop(topRight, borderTop);
-            Canvas.SetLeft(topRight, borderLeft + this.Width - squareScale * initSquareSize);
-            //left
-            Canvas.SetTop(left, borderTop + this.Height / 2.0 - squareScale * initSquareSize);
-            Canvas.SetLeft(left, borderLeft);
-            //right
-            Canvas.SetTop(right, borderTop + this.Height / 2.0 - squareScale * initSquareSize);
-            Canvas.SetLeft(right, borderLeft + this.Width - squareScale * initSquareSize);
-            //bottom left
-            Canvas.SetTop(bottomLeft, borderTop + this.Height - squareScale * initSquareSize);
-            Canvas.SetLeft(bottomLeft, borderLeft);
-            //bottom
-            Canvas.SetTop(bottom, borderTop + this.Height - squareScale * initSquareSize);
-            Canvas.SetLeft(bottom, borderLeft + this.Width / 2.0 - squareScale * initSquareSize);
+            Canvas.SetTop(topLeft, topLeftY);
+            Canvas.SetLeft(topLeft, topLeftX);
+            topLeft.RenderTransform = new RotateTransform() { Angle = rotate.Angle };
             //bottom right
-            Canvas.SetTop(bottomRight, borderTop + this.Height - squareScale * initSquareSize);
-            Canvas.SetLeft(bottomRight, borderLeft + this.Width - squareScale * initSquareSize);
+            Canvas.SetTop(bottomRight, bottomRightY - squareScale * initSquareSize);
+            Canvas.SetLeft(bottomRight, bottomRightX - squareScale * initSquareSize);
+            bottomRight.RenderTransform = new RotateTransform() { Angle = rotate.Angle, CenterX = squareScale * initSquareSize, CenterY = squareScale * initSquareSize };
+            //top
+            Canvas.SetTop(top, topLeftY + (topRightY - topLeftY) / 2.0);
+            Canvas.SetLeft(top, topLeftX + (topRightX - topLeftX) / 2.0);
+            top.RenderTransform = new RotateTransform() { Angle = rotate.Angle };
+            //top right
+            Canvas.SetTop(topRight, topRightY);
+            Canvas.SetLeft(topRight, topRightX - squareScale * initSquareSize);
+            topRight.RenderTransform = new RotateTransform() { Angle = rotate.Angle, CenterX = squareScale * initSquareSize };
+            //left
+            Canvas.SetTop(left, bottomLeftY - (bottomLeftY - topLeftY) / 2.0);
+            Canvas.SetLeft(left, bottomLeftX - (bottomLeftX - topLeftX) / 2.0);
+            left.RenderTransform = new RotateTransform() { Angle = rotate.Angle };
+            //right
+            Canvas.SetTop(right, bottomRightY - (bottomRightY - topRightY) / 2.0);
+            Canvas.SetLeft(right, bottomRightX - (bottomRightX - topRightX) / 2.0 - squareScale * initSquareSize);
+            right.RenderTransform = new RotateTransform() { Angle = rotate.Angle, CenterX = squareScale * initSquareSize };
+            //bottom left
+            Canvas.SetTop(bottomLeft, bottomLeftY - squareScale * initSquareSize);
+            Canvas.SetLeft(bottomLeft, bottomLeftX);
+            bottomLeft.RenderTransform = new RotateTransform() { Angle = rotate.Angle, CenterY = squareScale * initSquareSize };
+            //bottom
+            Canvas.SetTop(bottom, bottomLeftY - (bottomLeftY - bottomRightY) / 2.0 - squareScale * initSquareSize);
+            Canvas.SetLeft(bottom, bottomLeftX - (bottomLeftX - bottomRightX) / 2.0);
+            bottom.RenderTransform = new RotateTransform() { Angle = rotate.Angle, CenterY = squareScale * initSquareSize };
         }
 
         /// <summary>
@@ -241,18 +275,119 @@ namespace lenticulis_gui
         /// <returns></returns>
         private Rectangle CreateSquare()
         {
-            DoubleCollection dash = new DoubleCollection() { 2 };
-
             return new Rectangle()
             {
                 Width = initSquareSize,
                 Height = initSquareSize,
-                Stroke = Brushes.Black,
-                StrokeDashArray = dash,
                 Fill = Brushes.Yellow,
                 Opacity = 0.5,
                 IsHitTestVisible = false
             };
+        }
+
+        /// <summary>
+        /// Mouse down event for hit test rectangle
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mouseHitRectangle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Mouse.Capture(mouseHitRectangle);
+
+            canvas.Image_MouseLeftButtonDown(image, e);
+        }
+
+        /// <summary>
+        /// Mouse up event for hit test rectangle
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mouseHitRectangle_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            canvas.Image_MouseLeftButtonUp(image, e);
+        }
+
+        /// <summary>
+        /// Removes box by right button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mouseHitRectangle_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            HideBox();
+        }
+
+        /// <summary>
+        /// Removes box
+        /// </summary>
+        public void HideBox()
+        {
+            canvas.Children.Remove(mouseHitRectangle);
+            RemoveSquares();
+            this.Width = 0;
+            this.Height = 0;
+        }
+
+        /// <summary>
+        /// Sets cursors by selected tool
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ImageCursor_MouseMove(object sender, MouseEventArgs e)
+        {
+            Rectangle rect = sender as Rectangle;
+
+            // retrieves mouse position
+            Point mouse = Mouse.GetPosition(rect);
+
+            // and set cursor according to selected tool
+            switch (MainWindow.SelectedTool)
+            {
+                case TransformType.Translation:
+                    rect.Cursor = Cursors.SizeAll;
+                    break;
+                case TransformType.Scale:
+                    SetScaleCursor(rect, mouse);
+                    break;
+                case TransformType.Rotate:
+                    rect.Cursor = Cursors.Hand;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Sets cusror for scale by cursor position in image
+        /// </summary>
+        /// <param name="rect">mouse hit layer</param>
+        /// <param name="mouse">cursor point</param>
+        private void SetScaleCursor(Rectangle rect, Point mouse)
+        {
+            double tmpWidth = rect.ActualWidth / 3.0;
+            double tmpHeight = rect.ActualHeight / 3.0;
+
+            if (mouse.Y < tmpHeight * 2 && mouse.Y > tmpHeight && (mouse.X < tmpWidth || mouse.X > tmpWidth * 2))
+                rect.Cursor = Cursors.SizeWE;
+            else if (mouse.X < tmpWidth * 2 && mouse.X > tmpWidth && (mouse.Y < tmpHeight || mouse.Y > tmpHeight * 2))
+                rect.Cursor = Cursors.SizeNS;
+            else if ((mouse.X > tmpWidth * 2 && tmpHeight * 2 > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X < tmpWidth * 2))
+                rect.Cursor = Cursors.SizeNESW;
+            else if ((mouse.X < tmpWidth && tmpHeight > mouse.Y) || (mouse.Y > tmpHeight * 2 && mouse.X > tmpWidth * 2))
+                rect.Cursor = Cursors.SizeNWSE;
+            else
+                rect.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Set listeners to mouse hit test rectangle
+        /// </summary>
+        private void SetListeners()
+        {
+            mouseHitRectangle.IsHitTestVisible = true;
+            mouseHitRectangle.MouseLeftButtonDown += mouseHitRectangle_MouseLeftButtonDown;
+            mouseHitRectangle.MouseLeftButtonUp += mouseHitRectangle_MouseLeftButtonUp;
+            mouseHitRectangle.MouseRightButtonUp += mouseHitRectangle_MouseRightButtonUp;
+            mouseHitRectangle.MouseMove += ImageCursor_MouseMove;
         }
 
         /// <summary>

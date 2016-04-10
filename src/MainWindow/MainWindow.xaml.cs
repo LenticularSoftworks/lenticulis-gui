@@ -508,6 +508,13 @@ namespace lenticulis_gui
                     Source = Utils.iconResourceToImageSource("Resize")
                 };
             }
+
+            //hide bounding box on escape button event
+            if (e.Key == Key.Escape)
+            {
+                foreach (var canvas in canvasList)
+                    canvas.HideBox();
+            }
         }
 
         /// <summary>
