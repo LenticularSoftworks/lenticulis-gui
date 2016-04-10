@@ -127,6 +127,8 @@ namespace lenticulis_gui.src.Dialogs
             }
 
             LayerObject lobj = sourceItem.GetLayerObject();
+            //save history
+            LayerObjectHistory history = lobj.GetHistoryItem();
 
             // update transformations
             lobj.getTransformation(TransformType.Translation).setVector(transX, transY);
@@ -161,6 +163,10 @@ namespace lenticulis_gui.src.Dialogs
                 if (wc != null)
                     wc.Paint();
             }
+
+            //save undo action to history
+            history.StoreRedo();
+            ProjectHolder.HistoryList.AddHistoryItem(history);
 
             Close();
         }

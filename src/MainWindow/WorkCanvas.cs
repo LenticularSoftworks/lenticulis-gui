@@ -39,7 +39,9 @@ namespace lenticulis_gui
         /// </summary>
         private bool saveHistory = false;
 
-        //scale type
+        /// <summary>
+        /// scale type
+        /// </summary>
         private ScaleType scaleType;
 
         /// <summary>
@@ -51,6 +53,11 @@ namespace lenticulis_gui
         /// Bounding box
         /// </summary>
         private BoundingBox bounding;
+
+        /// <summary>
+        /// Mouse move on / off flag
+        /// </summary>
+        private bool mouseMoveOn = false;
 
         /// <summary>
         /// Cached canvas scale (for zoom in/out)
@@ -214,6 +221,13 @@ namespace lenticulis_gui
             // if there's a captured element, proceed
             if (capturedImage != null)
             {
+                //prevents transformations proceeding and history saving on first click
+                if (!mouseMoveOn)
+                {
+                    mouseMoveOn = true;
+                    return;
+                }
+
                 saveHistory = true;
 
                 switch (MainWindow.SelectedTool)
@@ -431,6 +445,7 @@ namespace lenticulis_gui
             SetLayerObjectProperties(capturedImage);
 
             saveHistory = false;
+            mouseMoveOn = false;
 
             // and restore initial attribute values
             alpha = 0;
