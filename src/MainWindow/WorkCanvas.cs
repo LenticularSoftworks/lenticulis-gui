@@ -306,6 +306,9 @@ namespace lenticulis_gui
             double width = dx * Math.Cos(ConvertToRadians(-alpha)) + dy * Math.Cos(ConvertToRadians(90.0 - alpha));
             double height = dx * Math.Sin(ConvertToRadians(-alpha)) + dy * Math.Sin(ConvertToRadians(90.0 - alpha));
 
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                KeepRatio(ref width, ref height);
+
             //select specific scale method
             if (Keyboard.IsKeyDown(Key.LeftAlt))
                 //transform = Image_CenterScale(img, mouse);
@@ -314,7 +317,7 @@ namespace lenticulis_gui
             {
                 switch (scaleType)
                 {
-                    case ScaleType.BottomRight: Image_BottomRightScale(mouse, width, height, dx, dy); break;
+                    case ScaleType.BottomRight: Image_BottomRightScale(mouse, width, height); break;
                     case ScaleType.BottomLeft:
                         Image_BottomScale(mouse, width, height, dx, dy);
                         Image_LeftScale(mouse, width, height, dx, dy);
@@ -337,12 +340,45 @@ namespace lenticulis_gui
 
         #region Scale methods
 
+        /// <summary>
+        /// Keeps aspect ratio when scaling
+        /// </summary>
+        /// <param name="xScale">x - scale vale</param>
+        /// <param name="yScale">y - scale value</param>
+        private void KeepRatio(ref double width, ref double height)
+        {
+            //get ratio
+            double ratio = initWidth / initHeight;
+
+            if (initWidth > initHeight)
+                height = width / ratio;
+            else
+                width = height * ratio;
+
+            //invert values when TopRight or BottomLeft scaling
+            if (scaleType == ScaleType.TopRight || scaleType == ScaleType.BottomLeft)
+            {
+                if (initWidth > initHeight)
+                    height *= -1;
+                else
+                    width *= -1;
+            }
+        }
+
         private void Image_TopScale(Point mouse, double width, double height, double dx, double dy)
         {
             scaleY = (capturedImage.Height * scaleStartY + height) / capturedImage.Height;
 
             if(scaleY > 0.0)
                 scale.ScaleY = scaleY;
+        }
+
+        private void Image_LeftScale(Point mouse, double width, double height, double dx, double dy)
+        {
+            scaleX = (capturedImage.Width * scaleStartX + width) / capturedImage.Width;
+
+            if (scaleX > 0.0)
+                scale.ScaleX = scaleX;
         }
 
         private void Image_BottomScale(Point mouse, double width, double height, double dx, double dy)
@@ -361,14 +397,6 @@ namespace lenticulis_gui
             scale.ScaleY = scaleY;
         }
 
-        private void Image_LeftScale(Point mouse, double width, double height, double dx, double dy)
-        {
-            scaleX = (capturedImage.Width * scaleStartX + width) / capturedImage.Width;
-
-            if (scaleX > 0.0)
-                scale.ScaleX = scaleX;
-        }
-
         private void Image_RightScale(Point mouse, double width, double height, double dx, double dy)
         {
             scaleX = (capturedImage.Width * scaleStartX - width) / capturedImage.Width;
@@ -385,7 +413,7 @@ namespace lenticulis_gui
             scale.ScaleX = scaleX;
         }
 
-        private void Image_BottomRightScale(Point mouse, double width, double height, double dx, double dy)
+        private void Image_BottomRightScale(Point mouse, double width, double height)
         {
             scaleX = (capturedImage.Width * scaleStartX - width) / capturedImage.Width;
             scaleY = (capturedImage.Height * scaleStartY - height) / capturedImage.Height;
@@ -393,10 +421,12 @@ namespace lenticulis_gui
             if (scaleX <= 0.0 || scaleY <= 0.0)
                 return;
 
-            Canvas.SetLeft(capturedImage, imageX + dx);
-            Canvas.SetTop(capturedImage, imageY + dy);
+            double diffX = height * Math.Sin(ConvertToRadians(-initialAngle)) + width * Math.Cos(ConvertToRadians(initialAngle));
+            double diffY = height * Math.Cos(ConvertToRadians(-initialAngle)) + width * Math.Sin(ConvertToRadians(initialAngle));
 
-            //nova skala
+            Canvas.SetLeft(capturedImage, imageX + diffX);
+            Canvas.SetTop(capturedImage, imageY + diffY);
+
             scale.ScaleX = scaleX;
             scale.ScaleY = scaleY;
         }
