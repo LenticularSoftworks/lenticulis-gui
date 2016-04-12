@@ -44,7 +44,8 @@ namespace lenticulis_gui.src.Containers
             set
             {
                 removeAction = value;
-                inProject = false;
+                if (value == true)
+                    inProject = false;
             }
         }
 
