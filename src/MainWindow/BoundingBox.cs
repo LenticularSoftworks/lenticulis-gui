@@ -35,7 +35,7 @@ namespace lenticulis_gui
         /// <summary>
         /// Initial square size
         /// </summary>
-        private const int initSquareSize = 10;
+        private const int initSquareSize = 7;
 
         /// <summary>
         /// Instance of selected image
@@ -177,9 +177,6 @@ namespace lenticulis_gui
         /// </summary>
         private void RepaintSquarePositions()
         {
-            double borderTop = Canvas.GetTop(this); //TODO remove
-            double borderLeft = Canvas.GetLeft(this);
-
             //get bounds size and center of rotation
             Rect bounds = image.TransformToVisual(canvas).TransformBounds(new Rect(image.RenderSize));
             RotateTransform rotate = ((TransformGroup)image.RenderTransform).Children[1] as RotateTransform;

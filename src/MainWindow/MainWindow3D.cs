@@ -241,6 +241,25 @@ namespace lenticulis_gui
                 Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
         }
 
+        /// <summary>
+        /// Returns Layer instance from project holder by depth TextBox id
+        /// </summary>
+        /// <param name="depthBox">Depth TextBox</param>
+        /// <returns>Layer if exists or null</returns>
+        private Layer GetProjectLayer(TextBox depthBox)
+        {
+            Layer returnLayer = null;
+
+            int layerID = LayerDepth.Children.IndexOf(depthBox);
+            if (layerID == -1) //== -1 when it is not in LayerDepth.Children
+                return null;
+            //if layer exists return its instance
+            if (layerID < ProjectHolder.Layers.Count)
+                returnLayer = ProjectHolder.Layers[layerID];
+
+            return returnLayer;
+        }
+
         #endregion 3D methods
 
         #region 3D listeners
@@ -403,10 +422,12 @@ namespace lenticulis_gui
                 if (value <= foreground && value >= background)
                 {
                     //store value to layer object
-
-                    //TODO index bounds 
-                    ProjectHolder.Layers[LayerDepth.Children.IndexOf(tb)].Depth = value / unitToInches;
-                    tb.Background = Brushes.White;
+                    Layer layer = GetProjectLayer(tb);
+                    if (layer != null)
+                    {
+                        layer.Depth = value / unitToInches;
+                        tb.Background = Brushes.White;
+                    }
                 }
                 else
                     tb.Background = Brushes.Firebrick;
@@ -439,10 +460,12 @@ namespace lenticulis_gui
                 return;
             }
 
-            //TODO remove when focused 
-            Layer layer = ProjectHolder.Layers[LayerDepth.Children.IndexOf((TextBox)sender)];
-            ((LayerHistory)historyItem).DepthRedo = layer.Depth;
-            ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+            Layer layer = GetProjectLayer((TextBox)sender);
+            if (layer != null)
+            {
+                ((LayerHistory)historyItem).DepthRedo = layer.Depth;
+                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+            }
 
             checkFocus = false;
         }

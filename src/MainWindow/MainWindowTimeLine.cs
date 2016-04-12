@@ -346,8 +346,8 @@ namespace lenticulis_gui
         /// <param name="setListeners">if true set listeners to new item</param>
         public void AddTimelineItem(TimelineItem newItem, bool setListeners, bool setHistory)
         {
-            //TODO if !contains?
-            timelineList.Add(newItem);
+            if(!timelineList.Contains(newItem))
+                timelineList.Add(newItem);
 
             if (setListeners)
             {
