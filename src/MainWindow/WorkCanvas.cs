@@ -46,6 +46,11 @@ namespace lenticulis_gui
         private ScaleType scaleType;
 
         /// <summary>
+        /// Scale type for center scale
+        /// </summary>
+        private ScaleType centerScaleType;
+
+        /// <summary>
         /// Captured element of transformation in progress
         /// </summary>
         private Image capturedImage = null;
@@ -207,6 +212,19 @@ namespace lenticulis_gui
                 else
                     scaleType = ScaleType.Left;
             }
+
+            tmpWidth = capturedImage.ActualWidth / 2.0;
+            tmpHeight = capturedImage.ActualHeight / 2.0;
+
+            //center scale type
+            if (mouse.X < tmpWidth && mouse.Y < tmpHeight)
+                centerScaleType = ScaleType.BottomRight;
+            else if (mouse.X < tmpWidth && mouse.Y > tmpHeight)
+                centerScaleType = ScaleType.TopRight;
+            else if (mouse.X > tmpWidth && mouse.Y > tmpHeight)
+                centerScaleType = ScaleType.TopLeft;
+            else if (mouse.X > tmpWidth && mouse.Y < tmpHeight)
+                centerScaleType = ScaleType.BottomLeft;
         }
 
         /// <summary>
@@ -300,6 +318,12 @@ namespace lenticulis_gui
         {
             Point mouse = Mouse.GetPosition(this);
 
+            if (Keyboard.IsKeyDown(Key.LeftAlt))
+            {
+                Image_CenterScale(mouse);
+                return;
+            }
+
             var dx = mouse.X - canvasX;
             var dy = mouse.Y - canvasY;
 
@@ -316,31 +340,25 @@ namespace lenticulis_gui
             }
 
             //select specific scale method
-            if (Keyboard.IsKeyDown(Key.LeftAlt))
-                //transform = Image_CenterScale(img, mouse);
-                ;
-            else
+            switch (scaleType)
             {
-                switch (scaleType)
-                {
-                    case ScaleType.BottomRight: Image_BottomRightScale(mouse, width, height); break;
-                    case ScaleType.BottomLeft:
-                        Image_BottomScale(mouse, width, height, dx, dy);
-                        Image_LeftScale(mouse, width, height, dx, dy);
-                        break;
-                    case ScaleType.Bottom: Image_BottomScale(mouse, width, height, dx, dy); break;
-                    case ScaleType.TopRight:
-                        Image_TopScale(mouse, width, height, dy, dy);
-                        Image_RightScale(mouse, width, height, dx, dy); break;
-                    case ScaleType.TopLeft:
-                        Image_TopScale(mouse, width, height, dy, dy);
-                        Image_LeftScale(mouse, width, height, dx, dy); break;
-                    case ScaleType.Top: Image_TopScale(mouse, width, height, dy, dy); break;
-                    case ScaleType.Right: Image_RightScale(mouse, width, height, dx, dy); break;
-                    case ScaleType.Left: Image_LeftScale(mouse, width, height, dx, dy); break;
-                    default: Image_TopScale(mouse, width, height, dy, dy);
-                        Image_LeftScale(mouse, width, height, dx, dy); break;
-                }
+                case ScaleType.BottomRight: Image_BottomRightScale(mouse, width, height); break;
+                case ScaleType.BottomLeft:
+                    Image_BottomScale(mouse, width, height);
+                    Image_LeftScale(mouse, width, height);
+                    break;
+                case ScaleType.Bottom: Image_BottomScale(mouse, width, height); break;
+                case ScaleType.TopRight:
+                    Image_TopScale(mouse, width, height);
+                    Image_RightScale(mouse, width, height); break;
+                case ScaleType.TopLeft:
+                    Image_TopScale(mouse, width, height);
+                    Image_LeftScale(mouse, width, height); break;
+                case ScaleType.Top: Image_TopScale(mouse, width, height); break;
+                case ScaleType.Right: Image_RightScale(mouse, width, height); break;
+                case ScaleType.Left: Image_LeftScale(mouse, width, height); break;
+                default: Image_TopScale(mouse, width, height);
+                    Image_LeftScale(mouse, width, height); break;
             }
         }
 
@@ -360,7 +378,7 @@ namespace lenticulis_gui
                 width = height * ratio;
 
             //invert values when TopRight or BottomLeft scaling
-            if (scaleType == ScaleType.TopRight || scaleType == ScaleType.BottomLeft)
+            if (centerScaleType == ScaleType.TopRight || centerScaleType == ScaleType.BottomLeft)
             {
                 if (initWidth > initHeight)
                     height *= -1;
@@ -369,15 +387,15 @@ namespace lenticulis_gui
             }
         }
 
-        private void Image_TopScale(Point mouse, double width, double height, double dx, double dy)
+        private void Image_TopScale(Point mouse, double width, double height)
         {
             scaleY = (capturedImage.Height * scaleStartY + height) / capturedImage.Height;
 
-            if(scaleY > 0.0)
+            if (scaleY > 0.0)
                 scale.ScaleY = scaleY;
         }
 
-        private void Image_LeftScale(Point mouse, double width, double height, double dx, double dy)
+        private void Image_LeftScale(Point mouse, double width, double height)
         {
             scaleX = (capturedImage.Width * scaleStartX + width) / capturedImage.Width;
 
@@ -385,7 +403,7 @@ namespace lenticulis_gui
                 scale.ScaleX = scaleX;
         }
 
-        private void Image_BottomScale(Point mouse, double width, double height, double dx, double dy)
+        private void Image_BottomScale(Point mouse, double width, double height)
         {
             scaleY = (capturedImage.Height * scaleStartY - height) / capturedImage.Height;
 
@@ -401,7 +419,7 @@ namespace lenticulis_gui
             scale.ScaleY = scaleY;
         }
 
-        private void Image_RightScale(Point mouse, double width, double height, double dx, double dy)
+        private void Image_RightScale(Point mouse, double width, double height)
         {
             scaleX = (capturedImage.Width * scaleStartX - width) / capturedImage.Width;
 
@@ -433,6 +451,83 @@ namespace lenticulis_gui
 
             scale.ScaleX = scaleX;
             scale.ScaleY = scaleY;
+        }
+
+        private void Image_CenterScale(Point mouse)
+        {
+            if (centerScaleType == ScaleType.BottomRight || centerScaleType == ScaleType.TopLeft)
+                Image_CenterScaleBottomRight(mouse);
+
+            if (centerScaleType == ScaleType.TopRight || centerScaleType == ScaleType.BottomLeft)
+                Image_CenterScaleTopRight(mouse);
+        }
+
+        private void Image_CenterScaleBottomRight(Point mouse)
+        {
+            var dx = mouse.X - canvasX;
+            var dy = mouse.Y - canvasY;
+
+            if (scaleType == ScaleType.TopLeft)
+            {
+                dx *= -1;
+                dy *= -1;
+            }
+
+            double width = dx * Math.Cos(ConvertToRadians(-alpha)) + dy * Math.Cos(ConvertToRadians(90.0 - alpha));
+            double height = dx * Math.Sin(ConvertToRadians(-alpha)) + dy * Math.Sin(ConvertToRadians(90.0 - alpha));
+
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                KeepRatio(ref width, ref height);
+
+            scaleX = (capturedImage.Width * scaleStartX - width * 2) / capturedImage.Width;
+            scaleY = (capturedImage.Height * scaleStartY - height * 2) / capturedImage.Height;
+
+            if (scaleX <= 0.0 || scaleY <= 0.0)
+                return;
+
+            double diffX = height * Math.Sin(ConvertToRadians(-initialAngle)) + width * Math.Cos(ConvertToRadians(initialAngle));
+            double diffY = height * Math.Cos(ConvertToRadians(-initialAngle)) + width * Math.Sin(ConvertToRadians(initialAngle));
+
+            Canvas.SetLeft(capturedImage, imageX + diffX);
+            Canvas.SetTop(capturedImage, imageY + diffY);
+
+            scale.ScaleX = scaleX;
+            scale.ScaleY = scaleY;
+        }
+
+        private void Image_CenterScaleTopRight(Point mouse)
+        {
+            var dx = 2 * (mouse.X - canvasX);
+            var dy = 2 * (mouse.Y - canvasY);
+
+            if (scaleType == ScaleType.BottomLeft)
+            {
+                dx *= -1;
+                dy *= -1;
+            }
+
+            double width = dx * Math.Cos(ConvertToRadians(-initialAngle)) + dy * Math.Cos(ConvertToRadians(90.0 - initialAngle));
+            double height = dx * Math.Sin(ConvertToRadians(-initialAngle)) + dy * Math.Sin(ConvertToRadians(90.0 - initialAngle));
+
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+                KeepRatio(ref width, ref height);
+
+            //top
+            scaleY = (capturedImage.Height * scaleStartY + height) / capturedImage.Height;
+            //right
+            scaleX = (capturedImage.Width * scaleStartX - width) / capturedImage.Width;
+
+            if (scaleX <= 0.0 || scaleY <= 0.0)
+                return;
+
+            scale.ScaleX = scaleX;
+            scale.ScaleY = scaleY;
+
+            double diffX = width * Math.Cos(ConvertToRadians(initialAngle)) - height * Math.Sin(ConvertToRadians(-initialAngle));
+            double diffY = width * Math.Sin(ConvertToRadians(initialAngle)) - height * Math.Cos(ConvertToRadians(-initialAngle));
+
+            Canvas.SetLeft(capturedImage, imageX + diffX / 2.0);
+            Canvas.SetTop(capturedImage, imageY + diffY / 2.0);
         }
 
         #endregion Scale methods
@@ -896,7 +991,8 @@ namespace lenticulis_gui
         /// <summary>
         /// Removes box from canvas
         /// </summary>
-        public void HideBox() {
+        public void HideBox()
+        {
             if (bounding != null)
                 bounding.HideBox();
         }
