@@ -146,13 +146,11 @@ namespace lenticulis_gui.src.App
             if (item.GetType() == typeof(TimelineItemHistory))
             {
                 ((TimelineItemHistory)item).Dispose();
-
-                Debug.WriteLine("unloading image from storage");
             }
 
             historyList.RemoveAt(index);
 
-            Debug.WriteLine("free");
+            Debug.WriteLine("free " + index);
         }
     }
 }

@@ -28,9 +28,25 @@ namespace lenticulis_gui.src.Containers
         public bool AddAction { get; set; }
 
         /// <summary>
+        /// Item is in project flag
+        /// </summary>
+        private bool inProject = true;
+        private bool removeAction;
+        /// <summary>
         /// Timelineitem was removed from timeline
         /// </summary>
-        public bool RemoveAction { get; set; }
+        public bool RemoveAction
+        {
+            get
+            {
+                return removeAction;
+            }
+            set
+            {
+                removeAction = value;
+                inProject = false;
+            }
+        }
 
         /// <summary>
         /// Instance of TimelineItem
@@ -45,9 +61,15 @@ namespace lenticulis_gui.src.Containers
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
 
             if (AddAction)
+            {
                 mw.RemoveTimelineItem(Instance, false);
+                inProject = false;
+            }
             else if (RemoveAction)
+            {
                 mw.AddTimelineItem(Instance, false, false);
+                inProject = true;
+            }
 
             Instance.SetPosition(UndoRow, UndoColumn, UndoLength);
         }
@@ -60,9 +82,15 @@ namespace lenticulis_gui.src.Containers
             MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
 
             if (AddAction)
+            {
                 mw.AddTimelineItem(Instance, false, false);
+                inProject = true;
+            }
             else if (RemoveAction)
+            {
                 mw.RemoveTimelineItem(Instance, false);
+                inProject = false;
+            }
 
             Instance.SetPosition(RedoRow, RedoColumn, RedoLength);
         }
@@ -85,8 +113,11 @@ namespace lenticulis_gui.src.Containers
         /// </summary>
         public void Dispose()
         {
-            if(RemoveAction)
+            if (!inProject)
+            {
                 Instance.GetLayerObject().unloadImage();
+                Debug.WriteLine("---> unloading image from storage " + Instance.Name);
+            }
         }
     }
 }
