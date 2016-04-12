@@ -307,7 +307,13 @@ namespace lenticulis_gui
             double height = dx * Math.Sin(ConvertToRadians(-alpha)) + dy * Math.Sin(ConvertToRadians(90.0 - alpha));
 
             if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                //no possibility to scale and keep ratio in this directions
+                if (scaleType == ScaleType.Top || scaleType == ScaleType.Bottom || scaleType == ScaleType.Left || scaleType == ScaleType.Right)
+                    return;
+
                 KeepRatio(ref width, ref height);
+            }
 
             //select specific scale method
             if (Keyboard.IsKeyDown(Key.LeftAlt))
@@ -347,9 +353,7 @@ namespace lenticulis_gui
         /// <param name="yScale">y - scale value</param>
         private void KeepRatio(ref double width, ref double height)
         {
-            //get ratio
             double ratio = initWidth / initHeight;
-
             if (initWidth > initHeight)
                 height = width / ratio;
             else

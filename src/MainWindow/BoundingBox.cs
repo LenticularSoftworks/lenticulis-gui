@@ -48,6 +48,11 @@ namespace lenticulis_gui
         private Rectangle mouseHitRectangle;
 
         /// <summary>
+        /// List of resize cursors
+        /// </summary>
+        private List<Cursor> cursors;
+
+        /// <summary>
         /// Class constructor creates border (bounding box) and adds to canvas.
         /// </summary>
         /// <param name="canvas">Canvas</param>
@@ -62,6 +67,14 @@ namespace lenticulis_gui
             mouseHitRectangle.Opacity = 0.5;
             mouseHitRectangle.Stretch = Stretch.Fill;
             mouseHitRectangle.IsHitTestVisible = false;
+
+            cursors = new List<Cursor>()
+            {
+                Cursors.SizeNWSE,
+                Cursors.SizeNS,
+                Cursors.SizeNESW,
+                Cursors.SizeWE,
+            };
 
             //listeners to mouse hit layer
             SetListeners();
@@ -382,22 +395,23 @@ namespace lenticulis_gui
         /// <returns>Rotated cursor</returns>
         private Cursor RotateMouseScaleCursor(Cursor cursor)
         {
-            List<Cursor> cursors = new List<Cursor>()
-            {
-                Cursors.SizeNWSE,
-                Cursors.SizeNS,
-                Cursors.SizeNESW,
-                Cursors.SizeWE,
-            };
+            int index = cursors.IndexOf(cursor);
 
             RotateTransform rotate = ((TransformGroup)image.RenderTransform).Children[1] as RotateTransform;
-            //360 divided to 8 directions  - initial state -22,5 to 22,5 degrees
-            int index = cursors.IndexOf(cursor) + (int)(Math.Abs(rotate.Angle + 22.5) % 360) / 45;
+            double angle = rotate.Angle % 360;
+            
+            if (rotate.Angle < 0)
+                angle = 360 + angle;
+
+            //move index by rotate +- 22.5 degrees
+            if ((angle >= 22.5 && angle < 67.5) || (angle >= 202.5 && angle < 247.5))
+                index += 1;
+            else if ((angle >= 67.5 && angle < 112.5) || (angle >= 247.5 && angle < 292.5))
+                index += 2;
+            else if ((angle >= 112.5 && angle < 157.5) || (angle >= 292.5 && angle < 337.5))
+                index += 3;
             
             index = index % cursors.Count;
-            
-            if (rotate.Angle > 180)
-                index = cursors.Count - 1 - index;
 
             return cursors[index];
         }
