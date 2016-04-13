@@ -70,7 +70,6 @@ namespace lenticulis_gui.src.App
             if (!proceedLoad(doc))
             {
                 // something fails - just clean up and return; the error message was shown before
-
                 resourceRemap = null;
                 objectResourceMap = null;
                 return;

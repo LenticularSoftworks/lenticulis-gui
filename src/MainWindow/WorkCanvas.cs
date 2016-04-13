@@ -868,8 +868,6 @@ namespace lenticulis_gui
                 // and retrieve image source for specified size
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
 
-                //TODO loading project error
-
                 // create new image instance
                 Image image = new Image();
 

@@ -220,7 +220,7 @@ namespace lenticulis_gui
             }
 
             ProjectHolder.CleanUp();
-            ProjectHolder.ValidProject = false;
+            Storage.Instance.cleanUp();
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();
         }

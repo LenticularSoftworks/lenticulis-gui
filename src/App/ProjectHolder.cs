@@ -96,6 +96,13 @@ namespace lenticulis_gui.src.App
             if (mw == null)
                 return;
 
+            ValidProject = false;
+            ViewAngle = 0.0;
+            ViewDistance = 0.0;
+            Foreground = 0.0;
+            Background = 0.0;
+            HistoryList = null;
+
             mw.ClearTimeline();
         }
     }

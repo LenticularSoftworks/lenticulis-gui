@@ -334,6 +334,7 @@ namespace lenticulis_gui
             TimelineHeader.Children.Clear();
             LayerDepth.Children.Clear();
             SliderPanel.Children.Clear();
+            timelineList = null;
 
             ProjectHolder.Layers.Clear();
             ProjectHolder.LayerCount = 0;
