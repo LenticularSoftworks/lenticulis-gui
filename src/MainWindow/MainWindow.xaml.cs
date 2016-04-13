@@ -478,7 +478,7 @@ namespace lenticulis_gui
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             //Change resize icon when holding shift
-            if (e.Key == Key.LeftShift && SelectedTool == TransformType.Scale)
+            if (Keyboard.IsKeyDown(Key.LeftShift) && SelectedTool == TransformType.Scale)
             {
                 ScaleButton.Content = new Image
                 {
@@ -501,7 +501,7 @@ namespace lenticulis_gui
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
             //Change back resize icon when holding shift
-            if (e.Key == Key.LeftShift && SelectedTool == TransformType.Scale)
+            if ((e.Key == Key.LeftShift || e.SystemKey == Key.LeftShift) && SelectedTool == TransformType.Scale)
             {
                 ScaleButton.Content = new Image
                 {
