@@ -14,6 +14,7 @@ using lenticulis_gui.src.SupportLib;
 using lenticulis_gui.src.Dialogs;
 using System.Windows.Controls.Primitives;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace lenticulis_gui
 {
@@ -73,6 +74,8 @@ namespace lenticulis_gui
                 });
                 LangChooserItem.Items.Add(mi);
             }
+
+            this.Closing += MainWindow_Closing;
         }
 
         /// <summary>
@@ -205,24 +208,33 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void NewProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ProjectHolder.ValidProject)
-            {
-                MessageBoxResult messageBoxResult = MessageBox.Show(LangProvider.getString("NEW_PROJECT_CONFIRM_TEXT"), LangProvider.getString("NEW_PROJECT_CONFIRM_TITLE"), MessageBoxButton.YesNoCancel);
-
-                if (messageBoxResult == MessageBoxResult.Cancel)
-                    return;
-
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    SaveRoutine();
-                    return;
-                }
-            }
+            if (!ProjectCloseSaveDialog())
+                return;
 
             ProjectHolder.CleanUp();
             Storage.Instance.cleanUp();
             ProjectPropertiesWindow ppw = new ProjectPropertiesWindow();
             ppw.ShowDialog();
+        }
+
+        /// <summary>
+        /// Show save dialog. Returns false if cancel was selected
+        /// </summary>
+        /// <returns>False if cancel selected else true</returns>
+        private bool ProjectCloseSaveDialog()
+        {
+            if (ProjectHolder.ValidProject)
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show(LangProvider.getString("NEW_PROJECT_CONFIRM_TEXT"), LangProvider.getString("NEW_PROJECT_CONFIRM_TITLE"), MessageBoxButton.YesNoCancel);
+
+                if (messageBoxResult == MessageBoxResult.Cancel)
+                    return false;
+
+                if (messageBoxResult == MessageBoxResult.Yes)
+                    SaveRoutine();
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -430,6 +442,15 @@ namespace lenticulis_gui
         private void CloseProgram_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        /// <summary>
+        /// Custom close method. Shows save dialog first
+        /// </summary>
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            if (!ProjectCloseSaveDialog())
+                e.Cancel = true;
         }
 
         /// <summary>
