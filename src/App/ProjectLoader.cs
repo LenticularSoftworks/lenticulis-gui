@@ -293,7 +293,7 @@ namespace lenticulis_gui.src.App
                 foreach (XmlElement el in nl.OfType<XmlElement>())
                 {
                     id = int.Parse(el.GetAttribute("id"));
-                    resourceId = int.Parse(el.GetAttribute("id"));
+                    resourceId = int.Parse(el.GetAttribute("resource-id"));
 
                     // store object in remapping dictionary to be able to resolve it later
                     objectResourceMap.Add(id, resourceRemap[resourceId]); //TODO resourceID nesedi
