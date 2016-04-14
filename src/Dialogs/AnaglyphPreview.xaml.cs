@@ -49,7 +49,7 @@ namespace lenticulis_gui.src.Dialogs
             imageSize = CalculateImageSize();
 
             //add to preview window
-            Image anaglyph = Anaglyph.RenderAnaglyphImage(leftCanvas, rightCanvas, grayScale);
+            Image anaglyph = Anaglyph.GetAnaglyphImage(leftCanvas, rightCanvas, grayScale);
             anaglyph.Width = imageSize.Width;
             anaglyph.Height = imageSize.Height;
             Canvas.SetTop(anaglyph, AnaglyphCanvas.Height / 2.0 - imageSize.Height / 2.0);

@@ -1,13 +1,9 @@
-﻿using lenticulis_gui.src.App;
-using System;
-using System.Diagnostics;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace lenticulis_gui.src.App
 {
@@ -17,112 +13,172 @@ namespace lenticulis_gui.src.App
     public static class Anaglyph
     {
         /// <summary>
+        /// Red channel color matrix
+        /// </summary>
+        private static ColorMatrix redChannelMatrix = new ColorMatrix(new float[][] 
+                                                {
+                                                    new float[]{1, 0, 0, 0, 0},
+                                                    new float[]{0, 0, 0, 0, 0},
+                                                    new float[]{0, 0, 0, 0, 0},
+                                                    new float[]{0, 0, 0, 1, 0},
+                                                    new float[]{0, 0, 0, 0, 1}
+                                                });
+
+        /// <summary>
+        /// Green - Blue channel color matrix
+        /// </summary>
+        private static ColorMatrix cyanChannelMatrix = new ColorMatrix(new float[][] 
+                                                {
+                                                    new float[]{0, 0, 0, 0, 0},
+                                                    new float[]{0, 1, 0, 0, 0},
+                                                    new float[]{0, 0, 1, 0, 0},
+                                                    new float[]{0, 0, 0, 1, 0},
+                                                    new float[]{0, 0, 0, 0, 1}
+                                                });
+
+        /// <summary>
+        /// Gray scale color matrix
+        /// </summary>
+        private static ColorMatrix grayScaleMatrix = new ColorMatrix(new float[][] 
+                                                {
+                                                    new float[] {.34f, .34f, .34f, 0, 0},
+                                                    new float[] {.34f, .34f, .34f, 0, 0},
+                                                    new float[] {.34f, .34f, .34f, 0, 0},
+                                                    new float[] {0, 0, 0, 1, 0},
+                                                    new float[] {0, 0, 0, 0, 1}
+                                                });
+
+        /// <summary>
         /// Create instance of Image class with anaglyph image created from canvases
         /// </summary>
         /// <param name="leftCanvas">Left Canvas</param>
         /// <param name="rightCanvas">Right canvas</param>
         /// <param name="grayScale">Color if false, else grayscale</param>
         /// <returns>Anaglyph Image</returns>
-        public static Image RenderAnaglyphImage(Canvas leftCanvas, Canvas rightCanvas, bool grayScale)
+        public static System.Windows.Controls.Image GetAnaglyphImage(Canvas leftCanvas, Canvas rightCanvas, bool grayScale)
         {
-            System.Drawing.Bitmap bmp = RenderFilteredBitmap(leftCanvas, rightCanvas, grayScale);
+            //render bitmap from canvases
+            Bitmap bmpLeft = RenderBitmapImage(leftCanvas);
+            Bitmap bmpRight = RenderBitmapImage(rightCanvas);
+
+            //apply gray scale matrix if grayScale is true
+            if (grayScale)
+            {
+                ApplyColorFilter(bmpLeft, grayScaleMatrix);
+                ApplyColorFilter(bmpRight, grayScaleMatrix);
+            }
+
+            //apply red channel filter for left and green-blue for right
+            ApplyColorFilter(bmpLeft, redChannelMatrix);
+            ApplyColorFilter(bmpRight, cyanChannelMatrix);
+
+            //create anaglyph by addition of right pixel channels to left
+            AnaglyphFromBitmaps(bmpLeft, bmpRight);
 
             //convert to image source
-            BitmapImage bitmapSource = new BitmapImage();
+            System.Windows.Media.Imaging.BitmapImage bitmapSource = new System.Windows.Media.Imaging.BitmapImage();
             MemoryStream stream = new MemoryStream();
 
-            bmp.Save(stream, ImageFormat.Bmp);
+            bmpLeft.Save(stream, ImageFormat.Bmp);
             stream.Position = 0;
             bitmapSource.BeginInit();
             bitmapSource.StreamSource = stream;
             bitmapSource.EndInit();
 
             //create and return image
-            return new Image() { Source = bitmapSource };
+            return new System.Windows.Controls.Image() { Source = bitmapSource };
         }
 
         /// <summary>
-        /// Renders anaglyph image as bitmap.
+        /// Merge left (red) and right (cyan) bitmap images to left bitmap by 
+        /// pixel channel additions. Method contains fast pixel acces through unsafe modifier and lockBits.
         /// </summary>
-        /// <param name="leftCanvas">Left canvas</param>
-        /// <param name="rightCanvas">Right canvas</param>
-        /// <param name="grayScale">Color if false, else grayscale</param>
-        /// <returns>Bitmap anaglyph image</returns>
-        private static System.Drawing.Bitmap RenderFilteredBitmap(Canvas leftCanvas, Canvas rightCanvas, bool grayScale)
+        /// <param name="left">left image (red)</param>
+        /// <param name="right">right image (green + blue)</param>
+        private static void AnaglyphFromBitmaps(Bitmap left, Bitmap right)
         {
-            //left and right image as bitmap
-            System.Drawing.Bitmap bmpLeft = RenderBitmapImage(leftCanvas);
-            System.Drawing.Bitmap bmpRight = RenderBitmapImage(rightCanvas);
-
-            if(grayScale) 
+            //unsafe - using pointers for fast access
+            unsafe
             {
-                ConvertToGrayScale(ref bmpLeft);
-                ConvertToGrayScale(ref bmpRight);
-            }
+                //lock bitamps
+                BitmapData leftData = left.LockBits(new Rectangle(0, 0, ProjectHolder.Width, ProjectHolder.Height),
+                   ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-            //anaglyph image
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ProjectHolder.Width, ProjectHolder.Height);
+                BitmapData rightData = right.LockBits(new Rectangle(0, 0, ProjectHolder.Width, ProjectHolder.Height),
+                   ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-            for (int i = 0; i < bmp.Width; i++)
-            {
-                for (int j = 0; j < bmp.Height; j++)
+                //row pointers
+                byte* pixelRowLeft;
+                byte* pixelRowRight;
+
+                //color channel position - each pixel: 3 bytes (R, G, B)
+                int colorPos;
+
+                for (int y = 0; y < leftData.Height; y++)
                 {
-                    //get pixel of right and left image on same position
-                    System.Drawing.Color leftPx = bmpLeft.GetPixel(i, j);
-                    System.Drawing.Color rightPx = bmpRight.GetPixel(i, j);
+                    //actual row positions
+                    //Scan0 returns first bitmap pixel
+                    pixelRowLeft = (byte*)leftData.Scan0 + (y * leftData.Stride);
+                    pixelRowRight = (byte*)rightData.Scan0 + (y * rightData.Stride);
 
-                    //set pixel to anaglyph image with left red channel and right green and blue channels
-                    bmp.SetPixel(i, j, System.Drawing.Color.FromArgb(leftPx.R, rightPx.G, rightPx.B));
+                    for (int x = 0; x < leftData.Width; x++)
+                    {
+                        colorPos = x * 3; //pixel channel step
+
+                        pixelRowLeft[colorPos] += pixelRowRight[colorPos]; //R
+                        pixelRowLeft[colorPos + 1] += pixelRowRight[colorPos + 1]; //G
+                        pixelRowLeft[colorPos + 2] += pixelRowRight[colorPos + 2]; //B
+                    }
                 }
-            }
 
-            return bmp;
+                left.UnlockBits(leftData);
+                right.UnlockBits(rightData);
+            }
         }
 
         /// <summary>
-        /// Convert referenced color bitmap to gray scaly bitmap
+        /// Apply color matrix to bitmap image
         /// </summary>
-        /// <param name="bitmap">Color bitmap</param>
-        private static void ConvertToGrayScale(ref System.Drawing.Bitmap bitmap) 
+        /// <param name="inputCanvasBmp">Bitmap image</param>
+        /// <param name="colorMatrix">Color matrix</param>
+        private static void ApplyColorFilter(Bitmap bmp, ColorMatrix colorMatrix)
         {
-            for (int i = 0; i < bitmap.Width; i++)
+            using (Graphics g = Graphics.FromImage(bmp))
             {
-                for (int j = 0; j < bitmap.Height; j++)
-                {
-                    System.Drawing.Color px = bitmap.GetPixel(i, j);
-                    
-                    //set all channels gray value as avrage value
-                    int gray = (int)((px.R + px.G + px.B) / 3.0);
-                    bitmap.SetPixel(i, j, System.Drawing.Color.FromArgb(gray, gray, gray));
-                }
+                //set color matrix to atributes
+                ImageAttributes imgAtr = new ImageAttributes();
+                imgAtr.SetColorMatrix(colorMatrix);
+
+                // draw image with applied filter 
+                g.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, ProjectHolder.Width, ProjectHolder.Height, GraphicsUnit.Pixel, imgAtr);
             }
         }
 
         /// <summary>
-        /// Render canvas as bitmap and returns as Image instance
+        /// Render canvas as bitmap
         /// </summary>
         /// <param name="canvas">Current canvas</param>
         /// <returns>Rendered bitmap image</returns>
-        private static System.Drawing.Bitmap RenderBitmapImage(Canvas canvas)
+        private static Bitmap RenderBitmapImage(Canvas canvas)
         {
             //create graphics instance from specified handle to a window
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero);
+            Graphics g = Graphics.FromHwnd(IntPtr.Zero);
 
-            Size measureSize = new Size(ProjectHolder.Width, ProjectHolder.Height);
+            System.Windows.Size measureSize = new System.Windows.Size(ProjectHolder.Width, ProjectHolder.Height);
             canvas.Measure(measureSize);
             canvas.Arrange(new Rect(measureSize));
 
             //render bitmap
-            RenderTargetBitmap bmp = new RenderTargetBitmap(ProjectHolder.Width, ProjectHolder.Height, g.DpiX, g.DpiY, PixelFormats.Pbgra32);
+            System.Windows.Media.Imaging.RenderTargetBitmap bmp = new System.Windows.Media.Imaging.RenderTargetBitmap(ProjectHolder.Width, ProjectHolder.Height, g.DpiX, g.DpiY, System.Windows.Media.PixelFormats.Pbgra32);
             bmp.Render(canvas);
 
             //convert to bitmap
             MemoryStream stream = new MemoryStream();
-            BitmapEncoder encoder = new BmpBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bmp));
+            System.Windows.Media.Imaging.BitmapEncoder encoder = new System.Windows.Media.Imaging.BmpBitmapEncoder();
+            encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmp));
             encoder.Save(stream);
 
-            return new System.Drawing.Bitmap(stream);
+            return new Bitmap(stream);
         }
     }
 }
