@@ -105,7 +105,7 @@ namespace lenticulis_gui.src.App
                    ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
                 BitmapData rightData = right.LockBits(new Rectangle(0, 0, ProjectHolder.Width, ProjectHolder.Height),
-                   ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                   ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
                 //row pointers
                 byte* pixelRowLeft;
