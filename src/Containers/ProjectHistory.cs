@@ -1,11 +1,10 @@
 ﻿using lenticulis_gui.src.App;
-using lenticulis_gui.src.Containers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace lenticulis_gui.src.App
+namespace lenticulis_gui.src.Containers
 {
     public class ProjectHistory : HistoryItem
     {
