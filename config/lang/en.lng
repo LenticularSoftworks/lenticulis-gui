@@ -35,7 +35,7 @@ OPEN_FILE=Open
 SAVE_FILE=Save
 CLOSE_APP=Close
 PROJ_PROPS=Project properties
-PROJ_MEM=History memory
+PROJ_MEM=Memory management
 # Úpravy
 EDIT=_Edit
 CHOOSELANG=Program language
@@ -91,7 +91,7 @@ LAYER_DOWN=Layer down
 ## O projektu
 ABOUT_WINDOW_TITLE=About project
 VERSION_TXT=Version
-ABOUT_PRODUCT_TXT=Project Lenticulis was created as semestral work within subject KIV/ZSWI. The team consisted of three computer science students, and two informatics students.
+ABOUT_PRODUCT_TXT=Project Lenticulis 0.6 was created as semestral work within subject KIV/ZSWI. The team consisted of three computer science students, and two informatics students. Lenticulis version 0.7 was created as functional enhancement of Lenticulis 0.6 within bachelor thesis.
 ABOUT_LICENCE_TXT=Application and support library are distributed under GNU GPLv3 licence. Source code is available at:
 TEAM_MEMBERS_TITLE=Team members
 TEAM_LEADER=team leader

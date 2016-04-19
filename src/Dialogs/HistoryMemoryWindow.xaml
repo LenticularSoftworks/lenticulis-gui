@@ -3,7 +3,7 @@
         xmlns:app="clr-namespace:lenticulis_gui.src.App"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="MemoryWindow" Height="100" Width="250">
+        Title="Správa paměti" Height="100" Width="250">
 
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>

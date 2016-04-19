@@ -111,7 +111,7 @@ namespace lenticulis_gui.src.App
                 if (historyListPointer >= 0 && tmpPointer != historyListPointer)
                     historyList.ElementAt(historyListPointer).ApplyRedo();
 
-                Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+                Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer - 1, historyListPointer);
             }
         }
 
@@ -121,7 +121,10 @@ namespace lenticulis_gui.src.App
         /// </summary>
         private void FreeHistoryList()
         {
-            long megaBytes = Process.GetCurrentProcess().WorkingSet64 / 1000000;
+            Process process = Process.GetCurrentProcess();
+
+            process.Refresh();
+            long megaBytes = (long)(process.WorkingSet64 / (1024f * 1024f));
 
             //remove first N items to reduce  memory
             //if historyList count is more than minimum and memory more than maximum memory value, remove items
@@ -131,7 +134,9 @@ namespace lenticulis_gui.src.App
                 historyListPointer--;
             }
 
-            Debug.WriteLine("{0} | {1}", megaBytes, Process.GetCurrentProcess().WorkingSet64 / 1000000);
+            //debug
+            process.Refresh();
+            Debug.WriteLine("{0} | {1}", megaBytes, (long)(process.WorkingSet64 / (1024f * 1024f)));
         }
 
         /// <summary>

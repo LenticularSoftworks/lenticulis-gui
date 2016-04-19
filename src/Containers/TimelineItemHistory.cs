@@ -31,6 +31,7 @@ namespace lenticulis_gui.src.Containers
         /// Item is in project flag
         /// </summary>
         private bool inProject = true;
+
         private bool removeAction;
         /// <summary>
         /// Timelineitem was removed from timeline

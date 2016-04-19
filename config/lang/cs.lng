@@ -35,7 +35,7 @@ OPEN_FILE=Otevřít
 SAVE_FILE=Uložit
 CLOSE_APP=Zavřít
 PROJ_PROPS=Vlastnosti projektu
-PROJ_MEM=Paměť historie
+PROJ_MEM=Správa paměti
 # Úpravy
 EDIT=Úpravy
 CHOOSELANG=Jazyk prostředí
@@ -91,7 +91,7 @@ LAYER_DOWN=Posun vrstvy dolů
 ## O projektu
 ABOUT_WINDOW_TITLE=O projektu
 VERSION_TXT=Verze
-ABOUT_PRODUCT_TXT=Projekt Lenticulus vznikal v rámci předmětu KIV/ZSWI, a to jako semestrální práce třech studentů informatiky a dvou studentů informačních systémů.
+ABOUT_PRODUCT_TXT=Projekt Lenticulus 0.6 vznikal v rámci předmětu KIV/ZSWI, a to jako semestrální práce tří studentů informatiky a dvou studentů informačních systémů. Lenticulis verze 0.7 vznikl rozšířením funkcionality Lenticulis 0.6 v rámci bakalářské práce.
 ABOUT_LICENCE_TXT=Program a jeho podpůrná knihovna jsou distribuovány pod licencí GNU GPLv3. Zdrojové kódy jsou k dispozici na:
 TEAM_MEMBERS_TITLE=Členové týmu
 TEAM_LEADER=vedoucí týmu
