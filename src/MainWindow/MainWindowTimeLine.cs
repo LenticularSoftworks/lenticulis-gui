@@ -852,7 +852,8 @@ namespace lenticulis_gui
                 //create history action
                 timelineHistory = capturedTimelineItem.GetHistoryItem();
 
-                Point mouse = Mouse.GetPosition((UIElement)sender);
+                capturedTimelineItem.CaptureMouse();
+                Point mouse = Mouse.GetPosition(capturedTimelineItem);
 
                 capturedX = mouse.X;
                 capturedY = mouse.Y;
@@ -1114,6 +1115,7 @@ namespace lenticulis_gui
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             }
 
+            capturedTimelineItem.ReleaseMouseCapture();
             saveHistory = false;
             timelineHistory = null;
             capturedTimelineItem = null;
