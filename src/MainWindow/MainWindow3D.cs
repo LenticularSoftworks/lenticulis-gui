@@ -2,7 +2,6 @@
 using lenticulis_gui.src.Containers;
 using lenticulis_gui.src.Dialogs;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -159,6 +158,15 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Reset 3D inputs
+        /// </summary>
+        public void Clear3D()
+        {
+            UnitsDepth.SelectedItem = LengthUnits.@in;
+            Units3D.SelectedItem = LengthUnits.@in;
+        }
+
+        /// <summary>
         /// Set 3D parameters inputs
         /// </summary>
         /// <param name="angle">Angle</param>
@@ -181,6 +189,8 @@ namespace lenticulis_gui
             ViewDist3D.Text = distance;
             Foreground3D.Text = foreground;
             Background3D.Text = background;
+
+            PropertyChanged3D();
         }
 
         /// <summary>
@@ -232,10 +242,10 @@ namespace lenticulis_gui
                 Warning3D.Content = "";
 
                 //save to project holder
-                ProjectHolder.ViewDistance = viewDist;
+                ProjectHolder.ViewDistance = viewDist / unitToInches;
                 ProjectHolder.ViewAngle = viewAngle;
-                ProjectHolder.Foreground = foreground;
-                ProjectHolder.Background = background;
+                ProjectHolder.Foreground = foreground / unitToInches;
+                ProjectHolder.Background = background / unitToInches;
             }
             else
                 Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
@@ -477,7 +487,7 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void Param3D_GotFocus(object sender, RoutedEventArgs e)
         {
-            historyItem = new ProjectHisotry3D()
+            historyItem = new ProjectHistory3D()
             {
                 UndoAngle = ViewAngle3D.Text,
                 UndoDistance = ViewDist3D.Text,
@@ -500,7 +510,7 @@ namespace lenticulis_gui
                 return;
             }
 
-            ProjectHisotry3D history = historyItem as ProjectHisotry3D;
+            ProjectHistory3D history = historyItem as ProjectHistory3D;
             history.RedoAngle = ViewAngle3D.Text;
             history.RedoDistance = ViewDist3D.Text;
             history.RedoBackground = Background3D.Text;

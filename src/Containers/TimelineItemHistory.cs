@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -118,7 +117,7 @@ namespace lenticulis_gui.src.Containers
             if (!inProject)
             {
                 Instance.GetLayerObject().unloadImage();
-                Debug.WriteLine("---> unloading image from storage " + Instance.Name);
+                //Debug.WriteLine("---> unloading image from storage " + Instance.Name);
             }
         }
     }

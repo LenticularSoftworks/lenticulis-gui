@@ -103,8 +103,7 @@ namespace lenticulis_gui.src.App
             {
                 ImageLoader.unloadImage(id);
                 loadedImages.Remove(id);
-            }
-            
+            }     
         }
     }
 }

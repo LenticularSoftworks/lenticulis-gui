@@ -8,7 +8,7 @@ namespace lenticulis_gui.src.Containers
     /// <summary>
     /// History of global 3D settings
     /// </summary>
-    public class ProjectHisotry3D : HistoryItem
+    public class ProjectHistory3D : HistoryItem
     {
         // Undo text values
         public string UndoDistance { get; set; }

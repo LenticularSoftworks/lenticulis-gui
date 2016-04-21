@@ -104,6 +104,7 @@ namespace lenticulis_gui.src.App
             HistoryList = null;
 
             mw.ClearTimeline();
+            mw.Clear3D();
         }
     }
 }
