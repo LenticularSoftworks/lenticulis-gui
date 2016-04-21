@@ -864,6 +864,9 @@ namespace lenticulis_gui
             {
                 // get image holder for current image
                 ImageHolder imageHolder = Storage.Instance.getImageHolder(lo.ResourceId);
+                //if (imageHolder == null)
+                //    continue;
+
                 // and retrieve image source for specified size
                 ImageSource source = imageHolder.getImageForSize(ProjectHolder.Width, ProjectHolder.Height);
 

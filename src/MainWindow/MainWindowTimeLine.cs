@@ -1115,7 +1115,9 @@ namespace lenticulis_gui
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             }
 
-            capturedTimelineItem.ReleaseMouseCapture();
+            if(capturedTimelineItem != null)
+                capturedTimelineItem.ReleaseMouseCapture();
+            
             saveHistory = false;
             timelineHistory = null;
             capturedTimelineItem = null;

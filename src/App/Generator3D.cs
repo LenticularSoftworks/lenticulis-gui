@@ -45,6 +45,9 @@ namespace lenticulis_gui.src.App
                 LayerObject lo = item.GetLayerObject();
 
                 int layer = lo.Layer;
+                if (layer >= ProjectHolder.Layers.Count)
+                    return;
+
                 double depth = ProjectHolder.Layers[layer].Depth;
 
                 //calculates and set disparity of object
