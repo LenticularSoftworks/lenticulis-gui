@@ -470,6 +470,7 @@ namespace lenticulis_gui.src.App
                             ttype = TransformType.Rotate;
                             angle = float.Parse(trel.GetAttribute("angle"));
                             break;
+                        case "translation3d": continue;
                     }
 
                     // default interpolation type is linear, may be something else (not mandatory)

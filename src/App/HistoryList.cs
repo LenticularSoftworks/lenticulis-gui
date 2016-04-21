@@ -22,7 +22,7 @@ namespace lenticulis_gui.src.App
         /// <summary>
         /// Initial max process memory usage
         /// </summary>
-        private const int initSize = 350;
+        private const int initSize = 650;
 
         /// <summary>
         /// Minimum of history list items
