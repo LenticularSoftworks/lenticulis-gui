@@ -956,7 +956,6 @@ namespace lenticulis_gui
             if (!browserItem.Image)
             {
                 MessageBox.Show(LangProvider.getString("UNSUPPORTED_TYPE_MSG"), LangProvider.getString("UNSUPPORTED_TYPE"), MessageBoxButton.OK, MessageBoxImage.Warning);
-
                 return;
             }
 

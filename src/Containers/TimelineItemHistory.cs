@@ -23,14 +23,27 @@ namespace lenticulis_gui.src.Containers
         private int RedoLength { get; set; }
 
         /// <summary>
-        /// Timeline item was added to timeline
-        /// </summary>
-        public bool AddAction { get; set; }
-
-        /// <summary>
         /// Item is in project flag
         /// </summary>
         private bool inProject = true;
+
+        private bool addAction;
+        /// <summary>
+        /// Timeline item was added to timeline
+        /// </summary>
+        public bool AddAction
+        {
+            get
+            {
+                return addAction;
+            }
+            set
+            {
+                addAction = value;
+                if (value == true)
+                    inProject = true;
+            }
+        }
 
         private bool removeAction;
         /// <summary>
@@ -118,7 +131,7 @@ namespace lenticulis_gui.src.Containers
             if (!inProject)
             {
                 Instance.GetLayerObject().unloadImage();
-                Debug.WriteLine("---> unloading image from storage " + Instance.Name);
+                //Debug.WriteLine("---> unloading image from storage " + Instance.Name);
             }
         }
     }

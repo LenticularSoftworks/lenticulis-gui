@@ -71,6 +71,10 @@ COULD_NOT_OPEN=Nelze otevřít
 UNSUPPORTED_TYPE=Nepodporovaný formát
 UNSUPPORTED_TYPE_MSG=Tento formát nelze načíst do projektu
 
+## Plátno
+STORAGE_ERR=Storage error
+STORAGE_ERR_MSG=Unexpected storage error. Could not load image.
+
 ## Timeline
 ADD_LAYER=Přidat vrstvu
 DEL_LAYER=Odebrat vrstvu
