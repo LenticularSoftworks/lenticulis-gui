@@ -78,7 +78,7 @@ namespace lenticulis_gui.src.App
             //check history list size and free memory if needed
             FreeHistoryList();
 
-            //Debug.WriteLine("add {0}", historyListPointer);
+            Debug.WriteLine("add {0}", historyListPointer);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace lenticulis_gui.src.App
 
                 historyListPointer--;
 
-                //Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+                Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
             }
         }
 
@@ -111,7 +111,7 @@ namespace lenticulis_gui.src.App
                 if (historyListPointer >= 0 && tmpPointer != historyListPointer)
                     historyList.ElementAt(historyListPointer).ApplyRedo();
 
-                //Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer - 1, historyListPointer);
+                Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer - 1, historyListPointer);
             }
         }
 
@@ -134,8 +134,8 @@ namespace lenticulis_gui.src.App
                 historyListPointer--;
             }
 
-            //process.Refresh();
-            //Debug.WriteLine("{0} | {1}", megaBytes, (long)(process.WorkingSet64 / (1024f * 1024f)));
+            process.Refresh();
+            Debug.WriteLine("{0} | {1}", megaBytes, (long)(process.WorkingSet64 / (1024f * 1024f)));
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace lenticulis_gui.src.App
 
             historyList.RemoveAt(index);
 
-            //Debug.WriteLine("free " + index);
+            Debug.WriteLine("free " + index);
         }
     }
 }

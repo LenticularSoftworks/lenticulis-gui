@@ -334,6 +334,8 @@ namespace lenticulis_gui
             TimelineHeader.Children.Clear();
             LayerDepth.Children.Clear();
             SliderPanel.Children.Clear();
+            if (timelineList != null)
+                timelineList.Clear();
             timelineList = null;
 
             ProjectHolder.Layers.Clear();
@@ -347,7 +349,7 @@ namespace lenticulis_gui
         /// <param name="setListeners">if true set listeners to new item</param>
         public void AddTimelineItem(TimelineItem newItem, bool setListeners, bool setHistory)
         {
-            if(!timelineList.Contains(newItem))
+            if (!timelineList.Contains(newItem))
                 timelineList.Add(newItem);
 
             if (setListeners)
@@ -1114,9 +1116,9 @@ namespace lenticulis_gui
                 ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
             }
 
-            if(capturedTimelineItem != null)
+            if (capturedTimelineItem != null)
                 capturedTimelineItem.ReleaseMouseCapture();
-            
+
             saveHistory = false;
             timelineHistory = null;
             capturedTimelineItem = null;

@@ -131,7 +131,7 @@ namespace lenticulis_gui.src.Containers
             if (!inProject)
             {
                 Instance.GetLayerObject().unloadImage();
-                //Debug.WriteLine("---> unloading image from storage " + Instance.Name);
+                Debug.WriteLine("---> unloading image from storage " + Instance.Name);
             }
         }
     }
