@@ -643,7 +643,6 @@ namespace lenticulis_gui
                     CenterY = capturedImage.Height * scaleY / 2.0,
                     Angle = alpha
                 };
-
             }
 
             // finish transformation by setting transformations properly interpolated/extrapolated to layerobject itself
@@ -700,8 +699,8 @@ namespace lenticulis_gui
                 transformation = layerObject.getTransformation(TransformType.Translation);
                 if (transformation != null && layerObject.Length > 1 && transformation.TransformX != 0 && transformation.TransformY != 0)
                 {
-                    transformation.setVector(transformation.TransformX - (imageY - layerObject.InitialX),
-                                 transformation.TransformY - (imageX - layerObject.InitialY));
+                    transformation.setVector(transformation.TransformX - (imageX - layerObject.InitialX),
+                                 transformation.TransformY - (imageY - layerObject.InitialY));
                 }
 
                 layerObject.InitialX = imageX;
