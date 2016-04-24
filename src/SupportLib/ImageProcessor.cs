@@ -69,69 +69,65 @@ namespace lenticulis_gui.src.SupportLib
                     w_delta = 0;
                     h_delta = 0;
 
-                    // the next block is applicable only when there are some transformations
-                    if (current.hasTransformations())
+                    // calculate progress on current frame
+                    if (current.Length > 1)
+                        progress = (float)(keyframe - current.Column) / (float)(current.Length - 1);
+                    else
+                        progress = 0.0f;
+
+                    // at first, look for scaling transformation
+                    trans = current.getTransformation(TransformType.Scale);
+                    if (trans != null)
                     {
-                        // calculate progress on current frame
-                        if (current.Length > 1)
-                            progress = (float)(keyframe - current.Column) / (float)(current.Length - 1);
-                        else
-                            progress = 0.0f;
+                        // resize image, if needed, according to progress and transform vector setting
+                        int int_x = (int)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
+                        int int_y = (int)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
 
-                        // at first, look for scaling transformation
-                        trans = current.getTransformation(TransformType.Scale);
-                        if (trans != null)
+                        if (int_x <= 0 || int_y <= 0)
+                            continue;
+
+                        tmp_x = (uint)int_x;
+                        tmp_y = (uint)int_y;
+                        SupportLib.resizeImage(tmp_x, tmp_y);
+
+                        // store final_width/_height so we can then compute the center of bounding box
+                        final_width = (int)tmp_x;
+                        final_height = (int)tmp_y;
+                    }
+
+                    // then for rotation
+                    trans = current.getTransformation(TransformType.Rotate);
+                    if (trans != null)
+                    {
+                        tmp_angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialAngle, current.InitialAngle + trans.TransformAngle);
+                        SupportLib.rotateImage(tmp_angle);
+
+                        // we have to increase final_width/_height to match the dimensions of bounding box
+                        // so we can then place image preciselly on canvas
+                        double w_now = final_width;
+                        double h_now = final_height;
+                        double angle_rad = ((double)tmp_angle) * Math.PI / 180.0;
+                        final_width = (int)Math.Ceiling(w_now * Math.Cos(angle_rad) + h_now * Math.Sin(angle_rad));
+                        final_height = (int)Math.Ceiling(w_now * Math.Sin(angle_rad) + h_now * Math.Cos(angle_rad));
+
+                        // the bounding box also moves a bit from original position
+                        w_delta = (int)((final_width - w_now) / 2);
+                        h_delta = (int)((final_height - h_now) / 2);
+                    }
+
+                    // and finally to translation, because image composition is done with coordinates to use
+                    trans = current.getTransformation(TransformType.Translation);
+                    Transformation trans3D = current.getTransformation(TransformType.Translation3D);
+                    if (trans != null)
+                    {
+                        // we just store coordinates, then we will work a bit with this value, so save it for later use
+                        final_x = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
+                        final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
+
+                        if (trans3D != null)
                         {
-                            // resize image, if needed, according to progress and transform vector setting
-                            int int_x = (int)(resource.width * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleX, current.InitialScaleX + trans.TransformX));
-                            int int_y = (int)(resource.height * Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialScaleY, current.InitialScaleY + trans.TransformY));
-
-                            if (int_x <= 0 || int_y <= 0)
-                                continue;
-
-                            tmp_x = (uint)int_x;
-                            tmp_y = (uint)int_y;
-                            SupportLib.resizeImage(tmp_x, tmp_y);
-
-                            // store final_width/_height so we can then compute the center of bounding box
-                            final_width = (int)tmp_x;
-                            final_height = (int)tmp_y;
-                        }
-
-                        // then for rotation
-                        trans = current.getTransformation(TransformType.Rotate);
-                        if (trans != null)
-                        {
-                            tmp_angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialAngle, current.InitialAngle + trans.TransformAngle);
-                            SupportLib.rotateImage(tmp_angle);
-
-                            // we have to increase final_width/_height to match the dimensions of bounding box
-                            // so we can then place image preciselly on canvas
-                            double w_now = final_width;
-                            double h_now = final_height;
-                            double angle_rad = ((double)tmp_angle) * Math.PI / 180.0;
-                            final_width = (int)Math.Ceiling(w_now * Math.Cos(angle_rad) + h_now * Math.Sin(angle_rad));
-                            final_height = (int)Math.Ceiling(w_now * Math.Sin(angle_rad) + h_now * Math.Cos(angle_rad));
-
-                            // the bounding box also moves a bit from original position
-                            w_delta = (int)((final_width - w_now) / 2);
-                            h_delta = (int)((final_height - h_now) / 2);
-                        }
-
-                        // and finally to translation, because image composition is done with coordinates to use
-                        trans = current.getTransformation(TransformType.Translation);
-                        Transformation trans3D = current.getTransformation(TransformType.Translation3D);
-                        if (trans != null)
-                        {
-                            // we just store coordinates, then we will work a bit with this value, so save it for later use
-                            final_x = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialX, current.InitialX + trans.TransformX);
-                            final_y = (int)Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialY, current.InitialY + trans.TransformY);
-
-                            if (trans3D != null)
-                            {
-                                int final3D_x = (int)Interpolator.interpolateLinearValue(trans3D.Interpolation, progress, current.InitialX, current.InitialX + trans3D.TransformX);
-                                final_x = (int)(final_x + final3D_x - current.InitialX);
-                            }
+                            int final3D_x = (int)Interpolator.interpolateLinearValue(trans3D.Interpolation, progress, current.InitialX, current.InitialX + trans3D.TransformX);
+                            final_x = (int)(final_x + final3D_x - current.InitialX);
                         }
                     }
 
@@ -178,7 +174,7 @@ namespace lenticulis_gui.src.SupportLib
                     // and for every column in layer it occupies, put it into matrix to that position
                     for (int i = lobj.Column; i < lobj.Column + lobj.Length; i++)
                     {
-                        if(i < ProjectHolder.ImageCount)
+                        if (i < ProjectHolder.ImageCount)
                             returnArray[i][lobj.Layer] = lobj;
                     }
                 }
