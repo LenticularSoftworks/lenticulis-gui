@@ -222,10 +222,8 @@
 
                             <ComboBox Name="Units3D" HorizontalAlignment="Left" Width="60" Loaded="Units3D_Loaded" SelectionChanged="Units3D_SelectionChanged" GotFocus="Param3D_GotFocus" LostFocus="Param3D_LostFocus" Grid.Column="1" Grid.Row="5" />
 
-                            <Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Content="{app:LangConverter str=REAL_WIDTH}" />
                             <Label Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" Content="{app:LangConverter str=FRAME_SPACING}" />
 
-                            <Label Name="Width3D" Grid.Column="1" Grid.Row="6" Margin="0,0,0,0" />
                             <Label Name="FrameSpacing3D" Grid.Column="1" Grid.Row="7" Margin="0,0,0,0"/>
                             <Label Name="Warning3D" Foreground="Firebrick" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="8" />
                             

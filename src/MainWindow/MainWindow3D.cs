@@ -66,22 +66,6 @@ namespace lenticulis_gui
         private HistoryItem historyItem = null;
 
         #region 3D methods
-        /// <summary>
-        /// Sets width text in 3D panel
-        /// </summary>
-        private void SetWidthText()
-        {
-            if (ProjectHolder.Width == 0 || ProjectHolder.Dpi == 0)
-            {
-                Width3D.Content = "";
-                return;
-            }
-
-            float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitToInches;
-            realWidth = (int)Math.Round(width * 1000) / 1000.0f;
-
-            Width3D.Content = realWidth + " " + Units3D.SelectedValue;
-        }
 
         /// <summary>
         /// Set recommended foreground and background values: +- 5% of image width
@@ -198,8 +182,6 @@ namespace lenticulis_gui
         /// </summary>
         public void PropertyChanged3D()
         {
-            SetWidthText();
-
             ConvertTextInput(ViewDist3D);
             ConvertTextInput(Background3D);
             ConvertTextInput(Foreground3D);
@@ -408,10 +390,23 @@ namespace lenticulis_gui
             double foreground;
             double background;
 
+            //parse background and foreground first
             if (UnitsDepth.SelectedItem == null || !Panel3D.IsEnabled)
                 return;
-            if (!(Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background)))
+            if (!(Double.TryParse(Foreground3D.Text, out foreground)))
+            {
+                Foreground3D.Background = Brushes.Firebrick;
                 return;
+            }
+
+            if (!Double.TryParse(Background3D.Text, out background))
+            {
+                Background3D.Background = Brushes.Firebrick;
+                return;
+            }
+
+            Foreground3D.Background = Brushes.White;
+            Background3D.Background = Brushes.White;
 
             TextBox tb = sender as TextBox;
 
@@ -442,6 +437,8 @@ namespace lenticulis_gui
                 else
                     tb.Background = Brushes.Firebrick;
             }
+            else
+                tb.Background = Brushes.Firebrick;
 
             Generate3D();
         }
@@ -627,8 +624,6 @@ namespace lenticulis_gui
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
                 UnitsDepth.IsEnabled = true;
-
-                SetWidthText();
                 SetDepthBounds();
 
                 generate = true;
