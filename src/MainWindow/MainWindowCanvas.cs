@@ -149,13 +149,20 @@ namespace lenticulis_gui
         /// </summary>
         /// <param name="scaleX">x scale</param>
         /// <param name="scaleY">y scale</param>
-        public void RescaleLayers(float scaleX, float scaleY)
+        /// <param name="setPosition">set new position by scale</param>
+        public void RescaleLayers(float scaleX, float scaleY, bool setPosition)
         {
             foreach (var item in timelineList)
             {
                 LayerObject lo = item.GetLayerObject();
                 lo.InitialScaleX *= scaleX;
                 lo.InitialScaleY *= scaleY;
+
+                if (setPosition)
+                {
+                    lo.InitialX *= scaleX;
+                    lo.InitialY *= scaleY;
+                }
             }
         }
 

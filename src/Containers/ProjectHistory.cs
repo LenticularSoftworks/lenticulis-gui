@@ -69,7 +69,7 @@ namespace lenticulis_gui.src.Containers
             if (ScaleX != 0 && ScaleY != 0)
             {
                 mw.RefreshCanvasList();
-                mw.RescaleLayers(1 / ScaleX, 1 / ScaleY);
+                mw.RescaleLayers(1 / ScaleX, 1 / ScaleY, true);
 
                 return;
             }
@@ -103,7 +103,7 @@ namespace lenticulis_gui.src.Containers
             if (ScaleX != 0 && ScaleY != 0)
             {
                 mw.RefreshCanvasList();
-                mw.RescaleLayers(ScaleX, ScaleY);
+                mw.RescaleLayers(ScaleX, ScaleY, true);
 
                 return;
             }

@@ -223,7 +223,7 @@ namespace lenticulis_gui.src.Dialogs
                     float newScaleX = (float)width / oldWidth;
                     float newScaleY = (float)height / oldHeight;
 
-                    mw.RescaleLayers(newScaleX, newScaleY);
+                    mw.RescaleLayers(newScaleX, newScaleY, true);
 
                     historyItem.ScaleX = newScaleX;
                     historyItem.ScaleY = newScaleY;
