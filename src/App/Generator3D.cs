@@ -102,7 +102,7 @@ namespace lenticulis_gui.src.App
 
             //set new position for frame seen by right and interpolate other images
             //distance of one object seen by left and right eye should be same in all frames
-            float progress = 1.0f / ((float)(rightEyeImage) / (float)(lo.Length - 1));
+            float progress = 1.0f / ((float)(rightEyeImage - lo.Column) / (float)(lo.Length - 1));
             float transX = Interpolator.interpolateLinearValue(InterpolationType.Linear, progress, lo.InitialX, newRight) - lo.InitialX;
 
             Transformation tr = new Transformation(TransformType.Translation3D, transX, 0.0f, 0);
