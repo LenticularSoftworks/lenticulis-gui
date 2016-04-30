@@ -15,6 +15,16 @@ namespace lenticulis_gui
 {
     public partial class MainWindow
     {
+        /// <summary>
+        /// Canvas #1 in main window
+        /// </summary>
+        WorkCanvas firstCanvas = null;
+
+        /// <summary>
+        /// Canvas #2 in main window
+        /// </summary>
+        WorkCanvas secondCanvas = null;
+
         #region Canvas methods
 
         /// <summary>
@@ -58,6 +68,11 @@ namespace lenticulis_gui
                 CanvasPanel.Children.Clear();
 
                 CanvasPanel.Children.Add(canvas);
+               
+                if (imageID >= 0 && imageID < ProjectHolder.ImageCount)
+                    firstCanvas = canvasList[imageID];
+
+                secondCanvas = null;
             }
         }
 
@@ -94,6 +109,12 @@ namespace lenticulis_gui
                 CanvasPanel.Children.Add(leftCanvas);
                 CanvasPanel.Children.Add(gs);
                 CanvasPanel.Children.Add(rightCanvas);
+
+                if (firstImageID >= 0 && firstImageID < ProjectHolder.ImageCount && secondImageID >= 0 && secondImageID < ProjectHolder.ImageCount)
+                {
+                    firstCanvas = canvasList[firstImageID];
+                    secondCanvas = canvasList[secondImageID];
+                }
             }
         }
 
@@ -105,9 +126,7 @@ namespace lenticulis_gui
         public ScrollViewer GetCanvas(int imageID)
         {
             if (imageID < 0 || imageID >= ProjectHolder.ImageCount)
-            {
                 return null;
-            }
 
             ScrollViewer scViewer = new ScrollViewer();
             scViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
@@ -142,6 +161,21 @@ namespace lenticulis_gui
             {
                 canvasList[i].Paint();
             }
+        }
+
+        /// <summary>
+        /// In dual view mode repaint second canvas
+        /// </summary>
+        /// <param name="callerID">ID of changed canvas</param>
+        public void RepaintSecondCanvas(int callerID) 
+        {
+            if (secondCanvas == null)
+                return;
+
+            if (callerID == canvasList.IndexOf(firstCanvas))
+                secondCanvas.Paint();
+            else if (callerID == canvasList.IndexOf(secondCanvas))
+                firstCanvas.Paint();
         }
 
         /// <summary>

@@ -656,6 +656,10 @@ namespace lenticulis_gui
             scaleX = 1.0;
             scaleY = 1.0;
             capturedImage = null;
+
+            //repaint change
+            MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+            mw.RepaintSecondCanvas(imageID);
         }
 
         /// <summary>
