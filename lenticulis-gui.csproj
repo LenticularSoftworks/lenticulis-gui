@@ -690,6 +690,10 @@
   <ItemGroup>
     <Resource Include="res\icon\Anaglyph_GS.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\icon\Redo_dis.ico" />
+    <Resource Include="res\icon\Undo_dis.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)config\*" "$(TargetDir)"

@@ -166,7 +166,7 @@ namespace lenticulis_gui.src.Dialogs
 
             //save undo action to history
             history.StoreRedo();
-            ProjectHolder.HistoryList.AddHistoryItem(history);
+            mw.AddToHistoryList(history);
 
             Close();
         }

@@ -76,11 +76,37 @@
                         <Image Source="/lenticulis-gui;component/res/icon/Folder.ico" />
                     </Button>
                     <Separator />
-                    <Button ToolTip="{app:LangConverter str=UNDO}" Click="UndoButton_Click">
-                        <Image Source="/lenticulis-gui;component/res/icon/Undo.ico" />
+                    <Button Name="UndoButton" ToolTip="{app:LangConverter str=UNDO}" IsEnabled="False" Click="UndoButton_Click">
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Value="True">
+                                            <Setter Property="Source" Value="/lenticulis-gui;component/res/icon/Undo.ico" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Value="False">
+                                            <Setter Property="Source" Value="/lenticulis-gui;component/res/icon/Undo_dis.ico" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </Button>
-                    <Button ToolTip="{app:LangConverter str=REDO}" Click="RedoButton_Click">
-                        <Image Source="/lenticulis-gui;component/res/icon/Redo.ico" />
+                    <Button Name="RedoButton" ToolTip="{app:LangConverter str=REDO}" IsEnabled="False" Click="RedoButton_Click">
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Value="True">
+                                            <Setter Property="Source" Value="/lenticulis-gui;component/res/icon/Redo.ico" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Value="False">
+                                            <Setter Property="Source" Value="/lenticulis-gui;component/res/icon/Redo_dis.ico" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </Button>
                     <Separator />
                     <Button ToolTip="{app:LangConverter str=ZOOMIN}" Click="ZoomInButton_Clicked">
@@ -100,6 +126,7 @@
                 </ToolBar>
             </ToolBarTray>
 
+            <!-- tools -->
             <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical">
                 <ToolBar>
                     <RadioButton GroupName="ToolSelect" Name="TranslationButton" IsChecked="True"  Style="{x:Null}" ToolTip="{app:LangConverter str=TR_TRANSLATE}" Click="Translation_Checked" Margin="0,0,0,10">
@@ -123,7 +150,7 @@
                     </Button>
                 </ToolBar>
             </ToolBarTray>
-
+            <!-- end tools -->
 
             <Grid>
                 <Grid.ColumnDefinitions>

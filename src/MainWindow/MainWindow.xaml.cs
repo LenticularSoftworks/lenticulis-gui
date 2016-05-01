@@ -461,6 +461,8 @@ namespace lenticulis_gui
         {
             ProjectHolder.HistoryList.Undo();
             RepaintCanvas();
+
+            SetUndoRedoButtons();
         }
 
         /// <summary>
@@ -470,6 +472,37 @@ namespace lenticulis_gui
         {
             ProjectHolder.HistoryList.Redo();
             RepaintCanvas();
+
+            SetUndoRedoButtons();
+        }
+
+        /// <summary>
+        /// Add new item to history list
+        /// </summary>
+        /// <param name="item">History list item</param>
+        public void AddToHistoryList(HistoryItem item) 
+        {
+            ProjectHolder.HistoryList.AddHistoryItem(item);
+
+            SetUndoRedoButtons();
+        }
+
+        /// <summary>
+        /// Disable / enable undo, redo buttons
+        /// </summary>
+        private void SetUndoRedoButtons() 
+        {
+            HistoryList list = ProjectHolder.HistoryList;
+
+            if (list.HistoryListPointer >= 0)
+                UndoButton.IsEnabled = true;
+            else
+                UndoButton.IsEnabled = false;
+
+            if (list.HistoryListPointer < list.HistoryListSize - 1)
+                RedoButton.IsEnabled = true;
+            else
+                RedoButton.IsEnabled = false;
         }
 
         /// <summary>

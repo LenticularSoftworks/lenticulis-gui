@@ -685,7 +685,9 @@ namespace lenticulis_gui
             if (saveHistory)
             {
                 historyItem.StoreRedo();
-                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+
+                MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+                mw.AddToHistoryList(historyItem);
             }
         }
 

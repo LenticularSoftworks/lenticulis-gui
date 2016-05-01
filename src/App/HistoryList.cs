@@ -10,14 +10,25 @@ namespace lenticulis_gui.src.App
     public class HistoryList
     {
         /// <summary>
-        /// Stored actions in linked list for undo redo
+        /// Stored actions in list for undo redo
         /// </summary>
         private List<HistoryItem> historyList;
 
         /// <summary>
         /// Index to historyList
         /// </summary>
-        private int historyListPointer;
+        public int HistoryListPointer { get; private set; }
+
+        /// <summary>
+        /// Public history list size property
+        /// </summary>
+        public int HistoryListSize
+        {
+            get
+            {
+                return historyList.Count;
+            }
+        }
 
         /// <summary>
         /// Initial max process memory usage [MB]
@@ -53,7 +64,7 @@ namespace lenticulis_gui.src.App
         public HistoryList()
         {
             historyList = new List<HistoryItem>();
-            historyListPointer = -1;
+            HistoryListPointer = -1;
             MemorySize = initSize;
         }
 
@@ -66,19 +77,19 @@ namespace lenticulis_gui.src.App
             int index = historyList.Count - 1;
 
             //remove all items above history pointer
-            while (index != historyListPointer)
+            while (index != HistoryListPointer)
             {
                 DisposeHistoryItem(index);
                 index--;
             }
 
             historyList.Add(item);
-            historyListPointer++;
+            HistoryListPointer++;
 
             //check history list size and free memory if needed
             FreeHistoryList();
 
-            Debug.WriteLine("add {0}", historyListPointer);
+            Debug.WriteLine("add {0}", HistoryListPointer);
         }
 
         /// <summary>
@@ -86,14 +97,14 @@ namespace lenticulis_gui.src.App
         /// </summary>
         public void Undo()
         {
-            if (historyListPointer >= 0)
+            if (HistoryListPointer >= 0)
             {
                 if (historyList.Count != 0)
-                    historyList.ElementAt(historyListPointer).ApplyUndo();
+                    historyList.ElementAt(HistoryListPointer).ApplyUndo();
 
-                historyListPointer--;
+                HistoryListPointer--;
 
-                Debug.WriteLine("Undo: {0}, pointer: {1}", historyListPointer + 1, historyListPointer);
+                Debug.WriteLine("Undo: {0}, pointer: {1}", HistoryListPointer + 1, HistoryListPointer);
             }
         }
 
@@ -102,16 +113,16 @@ namespace lenticulis_gui.src.App
         /// </summary>
         public void Redo()
         {
-            if (historyListPointer <= historyList.Count - 1 && historyListPointer >= -1)
+            if (HistoryListPointer <= historyList.Count - 1 && HistoryListPointer >= -1)
             {
-                int tmpPointer = historyListPointer;
+                int tmpPointer = HistoryListPointer;
 
-                if (historyListPointer < historyList.Count - 1)
-                    historyListPointer++;
-                if (historyListPointer >= 0 && tmpPointer != historyListPointer)
-                    historyList.ElementAt(historyListPointer).ApplyRedo();
+                if (HistoryListPointer < historyList.Count - 1)
+                    HistoryListPointer++;
+                if (HistoryListPointer >= 0 && tmpPointer != HistoryListPointer)
+                    historyList.ElementAt(HistoryListPointer).ApplyRedo();
 
-                Debug.WriteLine("Redo: {0}, pointer: {1}", historyListPointer - 1, historyListPointer);
+                Debug.WriteLine("Redo: {0}, pointer: {1}", HistoryListPointer - 1, HistoryListPointer);
             }
         }
 
@@ -131,7 +142,7 @@ namespace lenticulis_gui.src.App
             while (megaBytes > memorySize && historyList.Count > minHistoryListSize)
             {
                 DisposeHistoryItem(0);
-                historyListPointer--;
+                HistoryListPointer--;
             }
 
             process.Refresh();

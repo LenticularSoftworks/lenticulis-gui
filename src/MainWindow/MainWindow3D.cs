@@ -476,7 +476,7 @@ namespace lenticulis_gui
             if (layer != null)
             {
                 ((LayerHistory)historyItem).DepthRedo = layer.Depth;
-                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+                AddToHistoryList(historyItem);
             }
 
             checkFocus = false;
@@ -519,7 +519,7 @@ namespace lenticulis_gui
             history.RedoForeground = Foreground3D.Text;
             history.RedoUnits = Units3D.SelectedItem.ToString();
 
-            ProjectHolder.HistoryList.AddHistoryItem(history);
+            AddToHistoryList(history);
 
             checkFocus = false;
         }

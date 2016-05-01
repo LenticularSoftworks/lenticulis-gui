@@ -171,7 +171,7 @@ namespace lenticulis_gui
                 {
                     LayerHistory history = layer.GetHistoryItem();
                     history.AddLayer = true;
-                    ProjectHolder.HistoryList.AddHistoryItem(history);
+                    AddToHistoryList(history);
                 }
 
                 Generate3D();
@@ -235,7 +235,7 @@ namespace lenticulis_gui
                 if (projectHistoryItem != null)
                     projectHistoryItem.StoreDeletedLayer(history);
                 else if (setHistory)
-                    ProjectHolder.HistoryList.AddHistoryItem(history);
+                    AddToHistoryList(history);
             }
 
             //remove items in timelineList
@@ -269,7 +269,7 @@ namespace lenticulis_gui
                 TimelineItemHistory historyItem = item.GetHistoryItem();
                 historyItem.RemoveAction = true;
                 historyItem.StoreRedo();
-                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+                AddToHistoryList(historyItem);
             }
 
             timelineList.Remove(item);
@@ -375,7 +375,7 @@ namespace lenticulis_gui
                 TimelineItemHistory historyItem = newItem.GetHistoryItem();
                 historyItem.AddAction = true;
                 historyItem.StoreRedo();
-                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+                AddToHistoryList(historyItem);
 
                 timelineHistory = null;
             }
@@ -1018,7 +1018,7 @@ namespace lenticulis_gui
             //store history
             LayerHistory history = (ProjectHolder.Layers[layer]).GetHistoryItem();
             history.DownLayer = true;
-            ProjectHolder.HistoryList.AddHistoryItem(history);
+            AddToHistoryList(history);
         }
 
         /// <summary>
@@ -1041,7 +1041,7 @@ namespace lenticulis_gui
             //store history
             LayerHistory history = (ProjectHolder.Layers[layer]).GetHistoryItem();
             history.UpLayer = true;
-            ProjectHolder.HistoryList.AddHistoryItem(history);
+            AddToHistoryList(history);
         }
 
         /// <summary>
@@ -1066,7 +1066,7 @@ namespace lenticulis_gui
 
             //save redo
             history.StoreRedo();
-            ProjectHolder.HistoryList.AddHistoryItem(history);
+            AddToHistoryList(history);
 
             capturedTimelineItemContext = null;
         }
@@ -1113,7 +1113,7 @@ namespace lenticulis_gui
             {
                 //store to history list
                 timelineHistory.StoreRedo();
-                ProjectHolder.HistoryList.AddHistoryItem(timelineHistory);
+                AddToHistoryList(timelineHistory);
             }
 
             if (capturedTimelineItem != null)

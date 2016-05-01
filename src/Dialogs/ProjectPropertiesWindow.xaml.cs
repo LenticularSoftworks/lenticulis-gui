@@ -230,7 +230,7 @@ namespace lenticulis_gui.src.Dialogs
                 }
 
                 historyItem.SaveRedo();
-                ProjectHolder.HistoryList.AddHistoryItem(historyItem);
+                mw.AddToHistoryList(historyItem);
 
                 mw.RefreshCanvasList();
             }

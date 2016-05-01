@@ -242,6 +242,16 @@ namespace lenticulis_gui.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        public static System.Drawing.Icon Redo_dis {
+            get {
+                object obj = ResourceManager.GetObject("Redo_dis", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         public static System.Drawing.Icon Refresh {
             get {
                 object obj = ResourceManager.GetObject("Refresh", resourceCulture);
@@ -305,6 +315,16 @@ namespace lenticulis_gui.Properties {
         public static System.Drawing.Icon Undo {
             get {
                 object obj = ResourceManager.GetObject("Undo", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon Undo_dis {
+            get {
+                object obj = ResourceManager.GetObject("Undo_dis", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
