@@ -416,9 +416,9 @@ namespace lenticulis_gui.src.Dialogs
                 //set new values
                 PropertiesHeight.Text = heightTmp.ToString();
                 PropertiesWidth.Text = widthTmp.ToString();
-
-                unitSelect = selectedItem.ToString();
             }
+
+            unitSelect = selectedItem.ToString();
         }
 
         /// <summary>

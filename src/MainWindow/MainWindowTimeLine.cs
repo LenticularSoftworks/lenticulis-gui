@@ -598,7 +598,7 @@ namespace lenticulis_gui
             {
                 switch (Units3D.SelectedItem.ToString())
                 {
-                    case "mm": convertedDepth *= cmToInch * 100; break;
+                    case "mm": convertedDepth *= cmToInch * 10; break;
                     case "cm": convertedDepth *= cmToInch; break;
                 }
 
