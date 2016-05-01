@@ -613,22 +613,29 @@ namespace lenticulis_gui
         /// <param name="e"></param>
         private void TD_Checked(object sender, RoutedEventArgs e)
         {
+            Button button3D = sender as Button;
+
             if (!ProjectHolder.ValidProject)
                 return;
 
             if (Panel3D.IsEnabled)
             {
+                //disable
                 Panel3D.IsEnabled = false;
                 LayerDepth.IsEnabled = false;
                 UnitsDepth.IsEnabled = false;
+                button3D.Background = Brushes.Transparent;
 
                 Reset3DTranslation();
             }
             else
             {
+                //enable
                 Panel3D.IsEnabled = true;
                 LayerDepth.IsEnabled = true;
                 UnitsDepth.IsEnabled = true;
+                button3D.Background = Brushes.LightBlue;
+
                 SetDepthBounds();
 
                 generate = true;
