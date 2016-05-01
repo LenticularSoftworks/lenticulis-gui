@@ -26,11 +26,6 @@ namespace lenticulis_gui
         private float unitConvert = 1;
 
         /// <summary>
-        /// Real width of image
-        /// </summary>
-        private float realWidth;
-
-        /// <summary>
         /// Frame disparity spacing
         /// </summary>
         private int frameSpacing = 0;
@@ -72,6 +67,9 @@ namespace lenticulis_gui
         /// </summary>
         private void SetDepthBounds()
         {
+            float width = (ProjectHolder.Width / (float)ProjectHolder.Dpi) * unitToInches;
+            float realWidth = (int)Math.Round(width * 1000) / 1000.0f;
+
             if (realWidth != 0.0f && Foreground3D.Text == "" && Background3D.Text == "")
             {
                 float depthBound = realWidth * depthPercent;
@@ -88,8 +86,8 @@ namespace lenticulis_gui
         private void SetSpacingText()
         {
             //initial
-            double distance = Double.NegativeInfinity;
-            double angle = Double.NegativeInfinity;
+            double distance = Double.MinValue;
+            double angle = Double.MinValue;
 
             if (Double.TryParse(ViewAngle3D.Text, out angle) && Double.TryParse(ViewDist3D.Text, out distance))
             {
@@ -112,6 +110,13 @@ namespace lenticulis_gui
                     ViewAngle3D.Background = Brushes.Firebrick;
                     ViewDist3D.Background = Brushes.Firebrick;
                 }
+            }
+            else
+            {
+                if(ViewAngle3D.Text != "")
+                    ViewAngle3D.Background = Brushes.Firebrick;
+                if(ViewDist3D.Text != "")
+                    ViewDist3D.Background = Brushes.Firebrick;
             }
         }
 
@@ -306,7 +311,7 @@ namespace lenticulis_gui
             if (Units3D.SelectedItem.Equals(LengthUnits.cm))
             {
                 if (units == LengthUnits.mm)
-                    unitConvert /= 100.0f;
+                    unitConvert /= 10.0f;
                 else
                     unitConvert = cmToInch;
 
@@ -318,7 +323,7 @@ namespace lenticulis_gui
                 if (units == LengthUnits.cm)
                     unitConvert = 1 / cmToInch;
                 else
-                    unitConvert = 1 / (cmToInch * 100);
+                    unitConvert = 1 / (cmToInch * 10);
 
                 unitToInches = 1;
                 units = LengthUnits.@in;
@@ -326,11 +331,11 @@ namespace lenticulis_gui
             else
             {
                 if (units == LengthUnits.cm)
-                    unitConvert *= 100.0f;
+                    unitConvert *= 10.0f;
                 else
-                    unitConvert = cmToInch * 100;
+                    unitConvert = cmToInch * 10;
 
-                unitToInches = cmToInch * 100.0f;
+                unitToInches = cmToInch * 10.0f;
                 units = LengthUnits.mm;
             }
 
@@ -556,8 +561,8 @@ namespace lenticulis_gui
             for (int i = 0; i < ProjectHolder.LayerCount; i++)
             {
                 tb = (TextBox)LayerDepth.Children[i];
-
                 SetDepthText_SelectionChanged(tb, foreground, background);
+                CheckLayerDepthInput((object)tb);
             }
         }
 
