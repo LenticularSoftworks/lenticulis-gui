@@ -97,6 +97,15 @@ namespace lenticulis_gui.src.App
                 return;
 
             ValidProject = false;
+            Layers.Clear();
+            ImageCount = 0;
+            LayerCount = 0;
+            Width = 0;
+            Height = 0;
+            ProjectFileName = null;
+            ProjectName = null;
+            Dpi = 0;
+            Lpi = 0;
             ViewAngle = 0.0;
             ViewDistance = 0.0;
             Foreground = 0.0;

@@ -126,6 +126,7 @@ namespace lenticulis_gui
                 {
                     // save project to newly selected file target
                     ProjectSaver.saveProject(dialog.FileName);
+                    ProjectHolder.ProjectFileName = dialog.FileName;
                     return true;
                 }
                 return false;

@@ -34,6 +34,10 @@ namespace lenticulis_gui.src.App
         /// <param name="filename">path to file to be loaded</param>
         public static void loadProject(String filename)
         {
+            // clean up all previously done stuff
+            ProjectHolder.CleanUp();
+            Storage.Instance.cleanUp();
+
             // create stream from file
             FileStream docIn = null;
             try
@@ -59,12 +63,9 @@ namespace lenticulis_gui.src.App
             catch (XmlException)
             {
                 MessageBox.Show(LangProvider.getString("PLE_FILE_FORMAT"), LangProvider.getString("PROJECT_LOAD_ERROR"), MessageBoxButton.OK, MessageBoxImage.Error);
+                docIn.Close();
                 return;
             }
-
-            // clean up all previously done stuff
-            ProjectHolder.CleanUp();
-            Storage.Instance.cleanUp();
 
             // and load project from file
             if (!proceedLoad(doc))
@@ -72,8 +73,11 @@ namespace lenticulis_gui.src.App
                 // something fails - just clean up and return; the error message was shown before
                 resourceRemap = null;
                 objectResourceMap = null;
+                docIn.Close();
                 return;
             }
+
+            docIn.Close();
 
             resourceRemap = null;
             objectResourceMap = null;
