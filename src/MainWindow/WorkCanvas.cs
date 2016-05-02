@@ -827,12 +827,26 @@ namespace lenticulis_gui
         }
 
         /// <summary>
+        /// Clear WorkCanvas
+        /// </summary>
+        public void ClearCanvas()
+        {
+            //umload listeners
+            foreach (UIElement image in this.Children)
+            {
+                image.MouseLeftButtonDown -= Image_MouseLeftButtonDown;
+            }
+
+            // remove all child elements
+            this.Children.Clear();
+        }
+
+        /// <summary>
         /// Paint images on work canvas
         /// </summary>
         public void Paint()
         {
-            // remove all child elements
-            this.Children.Clear();
+            ClearCanvas();
 
             // list of images sorted by layer
             List<LayerObject> images = GetImages();
@@ -886,8 +900,21 @@ namespace lenticulis_gui
                 //if null -> storage err
                 if (imageHolder == null)
                 {
-                    MessageBox.Show(LangProvider.getString("STORAGE_ERR_MSG"), LangProvider.getString("STORAGE_ERR"), MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
+                    int resourceId = 0;
+                    MainWindow mw = System.Windows.Application.Current.MainWindow as MainWindow;
+
+                    //try load image again
+                    if (mw.LoadAndPutResource(lo.ResourcePath, lo.ResourceExt, false, out resourceId))
+                    {
+                        lo.ResourceId = resourceId;
+                        imageHolder = Storage.Instance.getImageHolder(lo.ResourceId);
+                    }
+                    else if(imageHolder == null)
+                    {
+                        //show error message if repeated loading wasnt successfull
+                        MessageBox.Show(LangProvider.getString("STORAGE_ERR_MSG"), LangProvider.getString("STORAGE_ERR"), MessageBoxButton.OK, MessageBoxImage.Error);
+                        continue;
+                    }
                 }
 
                 // and retrieve image source for specified size

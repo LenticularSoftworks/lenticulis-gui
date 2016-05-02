@@ -334,9 +334,22 @@ namespace lenticulis_gui
             TimelineHeader.Children.Clear();
             LayerDepth.Children.Clear();
             SliderPanel.Children.Clear();
+            
             if (timelineList != null)
                 timelineList.Clear();
             timelineList = null;
+
+            if (canvasList != null)
+            {
+                foreach (WorkCanvas c in canvasList)
+                {
+                    c.ClearCanvas();
+                }
+
+                canvasList.Clear();
+                canvasList = null;
+            }
+
 
             ProjectHolder.Layers.Clear();
             ProjectHolder.LayerCount = 0;
@@ -451,9 +464,10 @@ namespace lenticulis_gui
             ProjectHolder.Layers.RemoveAt(layer);
             ProjectHolder.Layers.Insert(layer - 1, tmp);
 
-            RefreshTimelineItemPosition();
-            RepaintCanvas();
+            ConvertDepthBoxSelection(layer, ProjectHolder.Layers[layer].Depth);
+            ConvertDepthBoxSelection(layer - 1, ProjectHolder.Layers[layer - 1].Depth);
 
+            RefreshTimelineItemPosition();
             capturedTimelineItemContext = null;
         }
 
@@ -475,9 +489,10 @@ namespace lenticulis_gui
             ProjectHolder.Layers.RemoveAt(layer + 1);
             ProjectHolder.Layers.Insert(layer, tmp);
 
-            RefreshTimelineItemPosition();
-            RepaintCanvas();
+            ConvertDepthBoxSelection(layer, ProjectHolder.Layers[layer].Depth);
+            ConvertDepthBoxSelection(layer + 1, ProjectHolder.Layers[layer + 1].Depth);
 
+            RefreshTimelineItemPosition();
             capturedTimelineItemContext = null;
         }
 
@@ -509,6 +524,33 @@ namespace lenticulis_gui
 
             if (tb != null)
                 ConvertDepthBoxSelection(tb, value);
+        }
+
+        /// <summary>
+        /// Set text box value by selected unit
+        /// </summary>
+        /// <param name="depthBox">textbox with depth</param>
+        /// <param name="value">value in inches</param>
+        private void ConvertDepthBoxSelection(TextBox depthBox, double value)
+        {
+            //convert to actual unit selection
+            double foreground;
+            double background;
+            double convertedDepth = value;
+            if (Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
+            {
+                switch (Units3D.SelectedItem.ToString())
+                {
+                    case "mm": convertedDepth *= cmToInch * 10; break;
+                    case "cm": convertedDepth *= cmToInch; break;
+                }
+
+                depthBox.Text = convertedDepth.ToString();
+
+                //if % is selected
+                if (UnitsDepth.SelectedItem.Equals("%"))
+                    SetDepthText_SelectionChanged(depthBox, foreground, background);
+            }
         }
 
         /// <summary>
@@ -581,33 +623,6 @@ namespace lenticulis_gui
             ConvertDepthBoxSelection(depthBox, depthValue);
 
             return depthValue;
-        }
-
-        /// <summary>
-        /// Set text box value by selected unit
-        /// </summary>
-        /// <param name="depthBox">textbox with depth</param>
-        /// <param name="value">value in inches</param>
-        private void ConvertDepthBoxSelection(TextBox depthBox, double value)
-        {
-            //convert to actual unit selection
-            double foreground;
-            double background;
-            double convertedDepth = value;
-            if (Double.TryParse(Foreground3D.Text, out foreground) && Double.TryParse(Background3D.Text, out background))
-            {
-                switch (Units3D.SelectedItem.ToString())
-                {
-                    case "mm": convertedDepth *= cmToInch * 10; break;
-                    case "cm": convertedDepth *= cmToInch; break;
-                }
-
-                depthBox.Text = convertedDepth.ToString();
-
-                //if % is selected
-                if (UnitsDepth.SelectedItem.Equals("%"))
-                    SetDepthText_SelectionChanged(depthBox, foreground, background);
-            }
         }
 
         /// <summary>
@@ -979,7 +994,8 @@ namespace lenticulis_gui
             {
                 int resourceId = 0;
                 // load resource and put it into internal structures
-                bool result = LoadAndPutResource(browserItem.Path + (browserItem.Path[browserItem.Path.Length - 1] == '\\' ? "" : "\\") + browserItem.Name, browserItem.Extension, false, out resourceId);
+                string path = browserItem.Path + (browserItem.Path[browserItem.Path.Length - 1] == '\\' ? "" : "\\") + browserItem.Name;
+                bool result = LoadAndPutResource(path, browserItem.Extension, false, out resourceId);
 
                 if (result)
                 {
@@ -988,6 +1004,8 @@ namespace lenticulis_gui
                     //new item into column and row with length 1 and zero coordinates. Real position is set after mouse up event
                     TimelineItem newItem = new TimelineItem(row, column, 1, browserItem.ToString());
                     newItem.GetLayerObject().ResourceId = resourceId;
+                    newItem.GetLayerObject().ResourcePath = path;
+                    newItem.GetLayerObject().ResourceExt = browserItem.Extension;
 
                     AddTimelineItem(newItem, true, true);
                 }

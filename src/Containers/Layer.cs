@@ -91,7 +91,8 @@ namespace lenticulis_gui.src.Containers
                 UpLayer = false,
                 DownLayer = false,
                 AddLayer = false,
-                RemoveLayer = false
+                RemoveLayer = false,
+                DepthChange = false
             };
         }
     }

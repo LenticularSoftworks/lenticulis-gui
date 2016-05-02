@@ -223,9 +223,6 @@ namespace lenticulis_gui
                 //set new positions
                 Generator3D.Generate3D(viewDist / unitToInches, viewAngle, ProjectHolder.ImageCount, ProjectHolder.Width, ProjectHolder.Dpi, timelineList);
 
-                //repaint result
-                RepaintCanvas();
-
                 Warning3D.Content = "";
 
                 //save to project holder
@@ -236,6 +233,9 @@ namespace lenticulis_gui
             }
             else
                 Warning3D.Content = LangProvider.getString("INVALID_3D_PARAMETERS");
+
+            //repaint result
+            RepaintCanvas();
         }
 
         /// <summary>
@@ -475,7 +475,9 @@ namespace lenticulis_gui
             Layer layer = GetProjectLayer((TextBox)sender);
             if (layer != null)
             {
-                ((LayerHistory)historyItem).DepthRedo = layer.Depth;
+                LayerHistory layerHist = (LayerHistory)historyItem;
+                layerHist.DepthRedo = layer.Depth;
+                layerHist.DepthChange = true;
                 AddToHistoryList(historyItem);
             }
 

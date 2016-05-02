@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -79,11 +78,15 @@ namespace lenticulis_gui.src.Containers
             {
                 mw.RemoveTimelineItem(Instance, false);
                 inProject = false;
+
+                return;
             }
             else if (RemoveAction)
             {
                 mw.AddTimelineItem(Instance, false, false);
                 inProject = true;
+
+                return;
             }
 
             Instance.SetPosition(UndoRow, UndoColumn, UndoLength);
@@ -100,11 +103,15 @@ namespace lenticulis_gui.src.Containers
             {
                 mw.AddTimelineItem(Instance, false, false);
                 inProject = true;
+
+                return;
             }
             else if (RemoveAction)
             {
                 mw.RemoveTimelineItem(Instance, false);
                 inProject = false;
+
+                return;
             }
 
             Instance.SetPosition(RedoRow, RedoColumn, RedoLength);
@@ -129,10 +136,7 @@ namespace lenticulis_gui.src.Containers
         public void Dispose()
         {
             if (!inProject)
-            {
                 Instance.GetLayerObject().unloadImage();
-                Debug.WriteLine("---> unloading image from storage " + Instance.Name);
-            }
         }
     }
 }

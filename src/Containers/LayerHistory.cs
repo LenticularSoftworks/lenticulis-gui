@@ -41,6 +41,11 @@ namespace lenticulis_gui.src.Containers
         public double DepthRedo {get; set;}
 
         /// <summary>
+        /// Depth change
+        /// </summary>
+        public bool DepthChange { get; set; }
+
+        /// <summary>
         /// Set to true when call undo
         /// </summary>
         private bool IsUndo = false;
@@ -74,9 +79,9 @@ namespace lenticulis_gui.src.Containers
 
                 foreach (var item in deletedList)
                     item.ApplyUndo();
-
-                mw.ConvertDepthBoxSelection(LayerId, LayerDepth);
             }
+            else if(DepthChange)
+                mw.ConvertDepthBoxSelection(LayerId, LayerDepth);
 
             IsUndo = true;
         }
@@ -93,10 +98,7 @@ namespace lenticulis_gui.src.Containers
 
             //Select operation
             if (AddLayer)
-            {
                 mw.AddTimelineLayer(1, false, true, LayerDepth); //adding and removing layer doesnt change depth
-                mw.ConvertDepthBoxSelection(LayerId, DepthRedo);
-            }
             else if (UpLayer)
                 mw.LayerUp(LayerId);
             else if (DownLayer)
@@ -109,6 +111,8 @@ namespace lenticulis_gui.src.Containers
 
                 mw.RemoveLastLayer(false, null);
             }
+            else if(DepthChange)
+                mw.ConvertDepthBoxSelection(LayerId, DepthRedo);
 
             IsUndo = false;
         }
@@ -139,7 +143,8 @@ namespace lenticulis_gui.src.Containers
         {
             if (RemoveLayer && deletedList != null)
             {
-                foreach (var item in deletedList) {
+                foreach (var item in deletedList)
+                {
                     item.Dispose();
                 }
             }

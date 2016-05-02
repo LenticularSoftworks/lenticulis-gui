@@ -111,6 +111,16 @@ namespace lenticulis_gui.src.Containers
         private bool transformationChanged = false;
 
         /// <summary>
+        /// Resource path - for loading
+        /// </summary>
+        public string ResourcePath { get; set; }
+
+        /// <summary>
+        /// Resource ext - for loading
+        /// </summary>
+        public string ResourceExt { get; set; }
+
+        /// <summary>
         /// Constructor - only sets ID of this object by generating a new one from static member,
         /// inits initial state of position, rotation and scale, and creates transformation dictionary
         /// </summary>

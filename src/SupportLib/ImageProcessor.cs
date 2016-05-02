@@ -99,7 +99,7 @@ namespace lenticulis_gui.src.SupportLib
                     trans = current.getTransformation(TransformType.Rotate);
                     if (trans != null)
                     {
-                        tmp_angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialAngle, current.InitialAngle + trans.TransformAngle);
+                        tmp_angle = Interpolator.interpolateLinearValue(trans.Interpolation, progress, current.InitialAngle, current.InitialAngle - trans.TransformAngle);
                         SupportLib.rotateImage(tmp_angle);
 
                         // we have to increase final_width/_height to match the dimensions of bounding box
