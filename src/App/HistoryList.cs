@@ -7,6 +7,9 @@ using System.Text;
 
 namespace lenticulis_gui.src.App
 {
+    /// <summary>
+    /// Class represents list of operation for calling Undo and Redo functions in project.
+    /// </summary>
     public class HistoryList
     {
         /// <summary>
