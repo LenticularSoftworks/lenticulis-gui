@@ -334,7 +334,7 @@ namespace lenticulis_gui
             TimelineHeader.Children.Clear();
             LayerDepth.Children.Clear();
             SliderPanel.Children.Clear();
-            
+
             if (timelineList != null)
                 timelineList.Clear();
             timelineList = null;
@@ -428,6 +428,20 @@ namespace lenticulis_gui
                 lsw.ShowDialog();
 
                 psdLayerIndex = lsw.selectedLayer;
+            }
+
+            //obtain psdLayer from given string
+            if (extension.ToLower().Equals("psd"))
+            {
+                int leftBr = path.LastIndexOf('[');
+                int rightBr = path.LastIndexOf(']');
+
+                string strLayer = "";
+                if(leftBr >= 0 && leftBr < path.Length && rightBr >= 0 && rightBr < path.Length)
+                    strLayer = path.Substring(leftBr + 1, path.Length - rightBr);
+
+                if (int.TryParse(strLayer, out psdLayerIndex))
+                    path = path.Substring(0, leftBr);
             }
 
             ImageHolder ih = ImageHolder.loadImage(path, true, psdLayerIndex);

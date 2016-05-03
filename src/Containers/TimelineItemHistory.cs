@@ -85,8 +85,6 @@ namespace lenticulis_gui.src.Containers
             {
                 mw.AddTimelineItem(Instance, false, false);
                 inProject = true;
-
-                return;
             }
 
             Instance.SetPosition(UndoRow, UndoColumn, UndoLength);
@@ -103,8 +101,6 @@ namespace lenticulis_gui.src.Containers
             {
                 mw.AddTimelineItem(Instance, false, false);
                 inProject = true;
-
-                return;
             }
             else if (RemoveAction)
             {
