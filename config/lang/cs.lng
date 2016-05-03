@@ -97,11 +97,13 @@ ABOUT_WINDOW_TITLE=O projektu
 VERSION_TXT=Verze
 ABOUT_PRODUCT_TXT=Projekt Lenticulus 0.6 vznikal v rámci předmětu KIV/ZSWI, a to jako semestrální práce tří studentů informatiky a dvou studentů informačních systémů. Lenticulis verze 0.7 vznikl rozšířením funkcionality Lenticulis 0.6 v rámci bakalářské práce.
 ABOUT_LICENCE_TXT=Program a jeho podpůrná knihovna jsou distribuovány pod licencí GNU GPLv3. Zdrojové kódy jsou k dispozici na:
-TEAM_MEMBERS_TITLE=Členové týmu
+TEAM_MEMBERS_TITLE=Členové týmu (v. 0.6)
 TEAM_LEADER=vedoucí týmu
 TEAM_DEVELOPER=vývoj
 TEAM_DOCUMENTATION=dokumentace
 TEAM_TESTING=testování
+THESIS_TITLE=Bakalářská práce (v. 0.7)
+THESIS_SUP=vedoucí bakalářské práce
 
 ## Export
 EXPORT_WINDOW_TITLE=Exportování

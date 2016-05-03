@@ -97,11 +97,13 @@ ABOUT_WINDOW_TITLE=About project
 VERSION_TXT=Version
 ABOUT_PRODUCT_TXT=Project Lenticulis 0.6 was created as semestral work within subject KIV/ZSWI. The team consisted of three computer science students, and two informatics students. Lenticulis version 0.7 was created as functional enhancement of Lenticulis 0.6 within bachelor thesis.
 ABOUT_LICENCE_TXT=Application and support library are distributed under GNU GPLv3 licence. Source code is available at:
-TEAM_MEMBERS_TITLE=Team members
+TEAM_MEMBERS_TITLE=Team members (v. 0.6)
 TEAM_LEADER=team leader
 TEAM_DEVELOPER=developer
 TEAM_DOCUMENTATION=documentation
 TEAM_TESTING=testing
+THESIS_TITLE=Bachelor thesis (v. 0.7)
+THESIS_SUP=thesis supervisor
 
 ## Export
 EXPORT_WINDOW_TITLE=Export

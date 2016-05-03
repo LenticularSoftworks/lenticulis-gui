@@ -4,7 +4,7 @@
         xmlns:p="clr-namespace:lenticulis_gui.Properties"
         xmlns:app="clr-namespace:lenticulis_gui.src.App"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="O projektu" Height="341" Width="540">
+        Title="O projektu" Height="410" Width="540">
 
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
@@ -61,6 +61,26 @@
               </BulletDecorator.Bullet>
             </BulletDecorator>
             Václav Pelc (<Run Text="{app:LangConverter str=TEAM_DOCUMENTATION}" />, <Run Text="{app:LangConverter str=TEAM_TESTING}" />)<LineBreak/>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="14,302,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="319"><Run Text="{app:LangConverter str=THESIS_TITLE}"/><LineBreak/><InlineUIContainer>
+        		<BulletDecorator>
+        			<BulletDecorator.Bullet>
+        				<Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+        			</BulletDecorator.Bullet>
+        		</BulletDecorator>
+        	</InlineUIContainer><Run Text=" Tomáš Kleisner ("/><Run Text="{app:LangConverter str=TEAM_DEVELOPER}" /><Run Text=")"/><LineBreak/><InlineUIContainer>
+        		<BulletDecorator>
+        			<BulletDecorator.Bullet>
+        				<Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+        			</BulletDecorator.Bullet>
+        		</BulletDecorator>
+        	</InlineUIContainer><Run Text=" Ing. Petr Lobaz ("/><Run Text="{app:LangConverter str=THESIS_SUP}" /><Run Text=")"/><LineBreak/><InlineUIContainer>
+        		<BulletDecorator>
+        			<BulletDecorator.Bullet>
+        				<Ellipse Height="5" Width="5" Margin="2,2,2,2" Fill="Blue"/>
+        			</BulletDecorator.Bullet>
+        		</BulletDecorator>
+        	</InlineUIContainer><Run Text=" BcA. Pavel Liška ("/><Run Text="{app:LangConverter str=TEAM_TESTING}" /><Run Text=")"/><LineBreak/>
         </TextBlock>
     </Grid>
 </Controls:MetroWindow>
