@@ -6,6 +6,9 @@ using System.Text;
 
 namespace lenticulis_gui.src.Containers
 {
+    /// <summary>
+    /// Undo /redo holder for project settings
+    /// </summary>
     public class ProjectHistory : HistoryItem
     {
         /// <summary>
